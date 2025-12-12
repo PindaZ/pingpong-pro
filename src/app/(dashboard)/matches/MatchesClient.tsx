@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Plus, CheckCircle2, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import LogResultModal from "@/components/LogResultModal";
