@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum MatchStatus {
+  PENDING   // Waiting for opponent confirmation
+  VALIDATED // Confirmed and counted towards ELO
+  REJECTED  // Declined by opponent
+}
+
+// ---------------------------------------------------------
+// MODELS
+// ---------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  
+  // Profile
+  bio           String?   @db.Text
+  avatarUrl     String?
+  
+  // Security & Permissions
+  role          Role      @default(USER)
+  
+  // Stats
+  elo           Int       @default(1200)
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  matchesAsPlayer1   Match[]  @relation("Player1")
+  matchesAsPlayer2   Match[]  @relation("Player2")
+  matchesWon         Match[]  @relation("Winner")
+  
+  createdTournaments Tournament[] @relation("TournamentCreator")
+  participations     TournamentParticipant[]
+  
+  rankingLogs        RankingLog[]
+
+  @@map("users")
+}
+
+model Match {
+  id          String       @id @default(cuid())
+  
+  // Metadata
+  playedAt    DateTime     @default(now())
+  status      MatchStatus  @default(PENDING)
+  
+  // Participants
+  player1Id   String
+  player1     User         @relation("Player1", fields: [player1Id], references: [id])
+  
+  player2Id   String
+  player2     User         @relation("Player2", fields: [player2Id], references: [id])
+  
+  // Result
+  winnerId    String?
+  winner      User?        @relation("Winner", fields: [winnerId], references: [id])
+  
+  // Score details (Best of 3 sets usually)
+  games       Game[]
+
+  // Optional Context
+  tournamentId String?
+  tournament   Tournament? @relation(fields: [tournamentId], references: [id])
+
+  // Auditing for ELO changes
+  rankingLogs RankingLog[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([player1Id])
+  @@index([player2Id])
+  @@index([winnerId])
+  @@index([status])
+  @@map("matches")
+}
+
+model Game {
+  id             String   @id @default(cuid())
+  
+  matchId        String
+  match          Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  
+  setNumber      Int      // e.g., 1, 2, 3
+  
+  scorePlayer1   Int
+  scorePlayer2   Int
+
+  @@unique([matchId, setNumber]) // Cannot have two "Set 1"s in the same match
+  @@map("games")
+}
+
+model Tournament {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  
+  startDate   DateTime
+  endDate     DateTime
+  
+  creatorId   String
+  creator     User     @relation("TournamentCreator", fields: [creatorId], references: [id])
+  
+  participants TournamentParticipant[]
+  matches      Match[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("tournaments")
+}
+
+model TournamentParticipant {
+  id           String     @id @default(cuid())
+  
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  joinedAt     DateTime   @default(now())
+
+  @@unique([tournamentId, userId]) // User can only join a tournament once
+  @@map("tournament_participants")
+}
+
+model RankingLog {
+  id        String   @id @default(cuid())
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  matchId   String?
+  match     Match?   @relation(fields: [matchId], references: [id])
+  
+  eloBefore Int
+  eloAfter  Int
+  change    Int      // e.g. +15 or -12
+  
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("ranking_logs")
+}
