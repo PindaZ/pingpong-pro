@@ -181,7 +181,7 @@ export async function PUT(
             db.game.createMany({
                 data: games.map((game: { scorePlayer1: number; scorePlayer2: number }, index: number) => ({
                     matchId: id,
-                    gameNumber: index + 1,
+                    setNumber: index + 1,
                     scorePlayer1: game.scorePlayer1,
                     scorePlayer2: game.scorePlayer2,
                 })),
