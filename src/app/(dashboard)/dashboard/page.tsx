@@ -13,7 +13,12 @@ export default async function DashboardPage() {
     }
 
     const currentUser = await db.user.findUnique({
-        where: { id: session.user.id }
+        where: { id: session.user.id },
+        include: {
+            matchesWon: true,
+            matchesAsPlayer1: true,
+            matchesAsPlayer2: true,
+        }
     });
 
     if (!currentUser) redirect("/login");
@@ -25,7 +30,7 @@ export default async function DashboardPage() {
 
     const recentMatches = await db.match.findMany({
         take: 5,
-        orderBy: { date: 'desc' },
+        orderBy: { playedAt: 'desc' },
         include: {
             player1: true,
             player2: true,
@@ -72,9 +77,17 @@ export default async function DashboardPage() {
                 />
                 <StatCard
                     title="Win Rate"
-                    value={`${currentUser.wins + currentUser.losses > 0 ? Math.round((currentUser.wins / (currentUser.wins + currentUser.losses)) * 100) : 0}% `}
+                    value={`${(() => {
+                        const wins = currentUser.matchesWon?.length || 0;
+                        const totalMatches = new Set([...currentUser.matchesAsPlayer1?.map(m => m.id) || [], ...currentUser.matchesAsPlayer2?.map(m => m.id) || []]).size;
+                        return totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0;
+                    })()}%`}
                     icon={<Activity className="text-white" size={24} />}
-                    description={`${currentUser.wins} W - ${currentUser.losses} L`}
+                    description={`${currentUser.matchesWon?.length || 0} W - ${(() => {
+                        const wins = currentUser.matchesWon?.length || 0;
+                        const totalMatches = new Set([...currentUser.matchesAsPlayer1?.map(m => m.id) || [], ...currentUser.matchesAsPlayer2?.map(m => m.id) || []]).size;
+                        return totalMatches - wins;
+                    })()} L`}
                     gradient="from-violet-600 to-purple-600"
                     trend="Lifetime"
                 />
@@ -170,8 +183,8 @@ function MatchItem({ match, currentUserId }: any) {
                 <div className="flex items-center gap-6">
                     {/* Date Badge */}
                     <div className="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-slate-800/80 border border-slate-700/50 text-slate-400 font-medium text-xs">
-                        <span className="text-lg text-white font-bold">{new Date(match.date).getDate()}</span>
-                        <span>{new Date(match.date).toLocaleString('default', { month: 'short' })}</span>
+                        <span className="text-lg text-white font-bold">{new Date(match.playedAt).getDate()}</span>
+                        <span>{new Date(match.playedAt).toLocaleString('default', { month: 'short' })}</span>
                     </div>
 
                     {/* Players */}
@@ -229,7 +242,7 @@ function LeaderboardItem({ user, rank }: any) {
                 </div>
                 <div>
                     <div className="font-medium text-slate-200 group-hover:text-white transition-colors">{user.name}</div>
-                    <div className="text-xs text-slate-500">{user.wins} Wins • {user.losses} Losses</div>
+                    <div className="text-xs text-slate-500">ELO {user.elo}</div>
                 </div>
             </div>
             <div className="font-mono font-bold text-slate-300">{user.elo}</div>
