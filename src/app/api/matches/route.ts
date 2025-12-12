@@ -10,16 +10,16 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const { opponentId, scores, tournamentId, skipValidation } = await req.json(); // scores: [{p1: 11, p2: 5}, ...]
+        const { opponentId, games, tournamentId, skipValidation } = await req.json(); // games: [{p1: 11, p2: 5}, ...]
 
-        if (!opponentId || !scores || !Array.isArray(scores)) {
+        if (!opponentId || !games || !Array.isArray(games)) {
             return new NextResponse("Missing data", { status: 400 });
         }
 
         // Calculate scores to determine winner
         let player1Wins = 0;
         let player2Wins = 0;
-        const formattedGames = scores.map((s: any, i: number) => {
+        const formattedGames = games.map((s: any, i: number) => {
             const s1 = parseInt(s.p1);
             const s2 = parseInt(s.p2);
             if (s1 > s2) player1Wins++; else player2Wins++;
