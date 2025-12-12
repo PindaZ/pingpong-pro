@@ -9,18 +9,33 @@ export default async function TournamentsPage() {
     const session = await getServerSession(authOptions);
     if (!session) redirect("/login");
 
+    const now = new Date();
+
     const tournaments = await db.tournament.findMany({
         orderBy: { startDate: 'desc' },
         include: {
-            winner: true,
+            creator: true,
             _count: {
                 select: { participants: true }
             }
         }
     });
 
-    const featuredTournament = tournaments.find(t => t.status === 'ONGOING' || t.status === 'UPCOMING');
-    const pastTournaments = tournaments.filter(t => t.id !== featuredTournament?.id);
+    // Compute status based on dates
+    const tournamentsWithStatus = tournaments.map(t => {
+        let status: 'UPCOMING' | 'ONGOING' | 'COMPLETED';
+        if (now < t.startDate) {
+            status = 'UPCOMING';
+        } else if (now > t.endDate) {
+            status = 'COMPLETED';
+        } else {
+            status = 'ONGOING';
+        }
+        return { ...t, status };
+    });
+
+    const featuredTournament = tournamentsWithStatus.find(t => t.status === 'ONGOING' || t.status === 'UPCOMING');
+    const pastTournaments = tournamentsWithStatus.filter(t => t.id !== featuredTournament?.id);
 
     return (
         <div className="space-y-10 max-w-7xl mx-auto">
@@ -158,13 +173,13 @@ function TournamentCard({ tournament }: any) {
                         <Users size={14} className="text-slate-500" />
                         <span className="text-sm font-medium text-slate-300">{tournament._count?.participants || 0} Players</span>
                     </div>
-                    {tournament.winner && (
-                        <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/10">
-                            <Crown size={12} className="text-amber-500" />
-                            <span className="text-xs font-bold text-amber-500">{tournament.winner.name}</span>
+                    {tournament.status === 'COMPLETED' ? (
+                        <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/10">
+                            <span className="text-xs font-bold text-emerald-500">COMPLETED</span>
                         </div>
+                    ) : (
+                        <ArrowRight size={16} className="text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                     )}
-                    {!tournament.winner && <ArrowRight size={16} className="text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />}
                 </div>
             </div>
         </div>

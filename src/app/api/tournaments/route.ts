@@ -27,7 +27,6 @@ export async function POST(req: Request) {
                 startDate: new Date(startDate),
                 endDate: new Date(endDate),
                 creatorId: session.user.id,
-                status: "UPCOMING"
             },
         });
 
@@ -43,7 +42,6 @@ export async function GET(req: Request) {
         const tournaments = await db.tournament.findMany({
             include: {
                 creator: { select: { name: true } },
-                winner: { select: { name: true, avatarUrl: true } },
                 _count: {
                     select: { participants: true }
                 }
