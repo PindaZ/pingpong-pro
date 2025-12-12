@@ -14,6 +14,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [maxParticipants, setMaxParticipants] = useState("16");
@@ -35,6 +36,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     name,
+                    description,
                     startDate,
                     endDate,
                     maxParticipants: parseInt(maxParticipants),
@@ -47,6 +49,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
             } else {
                 onClose();
                 setName("");
+                setDescription("");
                 setStartDate("");
                 setEndDate("");
                 router.refresh();
@@ -88,6 +91,19 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Winter Championship 2024"
                                 className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                                Description (Optional)
+                            </label>
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Enter tournament details, rules, prizes..."
+                                rows={3}
+                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                             />
                         </div>
 

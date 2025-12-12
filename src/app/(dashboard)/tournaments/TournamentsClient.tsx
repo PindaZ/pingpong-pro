@@ -32,6 +32,28 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
         return { ...t, status };
     });
 
+    // Helper: Check if user has joined a tournament
+    const getUserParticipation = (tournament: any) => {
+        const participant = tournament.participants?.find(
+            (p: any) => p.userId === currentUserId
+        );
+        return participant;
+    };
+
+    // Helper: Get user's position/seed in tournament
+    const getUserPosition = (tournament: any) => {
+        const participant = getUserParticipation(tournament);
+        if (!participant) return null;
+        return participant.seed || tournament.participants?.findIndex(
+            (p: any) => p.userId === currentUserId
+        ) + 1;
+    };
+
+    // Helper: Check if tournament is full
+    const isTournamentFull = (tournament: any) => {
+        return (tournament.participantsCount || tournament.participants?.length || 0) >= tournament.maxParticipants;
+    };
+
     const featuredTournament = tournamentsWithStatus.find(
         (t) => t.status === "ONGOING" || t.status === "UPCOMING"
     );
@@ -158,16 +180,63 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={() => handleJoin(featuredTournament.id)}
-                                            disabled={joining === featuredTournament.id}
-                                            className="px-8 py-4 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-colors shadow-xl shadow-white/5 active:scale-95 disabled:opacity-50 flex items-center gap-2"
-                                        >
-                                            {joining === featuredTournament.id ? (
-                                                <Loader2 className="animate-spin" size={18} />
-                                            ) : null}
-                                            Join Tournament
-                                        </button>
+                                        {/* Dynamic Join/Status Button */}
+                                        {(() => {
+                                            const hasJoined = getUserParticipation(featuredTournament);
+                                            const position = getUserPosition(featuredTournament);
+                                            const isFull = isTournamentFull(featuredTournament);
+                                            const isCompleted = featuredTournament.status === "COMPLETED";
+                                            const bracketGenerated = featuredTournament.bracketGenerated;
+
+                                            if (isCompleted) {
+                                                return (
+                                                    <button
+                                                        onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
+                                                        className="px-8 py-4 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-600 transition-colors shadow-xl active:scale-95 flex items-center gap-2"
+                                                    >
+                                                        <Trophy size={18} />
+                                                        View Results
+                                                    </button>
+                                                );
+                                            }
+
+                                            if (hasJoined) {
+                                                return (
+                                                    <button
+                                                        onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
+                                                        className="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold hover:from-emerald-500 hover:to-teal-500 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+                                                    >
+                                                        ✓ Joined {position ? `• Seed #${position}` : ""}
+                                                        <ArrowRight size={18} />
+                                                    </button>
+                                                );
+                                            }
+
+                                            if (isFull) {
+                                                return (
+                                                    <button
+                                                        disabled
+                                                        className="px-8 py-4 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed flex items-center gap-2"
+                                                    >
+                                                        <Users size={18} />
+                                                        Tournament Full
+                                                    </button>
+                                                );
+                                            }
+
+                                            return (
+                                                <button
+                                                    onClick={() => handleJoin(featuredTournament.id)}
+                                                    disabled={joining === featuredTournament.id}
+                                                    className="px-8 py-4 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-colors shadow-xl shadow-white/5 active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                                                >
+                                                    {joining === featuredTournament.id ? (
+                                                        <Loader2 className="animate-spin" size={18} />
+                                                    ) : null}
+                                                    Join Tournament
+                                                </button>
+                                            );
+                                        })()}
                                     </div>
 
                                     {/* Bracket Visual (Static Preview) - Clickable */}
