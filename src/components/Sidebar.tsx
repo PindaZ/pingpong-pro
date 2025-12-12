@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { Trophy, Swords, LayoutDashboard, User, LogOut, Disc, Bell } from "lucide-react";
+import { Trophy, Swords, LayoutDashboard, User, LogOut, Disc, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NotificationBell from "./NotificationBell";
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -40,6 +41,10 @@ export default function Sidebar() {
                 <NavItem href="/rankings" icon={<Trophy size={20} />} label="Rankings" active={pathname === "/rankings"} />
                 <NavItem href="/profile" icon={<User size={20} />} label="My Profile" active={pathname === "/profile"} />
             </nav>
+
+            <div className="px-4 mb-2">
+                <NotificationBell />
+            </div>
 
             <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
