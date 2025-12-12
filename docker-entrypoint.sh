@@ -2,7 +2,7 @@
 
 # Run database migrations
 echo "Running database migrations..."
-./node_modules/.bin/prisma db push --schema=./prisma/schema.prisma
+npx prisma db push
 
 # Start the application
 echo "Starting application..."
