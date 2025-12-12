@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowRight } from "lucide-react";
+import RulesModal from "@/components/RulesModal";
 
 export default function LandingPage() {
+  const [showRules, setShowRules] = useState(false);
+
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center relative overflow-hidden">
       {/* Background Effects */}
@@ -28,7 +34,10 @@ export default function LandingPage() {
             Start Playing
             <ArrowRight className="group-hover:translate-x-1 transition-transform" />
           </Link>
-          <button className="text-slate-400 hover:text-white font-medium text-lg px-8 py-4">
+          <button
+            onClick={() => setShowRules(true)}
+            className="text-slate-400 hover:text-white font-medium text-lg px-8 py-4 hover:bg-slate-800/50 rounded-full transition-all"
+          >
             Learn Rules
           </button>
         </div>
@@ -48,6 +57,10 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+
+      {/* Rules Modal */}
+      <RulesModal isOpen={showRules} onClose={() => setShowRules(false)} />
     </div>
   );
 }
+

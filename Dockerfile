@@ -68,6 +68,6 @@ ENV PORT=3000
 # set hostname to localhost
 ENV HOSTNAME="0.0.0.0"
 
-# Use entrypoint script to run migrations before starting
-ENTRYPOINT ["./docker-entrypoint.sh"]
+# Use shell to run migrations then start app (avoids CRLF issues with external scripts)
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
 
