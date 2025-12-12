@@ -68,6 +68,5 @@ ENV PORT=3000
 # set hostname to localhost
 ENV HOSTNAME="0.0.0.0"
 
-# Use shell to run migrations then start app (avoids CRLF issues with external scripts)
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
-
+# Run migrations then start app (use node directly since npx isn't available in standalone)
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && node server.js"]
