@@ -30,7 +30,7 @@ export default async function TournamentsPage() {
         endDate: t.endDate.toISOString(),
         status: "UPCOMING", // Pre-fill status key to avoid spread issues later, though calculated in client
         maxParticipants: t.maxParticipants,
-        participantsCount: t._count.participants, // Flatten count
+        participantsCount: t._count?.participants ?? 0, // Flatten count defensively
         creatorId: t.creatorId,
     }));
 

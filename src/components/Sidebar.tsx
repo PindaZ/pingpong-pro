@@ -14,7 +14,7 @@ export default function Sidebar() {
     const { data: session } = useSession();
 
     return (
-        <aside className="w-72 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800/60 hidden md:flex flex-col relative overflow-hidden">
+        <aside className="w-72 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800/60 hidden md:flex flex-col relative">
             {/* Decorative background glow */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
                 <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-indigo-600/20 rounded-full blur-[80px]" />

@@ -39,7 +39,7 @@ RUN apk add --no-cache openssl
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Set the correct permission for nextjs user and don't list /app directory as owner
 RUN mkdir .next
@@ -68,5 +68,5 @@ ENV PORT=3000
 # set hostname to localhost
 ENV HOSTNAME="0.0.0.0"
 
-# Start the application
-CMD ["node", "server.js"]
+# Start the application using entrypoint
+CMD ["./docker-entrypoint.sh"]
