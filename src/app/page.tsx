@@ -19,7 +19,7 @@ export default function LandingPage() {
       <div className="z-10 text-center space-y-8 px-4 max-w-2xl">
         <div className="space-y-4">
           <h1 className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight">
-            PingPong Pro
+            PingPong&apos;r
           </h1>
           <p className="text-slate-400 text-lg md:text-xl leading-relaxed">
             The ultimate platform for office competition. Track ELO, organize tournaments, and claim the championship title.
@@ -38,7 +38,7 @@ export default function LandingPage() {
             onClick={() => setShowRules(true)}
             className="text-slate-400 hover:text-white font-medium text-lg px-8 py-4 hover:bg-slate-800/50 rounded-full transition-all"
           >
-            Learn Rules
+            PingPong&apos;r Rules
           </button>
         </div>
 

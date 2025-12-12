@@ -48,8 +48,7 @@ export default function NotificationBell() {
             });
 
             if (res.ok) {
-                // Mark as read and refresh
-                await fetch(`/api/notifications/${matchId}`, { method: "PATCH" });
+                // Match validation automatically clears the notification (status changes from PENDING)
                 fetchNotifications();
                 router.refresh();
             }
@@ -66,12 +65,13 @@ export default function NotificationBell() {
         <div className="relative">
             <button
                 onClick={() => setOpen(!open)}
-                className="relative p-2 rounded-lg hover:bg-slate-800 transition-colors"
+                className="relative p-2.5 rounded-xl hover:bg-slate-800 transition-all active:scale-95"
             >
-                <Bell size={20} className="text-slate-400" />
+                <Bell size={20} className={cn("text-slate-400 transition-colors", open && "text-white")} />
                 {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                        {unreadCount > 9 ? "9+" : unreadCount}
+                    <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-500 border-2 border-slate-950"></span>
                     </span>
                 )}
             </button>
@@ -79,49 +79,85 @@ export default function NotificationBell() {
             {open && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                    <div className="absolute right-0 top-full mt-2 w-80 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden">
-                        <div className="px-4 py-3 border-b border-slate-800">
+                    <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-slate-900/95 backdrop-blur-2xl border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden ring-1 ring-white/10 origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                        <div className="px-5 py-4 border-b border-slate-800/50 flex items-center justify-between">
                             <h4 className="font-semibold text-white">Notifications</h4>
+                            {unreadCount > 0 && (
+                                <span className="text-xs font-medium text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-full border border-indigo-500/20">
+                                    {unreadCount} pending
+                                </span>
+                            )}
                         </div>
 
-                        <div className="max-h-80 overflow-auto">
+                        <div className="max-h-[400px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                             {notifications.length === 0 ? (
-                                <div className="p-6 text-center text-slate-500 text-sm">
-                                    No notifications
+                                <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                                    <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center mb-3">
+                                        <Bell size={20} className="text-slate-600" />
+                                    </div>
+                                    <p className="text-sm font-medium text-slate-400">All caught up!</p>
+                                    <p className="text-xs text-slate-500 mt-1">No new notifications.</p>
                                 </div>
                             ) : (
-                                notifications.map((notification) => (
-                                    <div
-                                        key={notification.id}
-                                        className={`p-4 border-b border-slate-800 last:border-0 ${!notification.read ? "bg-indigo-500/5" : ""
-                                            }`}
-                                    >
-                                        <p className="text-sm text-slate-300 mb-2">{notification.message}</p>
+                                <div className="divide-y divide-slate-800/50">
+                                    {notifications.map((notification) => (
+                                        <div
+                                            key={notification.id}
+                                            className={cn(
+                                                "p-4 transition-colors hover:bg-slate-800/30",
+                                                !notification.read ? "bg-indigo-500/5 relative" : ""
+                                            )}
+                                        >
+                                            {!notification.read && (
+                                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500" />
+                                            )}
+                                            <div className="flex gap-4">
+                                                <div className="mt-1">
+                                                    <div className="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                                        <Trophy size={14} />
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1 space-y-3">
+                                                    <div>
+                                                        <p className="text-sm text-slate-200 leading-relaxed font-medium">
+                                                            Match Result
+                                                        </p>
+                                                        <p className="text-xs text-slate-400 mt-0.5">
+                                                            {notification.message}
+                                                        </p>
+                                                        <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-medium">
+                                                            {new Date(notification.createdAt).toLocaleDateString(undefined, {
+                                                                month: "short",
+                                                                day: "numeric",
+                                                                hour: "2-digit",
+                                                                minute: "2-digit"
+                                                            })}
+                                                        </p>
+                                                    </div>
 
-                                        {notification.type === "MATCH_VALIDATION" && !notification.read && (
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleValidate(notification.matchId, "confirm")}
-                                                    disabled={loading}
-                                                    className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1 disabled:opacity-50"
-                                                >
-                                                    <Check size={14} /> Confirm
-                                                </button>
-                                                <button
-                                                    onClick={() => handleValidate(notification.matchId, "reject")}
-                                                    disabled={loading}
-                                                    className="flex-1 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1 disabled:opacity-50"
-                                                >
-                                                    <X size={14} /> Reject
-                                                </button>
+                                                    {notification.type === "MATCH_VALIDATION" && !notification.read && (
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => handleValidate(notification.matchId, "confirm")}
+                                                                disabled={loading}
+                                                                className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 disabled:opacity-50 transition-all hover:scale-[1.02] shadow-lg shadow-emerald-500/20"
+                                                            >
+                                                                <Check size={14} /> Confirm
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleValidate(notification.matchId, "reject")}
+                                                                disabled={loading}
+                                                                className="flex-1 py-2 bg-slate-700 hover:bg-red-600/90 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 disabled:opacity-50 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/20 border border-slate-600 hover:border-transparent"
+                                                            >
+                                                                <X size={14} /> Reject
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                        )}
-
-                                        <p className="text-xs text-slate-500 mt-2">
-                                            {new Date(notification.createdAt).toLocaleDateString()}
-                                        </p>
-                                    </div>
-                                ))
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
                     </div>

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Trophy, Loader2, ArrowRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
@@ -50,7 +51,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl relative z-10">
                 <div className="flex flex-col items-center mb-8">
                     <div className="p-3 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-500/20 mb-4">
-                        <Trophy className="text-white" size={32} />
+                        <Logo className="text-white w-8 h-8" />
                     </div>
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Welcome Back</h1>
                     <p className="text-slate-400 text-sm mt-1">Sign in to continue your streak</p>

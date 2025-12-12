@@ -136,7 +136,7 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                                         Participants
                                                     </div>
                                                     <div className="text-slate-200 font-semibold">
-                                                        {featuredTournament._count?.participants || 0} /{" "}
+                                                        {featuredTournament.participantsCount || 0} /{" "}
                                                         {featuredTournament.maxParticipants || 16}
                                                     </div>
                                                 </div>
@@ -262,7 +262,7 @@ function TournamentCard({
                     <div className="flex items-center gap-2">
                         <Users size={14} className="text-slate-500" />
                         <span className="text-sm font-medium text-slate-300">
-                            {tournament._count?.participants || 0} Players
+                            {tournament.participantsCount || 0} Players
                         </span>
                     </div>
                     {tournament.status === "COMPLETED" ? (

@@ -7,6 +7,8 @@ import { Trophy, Swords, LayoutDashboard, User, LogOut, Disc, Award } from "luci
 import { cn } from "@/lib/utils";
 import NotificationBell from "./NotificationBell";
 
+import { Logo } from "@/components/Logo";
+
 export default function Sidebar() {
     const pathname = usePathname();
     const { data: session } = useSession();
@@ -21,10 +23,10 @@ export default function Sidebar() {
             <div className="p-8 pb-4">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
-                        <Disc className="text-white animate-spin-slow" size={24} />
+                        <Logo className="text-white animate-spin-slow w-6 h-6" />
                     </div>
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent tracking-tight">
-                        PingPong<span className="text-indigo-400">Pro</span>
+                        PingPong<span className="text-indigo-400">&apos;r</span>
                     </h1>
                 </div>
 
@@ -38,7 +40,7 @@ export default function Sidebar() {
                 <NavItem href="/dashboard" icon={<LayoutDashboard size={20} />} label="Overview" active={pathname === "/dashboard"} />
                 <NavItem href="/matches" icon={<Swords size={20} />} label="Matches" active={pathname === "/matches"} />
                 <NavItem href="/tournaments" icon={<Trophy size={20} />} label="Tournaments" active={pathname === "/tournaments"} />
-                <NavItem href="/rankings" icon={<Trophy size={20} />} label="Rankings" active={pathname === "/rankings"} />
+                <NavItem href="/rankings" icon={<Award size={20} />} label="Rankings" active={pathname === "/rankings"} />
                 <NavItem href="/profile" icon={<User size={20} />} label="My Profile" active={pathname === "/profile"} />
             </nav>
 

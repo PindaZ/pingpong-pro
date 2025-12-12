@@ -24,11 +24,14 @@ export default async function TournamentsPage() {
     // Serialize dates to strings to avoid passing Date objects directly to Client Component
     // although Next.js supports it, it can be a source of issues.
     const tournaments = tournamentsData.map(t => ({
-        ...t,
+        id: t.id,
+        name: t.name,
         startDate: t.startDate.toISOString(),
         endDate: t.endDate.toISOString(),
-        createdAt: t.createdAt.toISOString(),
-        updatedAt: t.updatedAt.toISOString(),
+        status: "UPCOMING", // Pre-fill status key to avoid spread issues later, though calculated in client
+        maxParticipants: t.maxParticipants,
+        participantsCount: t._count.participants, // Flatten count
+        creatorId: t.creatorId,
     }));
 
     const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";

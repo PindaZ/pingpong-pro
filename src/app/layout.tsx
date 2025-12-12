@@ -7,7 +7,7 @@ import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PingPong Pro",
+  title: "PingPong'r",
   description: "Company Ping Pong Competition Manager",
 };
 

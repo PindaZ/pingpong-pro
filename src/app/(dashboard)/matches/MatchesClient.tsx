@@ -139,7 +139,9 @@ function MatchCard({
                                     : "text-slate-400 font-medium"
                             )}
                         >
-                            {match.player1?.name?.split(" ")[0] || "Player 1"}
+                            <Link href={`/profile/${match.player1Id}`} className="hover:text-indigo-400 hover:underline transition-colors">
+                                {match.player1?.name?.split(" ")[0] || "Player 1"}
+                            </Link>
                             {match.player1Id === currentUserId && (
                                 <span className="text-indigo-400 text-xs ml-1">(you)</span>
                             )}
@@ -175,7 +177,9 @@ function MatchCard({
                                     : "text-slate-400 font-medium"
                             )}
                         >
-                            {match.player2?.name?.split(" ")[0] || "Player 2"}
+                            <Link href={`/profile/${match.player2Id}`} className="hover:text-indigo-400 hover:underline transition-colors">
+                                {match.player2?.name?.split(" ")[0] || "Player 2"}
+                            </Link>
                             {match.player2Id === currentUserId && (
                                 <span className="text-indigo-400 text-xs ml-1">(you)</span>
                             )}

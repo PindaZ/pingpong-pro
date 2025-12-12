@@ -30,7 +30,7 @@ export default function RulesModal({ isOpen, onClose }: RulesModalProps) {
                     </button>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                         <Trophy className="w-8 h-8" />
-                        PingPong Pro Rules
+                        PingPong&#39;r Rules
                     </h2>
                     <p className="text-white/80 mt-1">Master the game, climb the ranks</p>
                 </div>
