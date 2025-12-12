@@ -64,14 +64,20 @@ export default function TournamentBracket({
     const handleGenerate = async () => {
         setGenerating(true);
         try {
-            await fetch(`/api/tournaments/${tournamentId}/bracket`, {
+            const res = await fetch(`/api/tournaments/${tournamentId}/bracket`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ seedingType }),
             });
-            onRefresh();
+            const data = await res.json();
+            if (res.ok) {
+                onRefresh();
+            } else {
+                alert(data.error || "Failed to generate bracket");
+            }
         } catch (error) {
             console.error("Failed to generate bracket:", error);
+            alert("Failed to generate bracket. Please try again.");
         } finally {
             setGenerating(false);
         }

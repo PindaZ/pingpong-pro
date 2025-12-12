@@ -93,6 +93,9 @@ model Match {
   // Auditing for ELO changes
   rankingLogs RankingLog[]
 
+  // Deletion approval tracking (for verified matches)
+  deletionRequestedBy String?
+
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 

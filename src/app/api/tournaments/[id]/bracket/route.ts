@@ -49,7 +49,7 @@ export async function POST(
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
-            return new NextResponse("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const { id } = await params;
@@ -58,7 +58,7 @@ export async function POST(
         // Check admin
         const user = await db.user.findUnique({ where: { id: session.user.id } });
         if (user?.role !== "ADMIN" && user?.role !== "SUPERADMIN") {
-            return new NextResponse("Forbidden", { status: 403 });
+            return NextResponse.json({ error: "Only admins can generate brackets" }, { status: 403 });
         }
 
         // Get tournament with participants
@@ -72,15 +72,15 @@ export async function POST(
         });
 
         if (!tournament) {
-            return new NextResponse("Tournament not found", { status: 404 });
+            return NextResponse.json({ error: "Tournament not found" }, { status: 404 });
         }
 
         if (tournament.bracketGenerated) {
-            return new NextResponse("Bracket already generated", { status: 400 });
+            return NextResponse.json({ error: "Bracket already generated" }, { status: 400 });
         }
 
         if (tournament.participants.length < 2) {
-            return new NextResponse("Need at least 2 participants", { status: 400 });
+            return NextResponse.json({ error: "Need at least 2 participants to generate a bracket" }, { status: 400 });
         }
 
         // Get participants and sort/shuffle based on seeding type
@@ -184,7 +184,7 @@ export async function POST(
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("[BRACKET_POST]", error);
-        return new NextResponse("Internal Error", { status: 500 });
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
 

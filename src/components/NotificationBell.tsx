@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Bell, Check, X, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -77,10 +78,10 @@ export default function NotificationBell() {
                 )}
             </button>
 
-            {open && (
+            {open && typeof document !== 'undefined' && createPortal(
                 <>
-                    <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
-                    <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-slate-900/95 backdrop-blur-2xl border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden ring-1 ring-white/10 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
+                    <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-slate-900/95 backdrop-blur-2xl border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 z-[9999] overflow-hidden ring-1 ring-white/10 animate-in fade-in zoom-in-95 duration-200">
                         <div className="px-5 py-4 border-b border-slate-800/50 flex items-center justify-between">
                             <h4 className="font-semibold text-white">Notifications</h4>
                             {unreadCount > 0 && (
@@ -162,7 +163,8 @@ export default function NotificationBell() {
                             )}
                         </div>
                     </div>
-                </>
+                </>,
+                document.body
             )}
         </div>
     );
