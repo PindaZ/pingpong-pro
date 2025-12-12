@@ -120,6 +120,7 @@ model Tournament {
   
   startDate   DateTime
   endDate     DateTime
+  maxParticipants Int @default(32)
   
   creatorId   String
   creator     User     @relation("TournamentCreator", fields: [creatorId], references: [id])

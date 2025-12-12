@@ -15,7 +15,7 @@ export async function POST(req: Request) {
         //   return new NextResponse("Forbidden", { status: 403 });
         // }
 
-        const { name, startDate, endDate } = await req.json();
+        const { name, startDate, endDate, maxParticipants } = await req.json();
 
         if (!name || !startDate || !endDate) {
             return new NextResponse("Missing data", { status: 400 });
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
                 name,
                 startDate: new Date(startDate),
                 endDate: new Date(endDate),
+                maxParticipants: maxParticipants ? parseInt(maxParticipants) : 32,
                 creatorId: session.user.id,
             },
         });
