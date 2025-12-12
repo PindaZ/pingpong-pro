@@ -39,6 +39,20 @@ export async function POST(req: Request) {
 
     } catch (error) {
         console.error("[REGISTER_ERROR]", error);
+        
+        // Enhanced error logging for debugging
+        if (error instanceof Error) {
+            console.error("[REGISTER_ERROR] Error name:", error.name);
+            console.error("[REGISTER_ERROR] Error message:", error.message);
+            console.error("[REGISTER_ERROR] Stack trace:", error.stack);
+        }
+        
+        // Check for specific Prisma errors
+        if (error && typeof error === 'object' && 'code' in error) {
+            console.error("[REGISTER_ERROR] Prisma error code:", (error as any).code);
+            console.error("[REGISTER_ERROR] Prisma meta:", (error as any).meta);
+        }
+        
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
