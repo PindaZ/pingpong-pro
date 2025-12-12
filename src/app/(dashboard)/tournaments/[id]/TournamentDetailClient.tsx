@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trophy, Calendar, Users, ArrowLeft, Shield } from "lucide-react";
+import { Trophy, Calendar, Users, ArrowLeft, Shield, Plus } from "lucide-react";
 import TournamentBracket from "@/components/TournamentBracket";
 import { cn } from "@/lib/utils";
+import ManageParticipantsModal from "@/components/ManageParticipantsModal";
 
 interface TournamentDetailClientProps {
     tournament: any;
@@ -88,31 +90,55 @@ export default function TournamentDetailClient({
             </div>
 
             {/* Participants List (if bracket not generated) */}
-            {!tournament.bracketGenerated && tournament.participants.length > 0 && (
+            {!tournament.bracketGenerated && (tournament.participants.length > 0 || isAdmin) && (
                 <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">Registered Participants</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                        {tournament.participants.map((p: any) => (
-                            <div
-                                key={p.id}
-                                className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-3"
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold text-white">Registered Participants</h2>
+                        {isAdmin && (
+                            <button
+                                onClick={() => setShowManageModal(true)}
+                                className="px-3 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 text-sm font-semibold hover:bg-indigo-600/30 transition-colors border border-indigo-500/30 active:scale-95 flex items-center gap-2"
                             >
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
-                                    {p.user.avatarUrl ? (
-                                        <img src={p.user.avatarUrl} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        p.user.name?.charAt(0)?.toUpperCase() || "?"
-                                    )}
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-sm font-medium text-white truncate">{p.user.name}</p>
-                                    <p className="text-xs text-slate-500">{p.user.elo} ELO</p>
-                                </div>
-                            </div>
-                        ))}
+                                <Plus size={16} />
+                                Add Player
+                            </button>
+                        )}
                     </div>
+
+                    {tournament.participants.length === 0 ? (
+                        <p className="text-slate-500 italic text-sm">No participants yet.</p>
+                    ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                            {tournament.participants.map((p: any) => (
+                                <div
+                                    key={p.id}
+                                    className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-3"
+                                >
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
+                                        {p.user.avatarUrl ? (
+                                            <img src={p.user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                        ) : (
+                                            p.user.name?.charAt(0)?.toUpperCase() || "?"
+                                        )}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-medium text-white truncate">{p.user.name}</p>
+                                        <p className="text-xs text-slate-500">{p.user.elo} ELO</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
+
+            <ManageParticipantsModal
+                isOpen={showManageModal}
+                onClose={() => setShowManageModal(false)}
+                tournamentId={tournament.id}
+                tournamentName={tournament.name}
+                participants={tournament.participants || []}
+            />
 
             {/* Bracket */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">

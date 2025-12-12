@@ -38,6 +38,7 @@ export default async function TournamentsPage() {
         maxParticipants: t.maxParticipants,
         participantsCount: t._count?.participants ?? 0, // Flatten count defensively
         creatorId: t.creatorId,
+        participants: t.participants, // Pass participants to client
     }));
 
     const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";

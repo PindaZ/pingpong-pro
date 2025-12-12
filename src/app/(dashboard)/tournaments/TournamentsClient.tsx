@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Trophy, Calendar, Users, ArrowRight, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CreateTournamentModal from "@/components/CreateTournamentModal";
-import ManageParticipantsModal from "@/components/ManageParticipantsModal";
 
 interface TournamentsClientProps {
     tournaments: any[];
@@ -16,7 +15,6 @@ interface TournamentsClientProps {
 export default function TournamentsClient({ tournaments, currentUserId, isAdmin }: TournamentsClientProps) {
     const router = useRouter();
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [showManageModal, setShowManageModal] = useState(false);
     const [joining, setJoining] = useState<string | null>(null);
 
     const now = new Date();
@@ -239,16 +237,6 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                                     </button>
                                                 );
                                             })()}
-
-                                            {isAdmin && !featuredTournament.bracketGenerated && (
-                                                <button
-                                                    onClick={() => setShowManageModal(true)}
-                                                    className="px-8 py-4 rounded-xl bg-indigo-600/20 text-indigo-300 font-bold hover:bg-indigo-600/30 transition-colors border border-indigo-500/30 active:scale-95 flex items-center gap-2"
-                                                >
-                                                    <Users size={18} />
-                                                    Manage Players
-                                                </button>
-                                            )}
                                         </div>
                                     </div>
 
@@ -307,15 +295,6 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
             </div>
 
             <CreateTournamentModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} />
-            {featuredTournament && (
-                <ManageParticipantsModal
-                    isOpen={showManageModal}
-                    onClose={() => setShowManageModal(false)}
-                    tournamentId={featuredTournament.id}
-                    tournamentName={featuredTournament.name}
-                    participants={featuredTournament.participants || []}
-                />
-            )}
         </>
     );
 }
