@@ -105,16 +105,18 @@ export async function PATCH(
                 data: {
                     userId: match.player1Id,
                     matchId: id,
-                    oldElo: player1Elo,
-                    newElo: newPlayer1Elo,
+                    eloBefore: player1Elo,
+                    eloAfter: newPlayer1Elo,
+                    change: newPlayer1Elo - player1Elo,
                 },
             }),
             db.rankingLog.create({
                 data: {
                     userId: match.player2Id,
                     matchId: id,
-                    oldElo: player2Elo,
-                    newElo: newPlayer2Elo,
+                    eloBefore: player2Elo,
+                    eloAfter: newPlayer2Elo,
+                    change: newPlayer2Elo - player2Elo,
                 },
             }),
         ]);
