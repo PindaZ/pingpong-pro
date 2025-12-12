@@ -12,14 +12,14 @@ export async function PATCH(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { name, bio } = body;
+        const { name, bio, avatarUrl } = body;
 
         const updatedUser = await db.user.update({
             where: { id: session.user.id },
             data: {
-                name: name || undefined,
-                bio: bio || undefined,
-                avatarUrl: body.avatarUrl || undefined,
+                name: name !== undefined ? name : undefined,
+                bio: bio !== undefined ? bio : undefined,
+                avatarUrl: avatarUrl !== undefined ? avatarUrl : undefined,
             },
         });
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Trophy, User, ChevronRight, Loader2, Shield, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -291,9 +292,9 @@ function PlayerSlot({
                             )}
                         </div>
                         <div className="min-w-0">
-                            <p className={cn("text-sm font-medium truncate", isWinner ? "text-emerald-400" : "text-white")}>
+                            <Link href={`/profile/${player.id}`} className={cn("text-sm font-medium truncate hover:underline", isWinner ? "text-emerald-400" : "text-white")}>
                                 {player.name || "TBD"}
-                            </p>
+                            </Link>
                             {player.elo && <p className="text-xs text-slate-500">{player.elo} ELO</p>}
                         </div>
                     </>

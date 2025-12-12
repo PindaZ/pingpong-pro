@@ -79,8 +79,8 @@ export default function NotificationBell() {
 
             {open && (
                 <>
-                    <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                    <div className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-slate-900/95 backdrop-blur-2xl border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden ring-1 ring-white/10 origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                    <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
+                    <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md bg-slate-900/95 backdrop-blur-2xl border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden ring-1 ring-white/10 animate-in fade-in zoom-in-95 duration-200">
                         <div className="px-5 py-4 border-b border-slate-800/50 flex items-center justify-between">
                             <h4 className="font-semibold text-white">Notifications</h4>
                             {unreadCount > 0 && (
@@ -90,7 +90,7 @@ export default function NotificationBell() {
                             )}
                         </div>
 
-                        <div className="max-h-[400px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                        <div className="max-h-[60vh] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                             {notifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                                     <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center mb-3">
