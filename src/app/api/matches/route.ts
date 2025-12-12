@@ -67,7 +67,7 @@ export async function GET(req: Request) {
                 winner: { select: { id: true, name: true } }
             },
             orderBy: {
-                date: 'desc'
+                playedAt: 'desc'
             }
         });
 

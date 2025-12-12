@@ -10,7 +10,7 @@ export default async function MatchesPage() {
     if (!session) redirect("/login");
 
     const matches = await db.match.findMany({
-        orderBy: { date: 'desc' },
+        orderBy: { playedAt: 'desc' },
         include: {
             player1: true,
             player2: true,
@@ -87,8 +87,8 @@ function MatchCard({ match }: any) {
             <div className="flex flex-col md:flex-row items-center gap-6 pl-3">
                 {/* Date */}
                 <div className="hidden md:flex flex-col items-center justify-center min-w-[70px] py-1">
-                    <span className="text-2xl font-bold text-slate-200">{new Date(match.date).getDate()}</span>
-                    <span className="text-xs font-semibold text-slate-500 uppercase">{new Date(match.date).toLocaleString('default', { month: 'short' })}</span>
+                    <span className="text-2xl font-bold text-slate-200">{new Date(match.playedAt).getDate()}</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase">{new Date(match.playedAt).toLocaleString('default', { month: 'short' })}</span>
                 </div>
 
                 {/* Match Content */}
@@ -123,7 +123,7 @@ function MatchCard({ match }: any) {
                     {/* Meta & Status */}
                     <div className="flex items-center justify-between md:justify-end gap-4 w-full border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
                         <div className="md:hidden text-xs text-slate-500">
-                            {new Date(match.date).toLocaleDateString()}
+                            {new Date(match.playedAt).toLocaleDateString()}
                         </div>
 
                         {isPending ? (
