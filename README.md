@@ -86,6 +86,10 @@ This project is built with performance and type-safety in mind, optimized for de
     ```
     Visit `http://localhost:3000`.
 
+## 🚀 Deployment
+
+For detailed, step-by-step instructions on deploying to a VPS (Hetzner, DigitalOcean) using **Dokploy**, please refer to the [Server Deployment Guide](DEPLOY.md).
+
 ## ⚙️ Environment Variables (`.env.example`)
 
 ```ini
