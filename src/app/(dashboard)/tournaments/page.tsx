@@ -17,6 +17,12 @@ export default async function TournamentsPage() {
         include: {
             _count: {
                 select: { participants: true }
+            },
+            participants: {
+                select: {
+                    userId: true,
+                    seed: true
+                }
             }
         }
     });

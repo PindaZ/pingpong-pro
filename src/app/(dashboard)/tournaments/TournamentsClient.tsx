@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trophy, Calendar, Users, ArrowRight, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CreateTournamentModal from "@/components/CreateTournamentModal";
+import ManageParticipantsModal from "@/components/ManageParticipantsModal";
 
 interface TournamentsClientProps {
     tournaments: any[];
@@ -15,6 +16,7 @@ interface TournamentsClientProps {
 export default function TournamentsClient({ tournaments, currentUserId, isAdmin }: TournamentsClientProps) {
     const router = useRouter();
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showManageModal, setShowManageModal] = useState(false);
     const [joining, setJoining] = useState<string | null>(null);
 
     const now = new Date();
@@ -181,62 +183,73 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                         </div>
 
                                         {/* Dynamic Join/Status Button */}
-                                        {(() => {
-                                            const hasJoined = getUserParticipation(featuredTournament);
-                                            const position = getUserPosition(featuredTournament);
-                                            const isFull = isTournamentFull(featuredTournament);
-                                            const isCompleted = featuredTournament.status === "COMPLETED";
-                                            const bracketGenerated = featuredTournament.bracketGenerated;
+                                        <div className="flex gap-3">
+                                            {(() => {
+                                                const hasJoined = getUserParticipation(featuredTournament);
+                                                const position = getUserPosition(featuredTournament);
+                                                const isFull = isTournamentFull(featuredTournament);
+                                                const isCompleted = featuredTournament.status === "COMPLETED";
 
-                                            if (isCompleted) {
+                                                if (isCompleted) {
+                                                    return (
+                                                        <button
+                                                            onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
+                                                            className="px-8 py-4 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-600 transition-colors shadow-xl active:scale-95 flex items-center gap-2"
+                                                        >
+                                                            <Trophy size={18} />
+                                                            View Results
+                                                        </button>
+                                                    );
+                                                }
+
+                                                if (hasJoined) {
+                                                    return (
+                                                        <button
+                                                            onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
+                                                            className="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold hover:from-emerald-500 hover:to-teal-500 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+                                                        >
+                                                            ✓ Joined {position ? `• Seed #${position}` : ""}
+                                                            <ArrowRight size={18} />
+                                                        </button>
+                                                    );
+                                                }
+
+                                                if (isFull) {
+                                                    return (
+                                                        <button
+                                                            disabled
+                                                            className="px-8 py-4 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed flex items-center gap-2"
+                                                        >
+                                                            <Users size={18} />
+                                                            Tournament Full
+                                                        </button>
+                                                    );
+                                                }
+
                                                 return (
                                                     <button
-                                                        onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
-                                                        className="px-8 py-4 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-600 transition-colors shadow-xl active:scale-95 flex items-center gap-2"
+                                                        onClick={() => handleJoin(featuredTournament.id)}
+                                                        disabled={joining === featuredTournament.id}
+                                                        className="px-8 py-4 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-colors shadow-xl shadow-white/5 active:scale-95 disabled:opacity-50 flex items-center gap-2"
                                                     >
-                                                        <Trophy size={18} />
-                                                        View Results
+                                                        {joining === featuredTournament.id ? (
+                                                            <Loader2 className="animate-spin" size={18} />
+                                                        ) : null}
+                                                        Join Tournament
                                                     </button>
                                                 );
-                                            }
+                                            })()}
 
-                                            if (hasJoined) {
-                                                return (
-                                                    <button
-                                                        onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
-                                                        className="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold hover:from-emerald-500 hover:to-teal-500 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
-                                                    >
-                                                        ✓ Joined {position ? `• Seed #${position}` : ""}
-                                                        <ArrowRight size={18} />
-                                                    </button>
-                                                );
-                                            }
-
-                                            if (isFull) {
-                                                return (
-                                                    <button
-                                                        disabled
-                                                        className="px-8 py-4 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed flex items-center gap-2"
-                                                    >
-                                                        <Users size={18} />
-                                                        Tournament Full
-                                                    </button>
-                                                );
-                                            }
-
-                                            return (
+                                            {isAdmin && !featuredTournament.bracketGenerated && (
                                                 <button
-                                                    onClick={() => handleJoin(featuredTournament.id)}
-                                                    disabled={joining === featuredTournament.id}
-                                                    className="px-8 py-4 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-colors shadow-xl shadow-white/5 active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                                                    onClick={() => setShowManageModal(true)}
+                                                    className="px-8 py-4 rounded-xl bg-indigo-600/20 text-indigo-300 font-bold hover:bg-indigo-600/30 transition-colors border border-indigo-500/30 active:scale-95 flex items-center gap-2"
                                                 >
-                                                    {joining === featuredTournament.id ? (
-                                                        <Loader2 className="animate-spin" size={18} />
-                                                    ) : null}
-                                                    Join Tournament
+                                                    <Users size={18} />
+                                                    Manage Players
                                                 </button>
-                                            );
-                                        })()}
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Bracket Visual (Static Preview) - Clickable */}
@@ -294,6 +307,15 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
             </div>
 
             <CreateTournamentModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} />
+            {featuredTournament && (
+                <ManageParticipantsModal
+                    isOpen={showManageModal}
+                    onClose={() => setShowManageModal(false)}
+                    tournamentId={featuredTournament.id}
+                    tournamentName={featuredTournament.name}
+                    participants={featuredTournament.participants || []}
+                />
+            )}
         </>
     );
 }
