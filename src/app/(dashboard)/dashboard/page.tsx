@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { TrendingUp, Award, Activity } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -128,9 +129,9 @@ export default async function DashboardPage() {
                                 <LeaderboardItem key={user.id} user={user} rank={idx + 1} />
                             ))}
                         </div>
-                        <button className="w-full mt-6 py-3 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800 hover:text-white transition-all">
+                        <Link href="/rankings" className="w-full mt-6 py-3 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800 hover:text-white transition-all text-center block">
                             View Full Rankings
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>
