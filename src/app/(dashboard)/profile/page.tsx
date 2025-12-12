@@ -14,12 +14,12 @@ export default async function ProfilePage() {
         include: {
             matchesWon: true,
             matchesAsPlayer1: {
-                include: { player2: true, winner: true, games: true },
+                include: { player1: true, player2: true, winner: true, games: true },
                 orderBy: { playedAt: 'desc' },
                 take: 5
             },
             matchesAsPlayer2: {
-                include: { player1: true, winner: true, games: true },
+                include: { player1: true, player2: true, winner: true, games: true },
                 orderBy: { playedAt: 'desc' },
                 take: 5
             },
