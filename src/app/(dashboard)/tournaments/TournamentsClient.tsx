@@ -43,11 +43,15 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
             const res = await fetch(`/api/tournaments/${tournamentId}`, {
                 method: "POST",
             });
+            const data = await res.json();
             if (res.ok) {
                 router.refresh();
+            } else {
+                alert(data.error || "Failed to join tournament");
             }
         } catch (error) {
             console.error("Join failed:", error);
+            alert("Failed to join tournament. Please try again.");
         } finally {
             setJoining(null);
         }
@@ -166,10 +170,13 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                         </button>
                                     </div>
 
-                                    {/* Bracket Visual (Static Preview) */}
-                                    <div className="hidden lg:flex items-center justify-center relative">
-                                        <div className="w-full max-w-md aspect-video bg-slate-950/50 rounded-2xl border border-slate-800 p-6 relative overflow-hidden group hover:border-slate-700 transition-all">
-                                            <div className="absolute inset-0 flex items-center justify-between px-10 opacity-30">
+                                    {/* Bracket Visual (Static Preview) - Clickable */}
+                                    <div
+                                        className="hidden lg:flex items-center justify-center relative cursor-pointer"
+                                        onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
+                                    >
+                                        <div className="w-full max-w-md aspect-video bg-slate-950/50 rounded-2xl border border-slate-800 p-6 relative overflow-hidden group hover:border-indigo-500/50 transition-all">
+                                            <div className="absolute inset-0 flex items-center justify-between px-10 opacity-30 group-hover:opacity-50 transition-opacity">
                                                 <div className="flex flex-col justify-around h-full py-4">
                                                     <div className="w-24 h-8 bg-slate-800 rounded mb-4" />
                                                     <div className="w-24 h-8 bg-slate-800 rounded mb-4" />
@@ -185,8 +192,8 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                                 </div>
                                             </div>
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <span className="px-4 py-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg text-slate-300 font-medium text-sm">
-                                                    View Bracket
+                                                <span className="px-4 py-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg text-slate-300 font-medium text-sm group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 transition-all">
+                                                    View Bracket →
                                                 </span>
                                             </div>
                                         </div>
