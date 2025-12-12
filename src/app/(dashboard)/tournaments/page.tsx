@@ -12,15 +12,24 @@ export default async function TournamentsPage() {
         where: { id: session.user.id },
     });
 
-    const tournaments = await db.tournament.findMany({
+    const tournamentsData = await db.tournament.findMany({
         orderBy: { startDate: 'desc' },
         include: {
-            creator: true,
             _count: {
                 select: { participants: true }
             }
         }
     });
+
+    // Serialize dates to strings to avoid passing Date objects directly to Client Component
+    // although Next.js supports it, it can be a source of issues.
+    const tournaments = tournamentsData.map(t => ({
+        ...t,
+        startDate: t.startDate.toISOString(),
+        endDate: t.endDate.toISOString(),
+        createdAt: t.createdAt.toISOString(),
+        updatedAt: t.updatedAt.toISOString(),
+    }));
 
     const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";
 

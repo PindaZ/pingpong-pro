@@ -19,6 +19,7 @@ export async function PATCH(req: NextRequest) {
             data: {
                 name: name || undefined,
                 bio: bio || undefined,
+                avatarUrl: body.avatarUrl || undefined,
             },
         });
 

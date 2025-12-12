@@ -58,8 +58,16 @@ export default async function ProfilePage() {
                 <div className="md:col-span-1 space-y-6">
                     <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
                         <div className="flex flex-col items-center text-center mb-6">
-                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold mb-4 ring-4 ring-indigo-500/20">
-                                {user.name?.charAt(0)?.toUpperCase() || "?"}
+                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold mb-4 ring-4 ring-indigo-500/20 overflow-hidden relative">
+                                {user.avatarUrl ? (
+                                    <img
+                                        src={user.avatarUrl}
+                                        alt={user.name || "Profile"}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    user.name?.charAt(0)?.toUpperCase() || "?"
+                                )}
                             </div>
                             <h3 className="text-xl font-bold text-white">{user.name || "Anonymous"}</h3>
                             <p className="text-slate-400 text-sm">{user.email}</p>
@@ -104,7 +112,7 @@ export default async function ProfilePage() {
                 {/* Edit Profile Form & Recent Matches */}
                 <div className="md:col-span-2 space-y-6">
                     {/* Edit Profile */}
-                    <ProfileForm user={{ id: user.id, name: user.name, bio: user.bio }} />
+                    <ProfileForm user={{ id: user.id, name: user.name, bio: user.bio, avatarUrl: user.avatarUrl }} />
 
                     {/* Recent Matches */}
                     <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
