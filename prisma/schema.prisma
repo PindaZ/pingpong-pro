@@ -55,6 +55,11 @@ model User {
   createdTournaments Tournament[] @relation("TournamentCreator")
   participations     TournamentParticipant[]
   
+  // Bracket relations
+  bracketAsPlayer1   BracketMatch[] @relation("BracketPlayer1")
+  bracketAsPlayer2   BracketMatch[] @relation("BracketPlayer2")
+  bracketWins        BracketMatch[] @relation("BracketWinner")
+  
   rankingLogs        RankingLog[]
 
   @@map("users")
@@ -122,11 +127,16 @@ model Tournament {
   endDate     DateTime
   maxParticipants Int @default(32)
   
+  // Bracket settings
+  bracketGenerated Boolean @default(false)
+  seedingType      String  @default("RANDOM") // RANDOM or ELO
+  
   creatorId   String
   creator     User     @relation("TournamentCreator", fields: [creatorId], references: [id])
   
   participants TournamentParticipant[]
   matches      Match[]
+  bracketMatches BracketMatch[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -142,6 +152,8 @@ model TournamentParticipant {
   
   userId       String
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  seed         Int?       // Seeding position (1 = top seed)
   
   joinedAt     DateTime   @default(now())
 
@@ -167,3 +179,34 @@ model RankingLog {
   @@index([userId])
   @@map("ranking_logs")
 }
+
+model BracketMatch {
+  id            String     @id @default(cuid())
+  
+  tournamentId  String
+  tournament    Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  
+  round         Int        // 1 = first round, 2 = quarters, etc.
+  position      Int        // Position in round (0-indexed)
+  
+  player1Id     String?
+  player1       User?      @relation("BracketPlayer1", fields: [player1Id], references: [id])
+  
+  player2Id     String?
+  player2       User?      @relation("BracketPlayer2", fields: [player2Id], references: [id])
+  
+  winnerId      String?
+  winner        User?      @relation("BracketWinner", fields: [winnerId], references: [id])
+  
+  score1        Int?       // Games won by player1
+  score2        Int?       // Games won by player2
+  
+  status        String     @default("PENDING") // PENDING, PLAYED, BYE
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@unique([tournamentId, round, position])
+  @@map("bracket_matches")
+}
+

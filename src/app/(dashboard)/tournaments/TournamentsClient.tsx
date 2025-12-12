@@ -231,6 +231,8 @@ function TournamentCard({
     onJoin: () => void;
     joining: boolean;
 }) {
+    const router = useRouter();
+
     return (
         <div className="group relative overflow-hidden rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all hover:-translate-y-1">
             <div className="p-6">
@@ -265,20 +267,24 @@ function TournamentCard({
                             {tournament.participantsCount || 0} Players
                         </span>
                     </div>
-                    {tournament.status === "COMPLETED" ? (
-                        <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/10">
-                            <span className="text-xs font-bold text-emerald-500">COMPLETED</span>
-                        </div>
-                    ) : (
+                    <div className="flex items-center gap-3">
                         <button
-                            onClick={onJoin}
-                            disabled={joining}
-                            className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
+                            onClick={() => router.push(`/tournaments/${tournament.id}`)}
+                            className="text-slate-400 hover:text-white text-sm font-medium"
                         >
-                            {joining ? <Loader2 className="animate-spin" size={14} /> : null}
-                            Join <ArrowRight size={14} />
+                            View
                         </button>
-                    )}
+                        {tournament.status !== "COMPLETED" && (
+                            <button
+                                onClick={onJoin}
+                                disabled={joining}
+                                className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
+                            >
+                                {joining ? <Loader2 className="animate-spin" size={14} /> : null}
+                                Join <ArrowRight size={14} />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
