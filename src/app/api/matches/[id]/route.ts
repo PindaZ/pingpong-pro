@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 // Handle actions on matches (Confirm, Reject, Approve Adjustment)
 export async function PATCH(
@@ -117,7 +118,7 @@ export async function PATCH(
                 data: {
                     player2Id: player2Id, // Update opponent if changed
                     status: "PENDING", // Reset to PENDING so new opponent (or same) verifies.
-                    adjustmentRequest: null, // Clear request
+                    adjustmentRequest: Prisma.DbNull, // Clear request
                     deletionRequestedBy: null,
                     winnerId: null, // Reset winner
                 }
@@ -132,7 +133,7 @@ export async function PATCH(
             }
             await db.match.update({
                 where: { id },
-                data: { adjustmentRequest: null }
+                data: { adjustmentRequest: Prisma.DbNull }
             });
             return NextResponse.json({ success: true, message: "Adjustment rejected" });
         }
