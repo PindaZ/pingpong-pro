@@ -19,6 +19,7 @@ export default function TournamentDetailClient({
     isAdmin,
 }: TournamentDetailClientProps) {
     const router = useRouter();
+    const [showManageModal, setShowManageModal] = useState(false);
 
     const now = new Date();
     const startDate = new Date(tournament.startDate);
