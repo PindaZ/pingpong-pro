@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Trophy, User, ChevronRight, Loader2, Shield, RefreshCw, Settings, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -161,12 +161,21 @@ export default function TournamentBracket({
                                     onRefresh={onRefresh}
                                     round={round}
                                     maxRound={maxRound}
+                                    onManage={(m) => setSelectedMatch(m)}
                                 />
                             ))}
                         </div>
                     </div>
                 ))}
             </div>
+
+            <ManageMatchModal
+                match={selectedMatch}
+                isOpen={!!selectedMatch}
+                onClose={() => setSelectedMatch(null)}
+                onUpdate={onRefresh}
+                tournamentId={tournamentId}
+            />
         </div>
     );
 }
@@ -179,6 +188,7 @@ function MatchCard({
     onRefresh,
     round,
     maxRound,
+    onManage,
 }: {
     match: BracketMatch;
     isAdmin: boolean;
@@ -187,6 +197,7 @@ function MatchCard({
     onRefresh: () => void;
     round: number;
     maxRound: number;
+    onManage: (match: BracketMatch) => void;
 }) {
     const [showActions, setShowActions] = useState(false);
     const isParticipant = match.player1?.id === currentUserId || match.player2?.id === currentUserId;
@@ -249,11 +260,7 @@ function MatchCard({
                         className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
                         onClick={(e) => {
                             e.stopPropagation();
-                            // Dispatch event or use simple prop callback if we could lift state
-                            // For simplicity, we are passing a setter from parent, or we can use a custom event.
-                            // Better: Pass setManagingMatch from parent to MatchCard
-                            const event = new CustomEvent("manageMatch", { detail: match });
-                            window.dispatchEvent(event);
+                            onManage(match);
                         }}
                     >
                         <Settings size={14} />
@@ -341,9 +348,17 @@ function ManageMatchModal({
     onUpdate: () => void;
     tournamentId: string;
 }) {
-    const [score1, setScore1] = useState(match?.score1?.toString() || "");
-    const [score2, setScore2] = useState(match?.score2?.toString() || "");
+    const [score1, setScore1] = useState("");
+    const [score2, setScore2] = useState("");
     const [loading, setLoading] = useState(false);
+
+    // Update state when match changes
+    useEffect(() => {
+        if (match) {
+            setScore1(match.score1?.toString() || "");
+            setScore2(match.score2?.toString() || "");
+        }
+    }, [match]);
 
     if (!isOpen || !match) return null;
 
@@ -400,8 +415,9 @@ function ManageMatchModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative z-10 bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-6">
                 <div className="flex justify-between items-center">
                     <h3 className="text-xl font-bold text-white">Manage Match</h3>
                     <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={24} /></button>
@@ -409,22 +425,24 @@ function ManageMatchModal({
 
                 <div className="grid grid-cols-3 gap-4 items-center">
                     <div className="text-center space-y-2">
-                        <div className="font-bold text-indigo-400 truncate">{match.player1?.name}</div>
+                        <div className="font-bold text-indigo-400 truncate text-sm">{match.player1?.name || "TBD"}</div>
                         <input
                             type="number"
                             value={score1}
                             onChange={(e) => setScore1(e.target.value)}
-                            className="w-20 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-indigo-500 focus:outline-none"
+                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-indigo-500 focus:outline-none"
+                            placeholder="0"
                         />
                     </div>
                     <div className="text-center text-slate-500 font-bold text-xl">VS</div>
                     <div className="text-center space-y-2">
-                        <div className="font-bold text-purple-400 truncate">{match.player2?.name}</div>
+                        <div className="font-bold text-purple-400 truncate text-sm">{match.player2?.name || "TBD"}</div>
                         <input
                             type="number"
                             value={score2}
                             onChange={(e) => setScore2(e.target.value)}
-                            className="w-20 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-indigo-500 focus:outline-none"
+                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-indigo-500 focus:outline-none"
+                            placeholder="0"
                         />
                     </div>
                 </div>
@@ -435,14 +453,14 @@ function ManageMatchModal({
                         disabled={loading}
                         className="flex-1 py-3 rounded-xl bg-slate-800 text-slate-300 font-medium hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50 border border-transparent transition-all flex items-center justify-center gap-2"
                     >
-                        <RefreshCw size={18} /> Reset Match
+                        <RefreshCw size={18} /> Reset
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
                         className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-all flex items-center justify-center gap-2"
                     >
-                        {loading ? <Loader2 className="animate-spin" /> : <><Shield size={18} /> Update Result</>}
+                        {loading ? <Loader2 className="animate-spin" /> : <><Shield size={18} /> Update</>}
                     </button>
                 </div>
             </div>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, CheckCircle2, X, Loader2, Edit3, AlertCircle } from "lucide-react";
+import { Plus, CheckCircle2, X, Loader2, Edit3, AlertCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import LogResultModal from "@/components/LogResultModal";
 import EditMatchModal from "@/components/EditMatchModal";
@@ -168,18 +168,27 @@ function MatchCard({
                         {/* Player 1 */}
                         <div
                             className={cn(
-                                "text-right flex-1 md:flex-none md:w-32 transition-colors",
+                                "flex items-center justify-end gap-3 flex-1 md:flex-none md:w-40 transition-colors",
                                 match.winnerId === match.player1Id
                                     ? "text-white font-bold"
                                     : "text-slate-400 font-medium"
                             )}
                         >
-                            <Link href={`/profile/${match.player1Id}`} className="hover:text-indigo-400 hover:underline transition-colors">
-                                {match.player1?.name?.split(" ")[0] || "Player 1"}
-                            </Link>
-                            {match.player1Id === currentUserId && (
-                                <span className="text-indigo-400 text-xs ml-1">(you)</span>
-                            )}
+                            <div className="flex flex-col items-end">
+                                <Link href={`/profile/${match.player1Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
+                                    {match.player1?.name?.split(" ")[0] || "Player 1"}
+                                    {match.player1Id === currentUserId && (
+                                        <span className="text-indigo-400 text-xs">(you)</span>
+                                    )}
+                                </Link>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                {match.player1?.avatarUrl ? (
+                                    <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    match.player1?.name?.charAt(0)?.toUpperCase() || <User size={14} />
+                                )}
+                            </div>
                         </div>
 
                         {/* Middle Score */}
@@ -206,18 +215,27 @@ function MatchCard({
                         {/* Player 2 */}
                         <div
                             className={cn(
-                                "text-left flex-1 md:flex-none md:w-32 transition-colors",
+                                "flex items-center justify-start gap-3 flex-1 md:flex-none md:w-40 transition-colors",
                                 match.winnerId === match.player2Id
                                     ? "text-white font-bold"
                                     : "text-slate-400 font-medium"
                             )}
                         >
-                            <Link href={`/profile/${match.player2Id}`} className="hover:text-indigo-400 hover:underline transition-colors">
-                                {match.player2?.name?.split(" ")[0] || "Player 2"}
-                            </Link>
-                            {match.player2Id === currentUserId && (
-                                <span className="text-indigo-400 text-xs ml-1">(you)</span>
-                            )}
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                {match.player2?.avatarUrl ? (
+                                    <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    match.player2?.name?.charAt(0)?.toUpperCase() || <User size={14} />
+                                )}
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <Link href={`/profile/${match.player2Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
+                                    {match.player2?.name?.split(" ")[0] || "Player 2"}
+                                    {match.player2Id === currentUserId && (
+                                        <span className="text-indigo-400 text-xs">(you)</span>
+                                    )}
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
