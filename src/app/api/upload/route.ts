@@ -21,11 +21,12 @@ export async function POST(req: NextRequest) {
         const buffer = Buffer.from(await file.arrayBuffer());
         const filename = `${Date.now()}_${file.name.replace(/\s/g, "_")}`;
 
-        // Use /app/public/uploads in production (Docker) or cwd/public/uploads locally
-        const isDocker = process.env.NODE_ENV === "production";
-        const uploadDir = isDocker
-            ? "/app/public/uploads"
-            : path.join(process.cwd(), "public/uploads");
+        // Use reliable path resolution for both Docker and local
+        const uploadDir = path.resolve(process.cwd(), "public/uploads");
+
+        console.log("[UPLOAD] Env:", process.env.NODE_ENV);
+        console.log("[UPLOAD] CWD:", process.cwd());
+        console.log("[UPLOAD] Saving to:", uploadDir);
 
         console.log("[UPLOAD] Saving to:", uploadDir);
         console.log("[UPLOAD] Filename:", filename);
