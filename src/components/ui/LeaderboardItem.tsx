@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Crown, Medal } from "lucide-react";
 
@@ -34,7 +35,9 @@ export function LeaderboardItem({ user, rank }: LeaderboardItemProps) {
                     {rankIcon || rank}
                 </div>
                 <div>
-                    <div className="font-medium text-slate-200 group-hover:text-white transition-colors">{user.name}</div>
+                    <Link href={`/profile/${user.id}`} className="font-medium text-slate-200 group-hover:text-white transition-colors hover:underline hover:text-indigo-400">
+                        {user.name}
+                    </Link>
                     <div className="text-xs text-slate-500">ELO {user.elo}</div>
                 </div>
             </div>

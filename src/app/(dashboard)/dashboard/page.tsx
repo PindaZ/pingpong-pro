@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TrendingUp, Award, Activity } from "lucide-react";
+import { TrendingUp, Award, Activity, Flame } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -8,6 +8,7 @@ import { calculateWins, calculateLosses, calculateWinRate } from "@/lib/stats";
 import { StatCard } from "@/components/ui/StatCard";
 import { MatchItem } from "@/components/ui/MatchItem";
 import { LeaderboardItem } from "@/components/ui/LeaderboardItem";
+import { EloHistoryChart } from "@/components/EloHistoryChart";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -43,6 +44,49 @@ export default async function DashboardPage() {
         }
     });
 
+    // Fetch ELO History
+    const rankingLogs = await db.rankingLog.findMany({
+        where: { userId: currentUser.id },
+        orderBy: { createdAt: 'asc' },
+        take: 50
+    });
+
+    // Format for Chart
+    const eloHistoryData = rankingLogs.map(log => ({
+        date: log.createdAt,
+        elo: log.eloAfter
+    }));
+
+    // Add current ELO if history is empty or last log significantly different (not strictly necessary but good for fresh data)
+    // Actually, simple is best. If no logs, maybe show just current.
+    if (eloHistoryData.length === 0) {
+        eloHistoryData.push({ date: new Date(), elo: currentUser.elo });
+    }
+
+    // Calculate Longest Streak
+    const allMatches = await db.match.findMany({
+        where: {
+            OR: [
+                { player1Id: currentUser.id },
+                { player2Id: currentUser.id }
+            ],
+            status: 'VALIDATED'
+        },
+        orderBy: { playedAt: 'asc' }
+    });
+
+    let currentStreak = 0;
+    let longestStreak = 0;
+
+    for (const match of allMatches) {
+        if (match.winnerId === currentUser.id) {
+            currentStreak++;
+            if (currentStreak > longestStreak) longestStreak = currentStreak;
+        } else {
+            currentStreak = 0;
+        }
+    }
+
     // Calculate Rank
     const rank = await db.user.count({
         where: { elo: { gt: currentUser.elo } }
@@ -65,16 +109,10 @@ export default async function DashboardPage() {
                     <h2 className="text-3xl font-bold text-white tracking-tight">Dashboard</h2>
                     <p className="text-slate-400 mt-1">Welcome back, {currentUser.name}</p>
                 </div>
-                <div className="flex gap-2 text-sm">
-                    <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        Online
-                    </span>
-                </div>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     title="Current ELO"
                     value={currentUser.elo.toString()}
@@ -99,6 +137,19 @@ export default async function DashboardPage() {
                     gradient="from-amber-500 to-orange-600"
                     trend="Global"
                 />
+                <StatCard
+                    title="Best Streak"
+                    value={`${longestStreak}`}
+                    icon={<Flame className="text-white" size={24} />}
+                    description="Consecutive Wins"
+                    gradient="from-rose-500 to-red-600"
+                    trend="Personal Best"
+                />
+            </div>
+
+            {/* ELO Graph */}
+            <div className="w-full">
+                <EloHistoryChart data={eloHistoryData} />
             </div>
 
             <div className="grid gap-8 lg:grid-cols-3">

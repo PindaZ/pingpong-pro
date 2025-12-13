@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Trophy, Calendar, Users, ArrowLeft, Shield, Plus } from "lucide-react";
 import TournamentBracket from "@/components/TournamentBracket";
 import { cn } from "@/lib/utils";
@@ -111,11 +112,12 @@ export default function TournamentDetailClient({
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                             {tournament.participants.map((p: any) => (
-                                <div
+                                <Link
+                                    href={`/profile/${p.user.id}`}
                                     key={p.id}
-                                    className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-3"
+                                    className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-3 hover:bg-slate-800 transition-colors group"
                                 >
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden group-hover:ring-2 group-hover:ring-indigo-500 transition-all">
                                         {p.user.avatarUrl ? (
                                             <img src={p.user.avatarUrl} alt="" className="w-full h-full object-cover" />
                                         ) : (
@@ -123,10 +125,10 @@ export default function TournamentDetailClient({
                                         )}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-sm font-medium text-white truncate">{p.user.name}</p>
+                                        <p className="text-sm font-medium text-white truncate group-hover:text-indigo-300 transition-colors">{p.user.name}</p>
                                         <p className="text-xs text-slate-500">{p.user.elo} ELO</p>
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     )}

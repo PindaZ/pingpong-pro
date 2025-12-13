@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Game, Match, User } from "@prisma/client";
 
@@ -31,9 +32,13 @@ export function MatchItem({ match, currentUserId }: MatchItemProps) {
                     {/* Players */}
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-3">
-                            <span className={cn("text-base font-semibold", match.winnerId === match.player1Id ? "text-white" : "text-slate-400")}>{match.player1.name}</span>
+                            <Link href={`/profile/${match.player1.id}`} className={cn("text-base font-semibold hover:underline hover:text-indigo-400 transition-colors", match.winnerId === match.player1Id ? "text-white" : "text-slate-400")}>
+                                {match.player1.name}
+                            </Link>
                             <span className="text-xs text-slate-600 font-medium">vs</span>
-                            <span className={cn("text-base font-semibold", match.winnerId === match.player2Id ? "text-white" : "text-slate-400")}>{match.player2.name}</span>
+                            <Link href={`/profile/${match.player2.id}`} className={cn("text-base font-semibold hover:underline hover:text-indigo-400 transition-colors", match.winnerId === match.player2Id ? "text-white" : "text-slate-400")}>
+                                {match.player2.name}
+                            </Link>
                         </div>
                         <div className="text-xs text-slate-500 font-mono flex gap-2">
                             {match.games.map((g, i) => (

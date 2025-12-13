@@ -51,8 +51,12 @@ export default function Sidebar() {
             <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="relative">
-                        <div className="w-10 h-10 rounded-full ring-2 ring-indigo-500/50 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                            {session?.user?.name?.charAt(0)?.toUpperCase() || "?"}
+                        <div className="w-10 h-10 rounded-full ring-2 ring-indigo-500/50 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold overflow-hidden">
+                            {session?.user?.image ? (
+                                <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                                session?.user?.name?.charAt(0)?.toUpperCase() || "?"
+                            )}
                         </div>
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-slate-900"></div>
                     </div>
