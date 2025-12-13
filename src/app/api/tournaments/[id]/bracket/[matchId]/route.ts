@@ -15,7 +15,12 @@ export async function POST(
         }
 
         const { id: tournamentId, matchId } = await params;
-        const { score1, score2 } = await req.json();
+        const { games, winnerId } = await req.json();
+
+        // Support both detailed games and simplified "winnerId"
+        if (!games && !winnerId) {
+            return new NextResponse("Missing match result data", { status: 400 });
+        }
 
         const bracketMatch = await db.bracketMatch.findUnique({
             where: { id: matchId },
@@ -35,8 +40,35 @@ export async function POST(
             return new NextResponse("Match already completed", { status: 400 });
         }
 
-        // Determine winner based on scores (best of 3)
-        const winnerId = score1 > score2 ? bracketMatch.player1Id : bracketMatch.player2Id;
+        let validatedGames = [];
+        let score1 = 0;
+        let score2 = 0;
+
+        if (winnerId) {
+            // Simplified reporting: Create 2 dummy games (e.g. 11-0, 11-0)
+            const isP1Winner = winnerId === bracketMatch.player1Id;
+            score1 = isP1Winner ? 2 : 0;
+            score2 = isP1Winner ? 0 : 2;
+
+            validatedGames = [
+                { setNumber: 1, scorePlayer1: isP1Winner ? 11 : 0, scorePlayer2: isP1Winner ? 0 : 11 },
+                { setNumber: 2, scorePlayer1: isP1Winner ? 11 : 0, scorePlayer2: isP1Winner ? 0 : 11 }
+            ];
+        } else if (games && Array.isArray(games)) {
+            // Detailed reporting (legacy/admin)
+            validatedGames = games.map((g: any, i: number) => {
+                const s1 = parseInt(g.p1);
+                const s2 = parseInt(g.p2);
+                if (s1 > s2) score1++;
+                else score2++;
+
+                return {
+                    setNumber: i + 1,
+                    scorePlayer1: s1,
+                    scorePlayer2: s2
+                };
+            });
+        }
 
         // Create pending match for validation (opponent must confirm)
         const match = await db.match.create({
@@ -46,20 +78,18 @@ export async function POST(
                 tournamentId,
                 status: "PENDING", // Always requires validation in tournaments
                 games: {
-                    create: [
-                        { setNumber: 1, scorePlayer1: score1, scorePlayer2: score2 },
-                    ],
+                    create: validatedGames,
                 },
             },
         });
 
-        // Update bracket match with pending scores (not confirmed yet)
+        // Update bracket match with pending scores
         await db.bracketMatch.update({
             where: { id: matchId },
             data: {
                 score1,
                 score2,
-                // Don't set winner until validated - status stays PENDING
+                // Don't set winner until validated
             },
         });
 

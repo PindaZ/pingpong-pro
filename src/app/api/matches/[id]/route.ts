@@ -175,7 +175,26 @@ export async function PATCH(
 
         const winnerId = player1Wins > player2Wins ? match.player1Id : match.player2Id;
 
-        // Update ELO ratings
+        if (match.tournamentId) {
+            // Tournaments: No ELO changes, just validate
+            await db.match.update({
+                where: { id },
+                data: {
+                    status: "VALIDATED",
+                    winnerId,
+                },
+            });
+
+            return NextResponse.json({
+                success: true,
+                status: "VALIDATED",
+                winner: winnerId,
+                eloChanges: null,
+                message: "Tournament match validated (No ELO impact)"
+            });
+        }
+
+        // Standard Match: Update ELO ratings
         const K = 32; // ELO K-factor
         const player1Elo = match.player1.elo;
         const player2Elo = match.player2.elo;

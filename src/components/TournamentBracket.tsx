@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Trophy, User, ChevronRight, Loader2, Shield, RefreshCw, Settings, X } from "lucide-react";
+import { Trophy, User, ChevronRight, Loader2, Shield, RefreshCw, Settings, X, Edit3 } from "lucide-react";
+import TournamentLogResultModal from "./TournamentLogResultModal";
 import { cn } from "@/lib/utils";
 
 interface Player {
@@ -44,6 +45,7 @@ export default function TournamentBracket({
     const [generating, setGenerating] = useState(false);
     const [seedingType, setSeedingType] = useState<"RANDOM" | "ELO">("RANDOM");
     const [selectedMatch, setSelectedMatch] = useState<BracketMatch | null>(null);
+    const [logResultMatch, setLogResultMatch] = useState<BracketMatch | null>(null);
 
     // Group matches by round
     const rounds: { [key: number]: BracketMatch[] } = {};
@@ -140,7 +142,7 @@ export default function TournamentBracket({
 
     return (
         <div className="overflow-x-auto pb-4">
-            <div className="flex gap-8 min-w-max p-4">
+            <div className="flex gap-16 min-w-max p-4">
                 {Array.from({ length: maxRound }, (_, i) => i + 1).map((round) => (
                     <div key={round} className="flex flex-col gap-4">
                         <h4 className="text-sm font-semibold text-slate-400 uppercase tracking-wider text-center mb-2">
@@ -162,6 +164,7 @@ export default function TournamentBracket({
                                     round={round}
                                     maxRound={maxRound}
                                     onManage={(m) => setSelectedMatch(m)}
+                                    onLogResult={(m) => setLogResultMatch(m)}
                                 />
                             ))}
                         </div>
@@ -176,6 +179,15 @@ export default function TournamentBracket({
                 onUpdate={onRefresh}
                 tournamentId={tournamentId}
             />
+
+            <TournamentLogResultModal
+                match={logResultMatch}
+                isOpen={!!logResultMatch}
+                onClose={() => setLogResultMatch(null)}
+                onSuccess={onRefresh}
+                tournamentId={tournamentId}
+                currentUserId={currentUserId}
+            />
         </div>
     );
 }
@@ -189,6 +201,7 @@ function MatchCard({
     round,
     maxRound,
     onManage,
+    onLogResult,
 }: {
     match: BracketMatch;
     isAdmin: boolean;
@@ -198,6 +211,7 @@ function MatchCard({
     round: number;
     maxRound: number;
     onManage: (match: BracketMatch) => void;
+    onLogResult: (match: BracketMatch) => void;
 }) {
     const [showActions, setShowActions] = useState(false);
     const isParticipant = match.player1?.id === currentUserId || match.player2?.id === currentUserId;
@@ -265,6 +279,19 @@ function MatchCard({
                     >
                         <Settings size={14} />
                         Manage
+                    </button>
+                )}
+
+                {!isAdmin && isParticipant && match.status !== "PLAYED" && match.status !== "BYE" && showActions && match.player1 && match.player2 && (
+                    <button
+                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onLogResult(match);
+                        }}
+                    >
+                        <Edit3 size={14} />
+                        Log Result
                     </button>
                 )}
             </div>
