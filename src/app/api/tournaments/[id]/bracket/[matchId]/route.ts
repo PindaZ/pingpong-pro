@@ -40,7 +40,7 @@ export async function POST(
             return new NextResponse("Match already completed", { status: 400 });
         }
 
-        let validatedGames = [];
+        let validatedGames: { setNumber: number; scorePlayer1: number; scorePlayer2: number }[] = [];
         let score1 = 0;
         let score2 = 0;
 
