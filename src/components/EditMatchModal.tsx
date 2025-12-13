@@ -139,7 +139,7 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative w-full max-w-md bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
+            <div className="relative w-full max-w-2xl bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
                 <div className="p-6 flex-none border-b border-slate-800">
                     <div className="flex items-center justify-between">
                         <h3 className="text-xl font-bold text-white">Adjust Match</h3>
