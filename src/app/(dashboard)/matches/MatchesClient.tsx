@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, CheckCircle2, X, Loader2 } from "lucide-react";
+import { Plus, CheckCircle2, X, Loader2, Edit3, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import LogResultModal from "@/components/LogResultModal";
+import EditMatchModal from "@/components/EditMatchModal";
 
 interface MatchesClientProps {
     matches: any[];
@@ -16,9 +17,10 @@ interface MatchesClientProps {
 export default function MatchesClient({ matches, users, currentUserId }: MatchesClientProps) {
     const router = useRouter();
     const [showLogModal, setShowLogModal] = useState(false);
+    const [editingMatch, setEditingMatch] = useState<any>(null);
     const [validating, setValidating] = useState<string | null>(null);
 
-    const handleValidate = async (matchId: string, action: "confirm" | "reject") => {
+    const handleValidate = async (matchId: string, action: "confirm" | "reject" | "approve_adjustment" | "reject_adjustment") => {
         setValidating(matchId);
         try {
             const res = await fetch(`/api/matches/${matchId}`, {
@@ -69,6 +71,7 @@ export default function MatchesClient({ matches, users, currentUserId }: Matches
                                 currentUserId={currentUserId}
                                 onValidate={handleValidate}
                                 validating={validating === match.id}
+                                onEdit={() => setEditingMatch(match)}
                             />
                         ))
                     )}
@@ -81,6 +84,14 @@ export default function MatchesClient({ matches, users, currentUserId }: Matches
                 users={users}
                 currentUserId={currentUserId}
             />
+
+            <EditMatchModal
+                isOpen={!!editingMatch}
+                onClose={() => setEditingMatch(null)}
+                match={editingMatch}
+                users={users}
+                currentUserId={currentUserId}
+            />
         </>
     );
 }
@@ -90,14 +101,37 @@ function MatchCard({
     currentUserId,
     onValidate,
     validating,
+    onEdit,
 }: {
     match: any;
     currentUserId: string;
-    onValidate: (id: string, action: "confirm" | "reject") => void;
+    onValidate: (id: string, action: "confirm" | "reject" | "approve_adjustment" | "reject_adjustment") => void;
     validating: boolean;
+    onEdit: () => void;
 }) {
     const isPending = match.status === "PENDING";
+    const isValidated = match.status === "VALIDATED";
+
+    // Validation: P2 can validate PENDING matches
     const canValidate = isPending && match.player2Id === currentUserId;
+
+    // Adjustment: Opponent can approve requested adjustment
+    // (Opponent is the one who didn't request)
+    // Actually we don't know who requested in MVP schema (json blob).
+    // Assuming currentUser is participant and button shows up if currentUser didn't initiate?
+    // Let's simpler: Show for both, but backend blocks requester.
+    // Or just show for "Other player".
+
+    const hasAdjustment = !!match.adjustmentRequest;
+    const canApproveAdjustment = isValidated && hasAdjustment && (match.player1Id === currentUserId || match.player2Id === currentUserId);
+    // Ideally we filter out requester.
+    // Let's assume the user who requested sees "Pending Approval" and the other sees "Approve".
+    // We can rely on `requestedBy` field inside JSON if we added it (we did in updated PUT!).
+    const requestedBy = match.adjustmentRequest?.requestedBy;
+    const isRequester = requestedBy === currentUserId;
+    const showAdjustmentApproval = canApproveAdjustment && !isRequester;
+
+    const canEdit = (isPending && match.player1Id === currentUserId) || (isValidated && (match.player1Id === currentUserId || match.player2Id === currentUserId));
 
     return (
         <div
@@ -193,6 +227,34 @@ function MatchCard({
                             {new Date(match.playedAt).toLocaleDateString()}
                         </div>
 
+                        {/* Adjustment Approval UI */}
+                        {showAdjustmentApproval && (
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-amber-500 flex items-center gap-1 animate-pulse">
+                                    <AlertCircle size={12} /> Adjustment Requested
+                                </span>
+                                {validating ? (
+                                    <Loader2 className="animate-spin text-slate-400" size={18} />
+                                ) : (
+                                    <>
+                                        <button onClick={() => onValidate(match.id, "approve_adjustment")} className="p-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded shadow-lg transition-all" title="Approve Changes">
+                                            <CheckCircle2 size={16} />
+                                        </button>
+                                        <button onClick={() => onValidate(match.id, "reject_adjustment")} className="p-1.5 bg-red-600 hover:bg-red-500 text-white rounded shadow-lg transition-all" title="Reject Changes">
+                                            <X size={16} />
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Rejection/Pending Request Status for Requester */}
+                        {isRequester && hasAdjustment && (
+                            <span className="text-xs font-bold text-slate-500 italic flex items-center gap-1">
+                                <Loader2 size={12} className="animate-spin" /> Adjustment Pending Approval
+                            </span>
+                        )}
+
                         {canValidate ? (
                             <div className="flex items-center gap-2">
                                 {validating ? (
@@ -200,7 +262,7 @@ function MatchCard({
                                 ) : (
                                     <>
                                         <span className="text-xs font-bold text-amber-500 animate-pulse">
-                                            AWAITING YOUR VALIDATION
+                                            VALIDATE
                                         </span>
                                         <button
                                             onClick={() => onValidate(match.id, "confirm")}
@@ -217,20 +279,33 @@ function MatchCard({
                                     </>
                                 )}
                             </div>
-                        ) : isPending ? (
-                            <div className="flex items-center gap-2 text-amber-500/80">
-                                <span className="text-xs font-bold">PENDING</span>
-                            </div>
-                        ) : match.status === "REJECTED" ? (
-                            <div className="flex items-center gap-2 text-red-500/80">
-                                <X size={16} />
-                                <span className="text-xs font-bold">REJECTED</span>
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-2 text-emerald-500/80">
-                                <CheckCircle2 size={16} />
-                                <span className="text-xs font-bold">VERIFIED</span>
-                            </div>
+                        ) : !showAdjustmentApproval && !hasAdjustment && (
+                            match.status === "PENDING" ? (
+                                <div className="flex items-center gap-2 text-amber-500/80">
+                                    <span className="text-xs font-bold">PENDING</span>
+                                </div>
+                            ) : match.status === "REJECTED" ? (
+                                <div className="flex items-center gap-2 text-red-500/80">
+                                    <X size={16} />
+                                    <span className="text-xs font-bold">REJECTED</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-emerald-500/80">
+                                    <CheckCircle2 size={16} />
+                                    <span className="text-xs font-bold">VERIFIED</span>
+                                </div>
+                            )
+                        )}
+
+                        {/* Edit Button */}
+                        {canEdit && !hasAdjustment && (
+                            <button
+                                onClick={onEdit}
+                                className="p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
+                                title="Adjust Match"
+                            >
+                                <Edit3 size={16} />
+                            </button>
                         )}
                     </div>
                 </div>

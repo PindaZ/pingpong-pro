@@ -95,6 +95,9 @@ model Match {
 
   // Deletion approval tracking (for verified matches)
   deletionRequestedBy String?
+  
+  // Adjustment approval tracking
+  adjustmentRequest   Json?        // Stores { newScores, newOpponentId, type: 'UPDATE' }
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt

@@ -30,10 +30,7 @@ export default function Sidebar() {
                     </h1>
                 </div>
 
-                <div className="px-4 py-3 bg-slate-800/40 rounded-xl border border-slate-700/50 backdrop-blur-sm mb-6">
-                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Current Season</p>
-                    <p className="text-sm font-semibold text-white">Winter League &apos;24</p>
-                </div>
+
             </div>
 
             <nav className="flex-1 px-4 space-y-2">
