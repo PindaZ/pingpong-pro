@@ -19,9 +19,15 @@ export default async function TournamentsPage() {
                 select: { participants: true }
             },
             participants: {
-                select: {
-                    userId: true,
-                    seed: true
+                take: 5, // Limit to 5 for previews
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            avatarUrl: true
+                        }
+                    }
                 }
             }
         }

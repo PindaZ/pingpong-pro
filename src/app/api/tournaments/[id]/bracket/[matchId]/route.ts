@@ -180,6 +180,23 @@ export async function PATCH(
             return NextResponse.json({ success: true, message: `${slot} removed, opponent advanced` });
         }
 
+        if (body.action === "reset") {
+            await db.bracketMatch.update({
+                where: { id: matchId },
+                data: {
+                    winnerId: null,
+                    score1: null,
+                    score2: null,
+                    status: "PENDING",
+                },
+            });
+
+            // Remove winner from next round
+            await propagateWinner(tournamentId, bracketMatch.round, bracketMatch.position, null);
+
+            return NextResponse.json({ success: true, message: "Match reset" });
+        }
+
         return new NextResponse("Invalid action", { status: 400 });
     } catch (error) {
         console.error("[BRACKET_MATCH_PATCH]", error);
@@ -187,8 +204,8 @@ export async function PATCH(
     }
 }
 
-// Helper: Propagate winner to next round
-async function propagateWinner(tournamentId: string, round: number, position: number, winnerId: string) {
+// Helper: Propagate winner (or removal) to next round
+async function propagateWinner(tournamentId: string, round: number, position: number, winnerId: string | null) {
     const nextRound = round + 1;
     const nextPosition = Math.floor(position / 2);
     const isPlayer1 = position % 2 === 0;

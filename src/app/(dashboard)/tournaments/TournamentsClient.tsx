@@ -339,31 +339,42 @@ function TournamentCard({
 
                 <div className="flex items-center justify-between border-t border-slate-800 pt-4">
                     <div className="flex items-center gap-2">
-                        <Users size={14} className="text-slate-500" />
-                        <span className="text-sm font-medium text-slate-300">
-                            {tournament.participantsCount || 0} Players
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-3">
+                        {tournament.participantsCount || 0} Players
+                    </span>
+                </div>
+
+                {/* Participant Avatars (Face Pile) */}
+                <div className="flex -space-x-2 mr-2">
+                    {tournament.participants?.map((p: any) => (
+                        <div key={p.userId || p.id} className="w-6 h-6 rounded-full border border-slate-900 bg-slate-800 flex items-center justify-center overflow-hidden" title={p.user?.name}>
+                            {p.user?.avatarUrl ? (
+                                <img src={p.user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-[10px] text-white font-bold">{p.user?.name?.charAt(0) || "?"}</span>
+                            )}
+                        </div>
+                    ))}
+                </div>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => router.push(`/tournaments/${tournament.id}`)}
+                        className="text-slate-400 hover:text-white text-sm font-medium"
+                    >
+                        View
+                    </button>
+                    {tournament.status !== "COMPLETED" && (
                         <button
-                            onClick={() => router.push(`/tournaments/${tournament.id}`)}
-                            className="text-slate-400 hover:text-white text-sm font-medium"
+                            onClick={onJoin}
+                            disabled={joining}
+                            className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
                         >
-                            View
+                            {joining ? <Loader2 className="animate-spin" size={14} /> : null}
+                            Join <ArrowRight size={14} />
                         </button>
-                        {tournament.status !== "COMPLETED" && (
-                            <button
-                                onClick={onJoin}
-                                disabled={joining}
-                                className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
-                            >
-                                {joining ? <Loader2 className="animate-spin" size={14} /> : null}
-                                Join <ArrowRight size={14} />
-                            </button>
-                        )}
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
+        </div >
     );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Trophy, User, ChevronRight, Loader2, Shield, RefreshCw } from "lucide-react";
+import { Trophy, User, ChevronRight, Loader2, Shield, RefreshCw, Settings, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Player {
@@ -244,24 +244,20 @@ function MatchCard({
                     {match.status}
                 </span>
 
-                {isAdmin && showActions && match.status === "PENDING" && match.player1 && match.player2 && (
+                {isAdmin && showActions && match.player1 && match.player2 && (
                     <button
-                        className="text-xs text-indigo-400 hover:text-indigo-300"
-                        onClick={() => {
-                            // Quick admin set winner (could open modal for more options)
-                            const winner = prompt("Enter winner ID (player1 or player2):");
-                            if (winner === "player1" || winner === "player2") {
-                                const winnerId = winner === "player1" ? match.player1?.id : match.player2?.id;
-                                fetch(`/api/tournaments/${tournamentId}/bracket/${match.id}`, {
-                                    method: "PATCH",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ action: "setWinner", winnerId }),
-                                }).then(() => onRefresh());
-                            }
+                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            // Dispatch event or use simple prop callback if we could lift state
+                            // For simplicity, we are passing a setter from parent, or we can use a custom event.
+                            // Better: Pass setManagingMatch from parent to MatchCard
+                            const event = new CustomEvent("manageMatch", { detail: match });
+                            window.dispatchEvent(event);
                         }}
                     >
-                        <Shield size={14} className="inline mr-1" />
-                        Set Winner
+                        <Settings size={14} />
+                        Manage
                     </button>
                 )}
             </div>
@@ -328,6 +324,128 @@ function PlayerSlot({
             {isWinner && status === "PLAYED" && (
                 <ChevronRight size={16} className="text-emerald-400 ml-1" />
             )}
+        </div>
+    );
+}
+
+function ManageMatchModal({
+    match,
+    isOpen,
+    onClose,
+    onUpdate,
+    tournamentId
+}: {
+    match: BracketMatch | null;
+    isOpen: boolean;
+    onClose: () => void;
+    onUpdate: () => void;
+    tournamentId: string;
+}) {
+    const [score1, setScore1] = useState(match?.score1?.toString() || "");
+    const [score2, setScore2] = useState(match?.score2?.toString() || "");
+    const [loading, setLoading] = useState(false);
+
+    if (!isOpen || !match) return null;
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            const s1 = parseInt(score1);
+            const s2 = parseInt(score2);
+
+            if (isNaN(s1) || isNaN(s2)) {
+                alert("Please enter valid scores");
+                return;
+            }
+
+            const winnerId = s1 > s2 ? match.player1?.id : match.player2?.id;
+
+            await fetch(`/api/tournaments/${tournamentId}/bracket/${match.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "setWinner",
+                    score1: s1,
+                    score2: s2,
+                    winnerId
+                }),
+            });
+            onUpdate();
+            onClose();
+        } catch (error) {
+            console.error(error);
+            alert("Failed to update match");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleReset = async () => {
+        if (!confirm("Are you sure? This will remove the winner and clear scores.")) return;
+        setLoading(true);
+        try {
+            await fetch(`/api/tournaments/${tournamentId}/bracket/${match.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "reset" }),
+            });
+            onUpdate();
+            onClose();
+        } catch (error) {
+            console.error(error);
+            alert("Failed to reset match");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-6">
+                <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-bold text-white">Manage Match</h3>
+                    <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={24} /></button>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 items-center">
+                    <div className="text-center space-y-2">
+                        <div className="font-bold text-indigo-400 truncate">{match.player1?.name}</div>
+                        <input
+                            type="number"
+                            value={score1}
+                            onChange={(e) => setScore1(e.target.value)}
+                            className="w-20 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-indigo-500 focus:outline-none"
+                        />
+                    </div>
+                    <div className="text-center text-slate-500 font-bold text-xl">VS</div>
+                    <div className="text-center space-y-2">
+                        <div className="font-bold text-purple-400 truncate">{match.player2?.name}</div>
+                        <input
+                            type="number"
+                            value={score2}
+                            onChange={(e) => setScore2(e.target.value)}
+                            className="w-20 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-indigo-500 focus:outline-none"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t border-slate-800">
+                    <button
+                        onClick={handleReset}
+                        disabled={loading}
+                        className="flex-1 py-3 rounded-xl bg-slate-800 text-slate-300 font-medium hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50 border border-transparent transition-all flex items-center justify-center gap-2"
+                    >
+                        <RefreshCw size={18} /> Reset Match
+                    </button>
+                    <button
+                        onClick={handleSave}
+                        disabled={loading}
+                        className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-all flex items-center justify-center gap-2"
+                    >
+                        {loading ? <Loader2 className="animate-spin" /> : <><Shield size={18} /> Update Result</>}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }
