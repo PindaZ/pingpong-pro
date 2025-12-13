@@ -11,7 +11,16 @@ export async function GET(
     try {
         // Sanitize filename to prevent directory traversal
         const sanitizedFilename = path.basename(filename);
-        const filePath = path.join(process.cwd(), "public/uploads", sanitizedFilename);
+
+        // Use /app/public/uploads in production (Docker) or cwd/public/uploads locally
+        const isDocker = process.env.NODE_ENV === "production";
+        const uploadDir = isDocker
+            ? "/app/public/uploads"
+            : path.join(process.cwd(), "public/uploads");
+
+        const filePath = path.join(uploadDir, sanitizedFilename);
+
+        console.log("[SERVE] Looking for file:", filePath);
 
         const fileBuffer = await readFile(filePath);
 
@@ -44,7 +53,8 @@ export async function GET(
                 "Cache-Control": "public, max-age=31536000, immutable",
             },
         });
-    } catch (error) {
+    } catch (error: any) {
+        console.error("[SERVE] File not found:", error.message);
         return new NextResponse("File not found", { status: 404 });
     }
 }

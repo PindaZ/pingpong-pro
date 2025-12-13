@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, access } from "fs/promises";
 import path from "path";
 
 export async function POST(req: NextRequest) {
@@ -20,20 +20,34 @@ export async function POST(req: NextRequest) {
 
         const buffer = Buffer.from(await file.arrayBuffer());
         const filename = `${Date.now()}_${file.name.replace(/\s/g, "_")}`;
-        const uploadDir = path.join(process.cwd(), "public/uploads");
 
+        // Use /app/public/uploads in production (Docker) or cwd/public/uploads locally
+        const isDocker = process.env.NODE_ENV === "production";
+        const uploadDir = isDocker
+            ? "/app/public/uploads"
+            : path.join(process.cwd(), "public/uploads");
+
+        console.log("[UPLOAD] Saving to:", uploadDir);
+        console.log("[UPLOAD] Filename:", filename);
+
+        // Create directory if it doesn't exist
         try {
             await mkdir(uploadDir, { recursive: true });
-        } catch (e) {
-            // Ignore if exists
+        } catch (mkdirError: any) {
+            if (mkdirError.code !== 'EEXIST') {
+                console.error("[UPLOAD] mkdir error:", mkdirError);
+            }
         }
 
-        await writeFile(path.join(uploadDir, filename), buffer);
+        const filePath = path.join(uploadDir, filename);
+        await writeFile(filePath, buffer);
+
+        console.log("[UPLOAD] File saved successfully:", filePath);
 
         const url = `/api/uploads/${filename}`;
         return NextResponse.json({ url });
-    } catch (error) {
-        console.error("Upload failed:", error);
-        return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    } catch (error: any) {
+        console.error("[UPLOAD] Failed:", error.message, error.stack);
+        return NextResponse.json({ error: `Upload failed: ${error.message}` }, { status: 500 });
     }
 }

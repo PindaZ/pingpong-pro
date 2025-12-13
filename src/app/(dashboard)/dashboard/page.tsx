@@ -157,7 +157,7 @@ export default async function DashboardPage() {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
                         <h3 className="font-semibold text-lg text-white">Recent Activity</h3>
-                        <button className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">View All</button>
+                        <Link href="/matches" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">View All</Link>
                     </div>
 
                     <div className="space-y-4">
@@ -165,7 +165,9 @@ export default async function DashboardPage() {
                             <div className="text-slate-500 italic">No matches played yet.</div>
                         ) : (
                             recentMatches.map((match) => (
-                                <MatchItem key={match.id} match={match} currentUserId={currentUser.id} />
+                                <Link key={match.id} href="/matches">
+                                    <MatchItem match={match} currentUserId={currentUser.id} />
+                                </Link>
                             ))
                         )}
                     </div>
