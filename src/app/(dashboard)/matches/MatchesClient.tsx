@@ -152,11 +152,11 @@ function MatchCard({
 
             <div className="flex flex-col md:flex-row items-center gap-6 pl-3">
                 {/* Date */}
-                <div className="hidden md:flex flex-col items-center justify-center min-w-[70px] py-1">
-                    <span className="text-2xl font-bold text-slate-200">
+                <div className="flex flex-col items-center justify-center min-w-[50px] md:min-w-[70px] py-1">
+                    <span className="text-xl md:text-2xl font-bold text-slate-200">
                         {new Date(match.playedAt).getDate()}
                     </span>
-                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                    <span className="text-[10px] md:text-xs font-semibold text-slate-500 uppercase">
                         {new Date(match.playedAt).toLocaleString("default", { month: "short" })}
                     </span>
                 </div>

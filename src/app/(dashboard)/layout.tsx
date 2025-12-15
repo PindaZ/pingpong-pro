@@ -1,4 +1,5 @@
 import Sidebar from "@/components/Sidebar";
+import MobileNav from "@/components/MobileNav";
 
 export default function DashboardLayout({
     children,
@@ -15,11 +16,13 @@ export default function DashboardLayout({
                 {/* Top Mesh Gradient */}
                 <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-purple-900/10 rounded-full blur-[120px] pointer-events-none" />
 
-                <div className="flex-1 overflow-auto p-8 relative z-10 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                <div className="flex-1 overflow-auto p-4 md:p-8 pb-20 md:pb-8 relative z-10 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                     {children}
                 </div>
             </main>
+
+            {/* Mobile Bottom Navigation */}
+            <MobileNav />
         </div>
     );
 }
-

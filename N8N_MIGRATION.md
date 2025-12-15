@@ -25,6 +25,12 @@ version: '3.8'
 services:
   n8n:
     image: n8nio/n8n:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.n8n.rule=Host(`n8n.jdwebsite.nl`)"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.tls.certresolver=letsencrypt"
+      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
     environment:
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=root-postgres-1
@@ -47,12 +53,9 @@ services:
       - /root/n8n/files:/files
     networks:
       - dokploy-network
-      - web # Existing network for postgres
 
 networks:
   dokploy-network:
-    external: true
-  web:
     external: true
     ```
 
