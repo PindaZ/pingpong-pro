@@ -127,7 +127,7 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                             <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl">
                                 {/* Background Effects */}
                                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
-                                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 blur-[100px] rounded-full pointer-events-none" />
+                                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 blur-[100px] rounded-full pointer-events-none" />
 
                                 <div className="grid lg:grid-cols-2 gap-8 relative z-10 p-8 md:p-10">
                                     <div className="space-y-6">
@@ -215,7 +215,7 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                                             onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
                                                             className="px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold hover:from-emerald-500 hover:to-teal-500 transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
                                                         >
-                                                            ✓ Joined {position ? `• Seed #${position}` : ""}
+                                                            ✓ Joined {position ? `• Rank #${position}` : ""}
                                                             <ArrowRight size={18} />
                                                         </button>
                                                     );

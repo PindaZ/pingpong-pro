@@ -79,8 +79,8 @@ export function EloHistoryChart({ data }: EloHistoryChartProps) {
                 >
                     <defs>
                         <linearGradient id="eloGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#818cf8" stopOpacity="0.2" />
-                            <stop offset="100%" stopColor="#818cf8" stopOpacity="0.0" />
+                            <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.2" />
+                            <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0.0" />
                         </linearGradient>
                     </defs>
 
@@ -99,7 +99,7 @@ export function EloHistoryChart({ data }: EloHistoryChartProps) {
                     <path d={fillPathD} fill="url(#eloGradient)" />
 
                     {/* Line */}
-                    <path d={pathD} fill="none" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d={pathD} fill="none" stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
 
                     {/* Hover Hotspots & Points */}
                     {points.map((p, i) => (
