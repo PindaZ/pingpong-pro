@@ -121,22 +121,27 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 {/* Avatar Upload Section */}
                 {editing && (
                     <div className="flex items-center gap-4">
-                        <div className="relative w-16 h-16 rounded-full bg-slate-800 overflow-hidden ring-2 ring-slate-700">
+                        <label className="relative w-16 h-16 rounded-full bg-slate-800 overflow-hidden ring-2 ring-slate-700 cursor-pointer group">
                             {previewUrl ? (
                                 <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-slate-500">
-                                    <Camera size={24} />
+                                <div className="w-full h-full flex items-center justify-center text-slate-500 gradient-primary">
+                                    <Camera size={24} className="text-white" />
                                 </div>
                             )}
-                        </div>
+                            {/* Hover overlay */}
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <Camera size={20} className="text-white" />
+                            </div>
+                            <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                        </label>
                         <div>
                             <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium rounded-lg transition-colors border border-slate-700">
                                 <Upload size={14} />
                                 <span>Change Photo</span>
                                 <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                             </label>
-                            <p className="text-xs text-slate-500 mt-1">Recommended: Square JPG, PNG</p>
+                            <p className="text-xs text-slate-500 mt-1">Click avatar or button</p>
                         </div>
                     </div>
                 )}

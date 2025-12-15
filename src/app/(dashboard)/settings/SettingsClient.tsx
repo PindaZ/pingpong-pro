@@ -233,18 +233,18 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-3">
                     <button
                         onClick={resetToDefault}
-                        className="px-4 py-2.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center gap-2"
+                        className="px-4 py-2.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
                     >
                         <RefreshCw size={16} />
-                        Reset to Default
+                        Reset
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex-1 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/20"
+                        className="flex-1 py-2.5 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-lg"
                     >
                         {saving ? (
                             <Loader2 className="animate-spin" size={18} />

@@ -41,6 +41,9 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
+# Create uploads directory with proper permissions for file uploads
+RUN mkdir -p ./public/uploads && chown -R nextjs:nodejs ./public/uploads
+
 # Set the correct permission for nextjs user and don't list /app directory as owner
 RUN mkdir .next
 RUN chown nextjs:nodejs .next

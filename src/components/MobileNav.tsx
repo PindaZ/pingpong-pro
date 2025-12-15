@@ -60,7 +60,7 @@ export default function MobileNav() {
                     <div className="absolute bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 rounded-t-2xl p-6 safe-area-bottom animate-slide-up">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold overflow-hidden">
+                                <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center text-white font-bold overflow-hidden">
                                     {session?.user?.image ? (
                                         <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
