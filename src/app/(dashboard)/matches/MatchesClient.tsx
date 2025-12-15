@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, CheckCircle2, X, Loader2, Edit3, AlertCircle, User } from "lucide-react";
+import { Plus, CheckCircle2, X, Loader2, Edit3, AlertCircle, User, Swords } from "lucide-react";
 import { cn } from "@/lib/utils";
 import LogResultModal from "@/components/LogResultModal";
 import EditMatchModal from "@/components/EditMatchModal";
@@ -60,8 +60,20 @@ export default function MatchesClient({ matches, users, currentUserId }: Matches
                 {/* Match Grid */}
                 <div className="space-y-4">
                     {matches.length === 0 ? (
-                        <div className="text-center py-12 text-slate-500">
-                            No matches found. Log your first match!
+                        <div className="text-center py-20 px-6 rounded-3xl border border-dashed border-slate-800 bg-slate-900/50">
+                            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 group-hover:scale-110 transition-transform">
+                                <Swords size={32} />
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">No matches yet</h3>
+                            <p className="text-slate-400 max-w-sm mx-auto mb-6">
+                                Challenge a colleague to a game and start tracking your ELO rating!
+                            </p>
+                            <button
+                                onClick={() => setShowLogModal(true)}
+                                className="btn-primary px-6 py-3 rounded-xl text-white font-semibold inline-flex items-center gap-2 hover:scale-105 transition-transform"
+                            >
+                                <Plus size={18} /> Log First Match
+                            </button>
                         </div>
                     ) : (
                         matches.map((match) => (

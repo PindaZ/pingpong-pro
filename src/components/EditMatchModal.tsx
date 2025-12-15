@@ -13,6 +13,8 @@ interface EditMatchModalProps {
     currentUserId: string;
 }
 
+import ResponsiveModal from "@/components/ui/ResponsiveModal";
+
 // Reuse validation logic (could be extracted to utils)
 function validateGameScore(p1: number, p2: number): string | null {
     const winner = Math.max(p1, p2);
@@ -137,110 +139,100 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
     const opponents = users.filter(u => u.id !== currentUserId);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative w-full max-w-2xl bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
-                <div className="p-6 flex-none border-b border-slate-800">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-bold text-white">Adjust Match</h3>
-                        <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-lg"><X size={20} className="text-slate-400" /></button>
+        <ResponsiveModal isOpen={isOpen} onClose={onClose} title="Adjust Match" className="max-w-2xl">
+            <div className="p-6 overflow-y-auto">
+
+                {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg">{error}</div>}
+
+                {isDeleteConfirm ? (
+                    <div className="space-y-4">
+                        <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl text-center">
+                            <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-2" />
+                            <h4 className="text-white font-bold mb-1">Are you sure?</h4>
+                            <p className="text-sm text-slate-400">
+                                {isValidated
+                                    ? "This will request deletion from your opponent. ELO changes will be reverted upon approval."
+                                    : "This will permanently delete this match record."}
+                            </p>
+                        </div>
+                        <div className="flex gap-3">
+                            <button onClick={() => setIsDeleteConfirm(false)} className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg">Cancel</button>
+                            <button onClick={handleDelete} disabled={loading} className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg flex items-center justify-center gap-2">
+                                {loading && <Loader2 className="animate-spin" size={16} />} Delete Match
+                            </button>
+                        </div>
                     </div>
-                </div>
-
-                <div className="p-6 overflow-y-auto">
-
-                    {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg">{error}</div>}
-
-                    {isDeleteConfirm ? (
-                        <div className="space-y-4">
-                            <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl text-center">
-                                <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-2" />
-                                <h4 className="text-white font-bold mb-1">Are you sure?</h4>
-                                <p className="text-sm text-slate-400">
-                                    {isValidated
-                                        ? "This will request deletion from your opponent. ELO changes will be reverted upon approval."
-                                        : "This will permanently delete this match record."}
+                ) : (
+                    <div className="space-y-4">
+                        {isValidated && (
+                            <div className="p-3 bg-primary/10 border-primary/20 rounded-lg flex items-start gap-2">
+                                <AlertTriangle size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-primary">
+                                    Since this match is verified, any changes (including deletion) request approval from the opponent. ELO will be reverted and re-applied manually if needed by the system logic.
                                 </p>
                             </div>
-                            <div className="flex gap-3">
-                                <button onClick={() => setIsDeleteConfirm(false)} className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg">Cancel</button>
-                                <button onClick={handleDelete} disabled={loading} className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg flex items-center justify-center gap-2">
-                                    {loading && <Loader2 className="animate-spin" size={16} />} Delete Match
-                                </button>
+                        )}
+
+                        <div>
+                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Opponent</label>
+                            <select
+                                value={opponentId}
+                                onChange={(e) => setOpponentId(e.target.value)}
+                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white"
+                            >
+                                {opponents.map((user) => (
+                                    <option key={user.id} value={user.id}>{user.name || user.email}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide">Scores</label>
+                                <button onClick={addGame} disabled={games.length >= 5} className="text-xs text-primary flex items-center gap-1 disabled:opacity-50"><Plus size={14} /> Add Game</button>
+                            </div>
+                            <div className="space-y-2">
+                                {games.map((game, index) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                        <span className="text-xs text-slate-500 w-6">#{index + 1}</span>
+                                        <input type="number" value={game.p1} onChange={(e) => updateGame(index, "p1", e.target.value)} className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center" placeholder="You" />
+                                        <span className="text-slate-500">-</span>
+                                        <input type="number" value={game.p2} onChange={(e) => updateGame(index, "p2", e.target.value)} className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center" placeholder="Opp" />
+                                        {games.length > 1 && (
+                                            <button onClick={() => removeGame(index)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400"><Trash2 size={16} /></button>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {isValidated && (
-                                <div className="p-3 bg-primary/10 border-primary/20 rounded-lg flex items-start gap-2">
-                                    <AlertTriangle size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                                    <p className="text-xs text-primary">
-                                        Since this match is verified, any changes (including deletion) request approval from the opponent. ELO will be reverted and re-applied manually if needed by the system logic.
-                                    </p>
-                                </div>
-                            )}
 
-                            <div>
-                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Opponent</label>
-                                <select
-                                    value={opponentId}
-                                    onChange={(e) => setOpponentId(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white"
-                                >
-                                    {opponents.map((user) => (
-                                        <option key={user.id} value={user.id}>{user.name || user.email}</option>
-                                    ))}
-                                </select>
+                        {validationWarnings.length > 0 && (
+                            <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm">
+                                {validationWarnings.map((w, i) => <p key={i}>{w}</p>)}
                             </div>
+                        )}
 
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide">Scores</label>
-                                    <button onClick={addGame} disabled={games.length >= 5} className="text-xs text-primary flex items-center gap-1 disabled:opacity-50"><Plus size={14} /> Add Game</button>
-                                </div>
-                                <div className="space-y-2">
-                                    {games.map((game, index) => (
-                                        <div key={index} className="flex items-center gap-2">
-                                            <span className="text-xs text-slate-500 w-6">#{index + 1}</span>
-                                            <input type="number" value={game.p1} onChange={(e) => updateGame(index, "p1", e.target.value)} className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center" placeholder="You" />
-                                            <span className="text-slate-500">-</span>
-                                            <input type="number" value={game.p2} onChange={(e) => updateGame(index, "p2", e.target.value)} className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center" placeholder="Opp" />
-                                            {games.length > 1 && (
-                                                <button onClick={() => removeGame(index)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400"><Trash2 size={16} /></button>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {validationWarnings.length > 0 && (
-                                <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm">
-                                    {validationWarnings.map((w, i) => <p key={i}>{w}</p>)}
-                                </div>
-                            )}
-
-                            <div className="flex gap-3 pt-2">
-                                <button
-                                    onClick={() => setIsDeleteConfirm(true)}
-                                    type="button"
-                                    className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-red-400 font-semibold rounded-lg transition-colors border border-slate-700"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                                <button
-                                    onClick={handleUpdate}
-                                    disabled={loading}
-                                    className="flex-1 py-3 btn-primary text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                                >
-                                    {loading && <Loader2 className="animate-spin" size={18} />}
-                                    {isValidated ? "Request Changes" : "Save Changes"}
-                                </button>
-                            </div>
+                        <div className="flex gap-3 pt-2">
+                            <button
+                                onClick={() => setIsDeleteConfirm(true)}
+                                type="button"
+                                className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-red-400 font-semibold rounded-lg transition-colors border border-slate-700"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                            <button
+                                onClick={handleUpdate}
+                                disabled={loading}
+                                className="flex-1 py-3 btn-primary text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                            >
+                                {loading && <Loader2 className="animate-spin" size={18} />}
+                                {isValidated ? "Request Changes" : "Save Changes"}
+                            </button>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
             <RulesModal isOpen={showRules} onClose={() => setShowRules(false)} />
-        </div>
+        </ResponsiveModal>
     );
 }

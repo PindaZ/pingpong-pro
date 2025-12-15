@@ -100,16 +100,25 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                 </div>
 
                 {tournaments.length === 0 ? (
-                    <div className="text-center py-20">
-                        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-slate-800/50 flex items-center justify-center">
-                            <Trophy size={48} className="text-slate-600" />
+                    <div className="text-center py-20 px-6 rounded-3xl border border-dashed border-slate-800 bg-slate-900/50">
+                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Trophy size={40} className="text-slate-500" />
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">No Tournaments Yet</h3>
-                        <p className="text-slate-400 max-w-md mx-auto">
+                        <h3 className="text-xl font-bold text-white mb-2">No Tournaments Yet</h3>
+                        <p className="text-slate-400 max-w-sm mx-auto mb-8">
                             {isAdmin
-                                ? "Create your first tournament to get started!"
-                                : "Check back later for upcoming tournaments."}
+                                ? "Create your first tournament to get the competition started!"
+                                : "Check back later for upcoming championships and events."}
                         </p>
+                        {isAdmin && (
+                            <button
+                                onClick={() => setShowCreateModal(true)}
+                                className="btn-primary px-6 py-3 rounded-xl text-white font-semibold inline-flex items-center gap-2 hover:scale-105 transition-transform shadow-lg shadow-primary"
+                            >
+                                <Plus size={18} />
+                                Create Tournament
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <>

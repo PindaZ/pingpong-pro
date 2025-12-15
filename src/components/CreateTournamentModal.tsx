@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X, Loader2, Calendar, Users } from "lucide-react";
+import { Loader2, Calendar, Users } from "lucide-react";
+import ResponsiveModal from "@/components/ui/ResponsiveModal";
 
 interface CreateTournamentModalProps {
     isOpen: boolean;
@@ -18,8 +19,6 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [maxParticipants, setMaxParticipants] = useState("16");
-
-    if (!isOpen) return null;
 
     const handleSubmit = async () => {
         if (!name || !startDate || !endDate) {
@@ -62,104 +61,91 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-
-            <div className="relative w-full max-w-md bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl">
-                <div className="p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-xl font-bold text-white">Create Tournament</h3>
-                        <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-                            <X size={20} className="text-slate-400" />
-                        </button>
+        <ResponsiveModal isOpen={isOpen} onClose={onClose} title="Create Tournament">
+            <div className="p-6 space-y-4">
+                {error && (
+                    <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                        {error}
                     </div>
+                )}
 
-                    {error && (
-                        <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                            {error}
-                        </div>
-                    )}
+                <div>
+                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                        Tournament Name
+                    </label>
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Winter Championship 2024"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                </div>
 
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                Tournament Name
-                            </label>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Winter Championship 2024"
-                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                            />
-                        </div>
+                <div>
+                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                        Description (Optional)
+                    </label>
+                    <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Enter tournament details, rules, prizes..."
+                        rows={3}
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                    />
+                </div>
 
-                        <div>
-                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                Description (Optional)
-                            </label>
-                            <textarea
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Enter tournament details, rules, prizes..."
-                                rows={3}
-                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                    <Calendar size={12} className="inline mr-1" />
-                                    Start Date
-                                </label>
-                                <input
-                                    type="date"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                    End Date
-                                </label>
-                                <input
-                                    type="date"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                <Users size={12} className="inline mr-1" />
-                                Max Participants
-                            </label>
-                            <select
-                                value={maxParticipants}
-                                onChange={(e) => setMaxParticipants(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                            >
-                                <option value="8">8 Players</option>
-                                <option value="16">16 Players</option>
-                                <option value="32">32 Players</option>
-                            </select>
-                        </div>
-
-                        <button
-                            onClick={handleSubmit}
-                            disabled={loading}
-                            className="w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                        >
-                            {loading ? <Loader2 className="animate-spin" size={18} /> : null}
-                            Create Tournament
-                        </button>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                            <Calendar size={12} className="inline mr-1" />
+                            Start Date
+                        </label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                            End Date
+                        </label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
                     </div>
                 </div>
+
+                <div>
+                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                        <Users size={12} className="inline mr-1" />
+                        Max Participants
+                    </label>
+                    <select
+                        value={maxParticipants}
+                        onChange={(e) => setMaxParticipants(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                        <option value="8">8 Players</option>
+                        <option value="16">16 Players</option>
+                        <option value="32">32 Players</option>
+                    </select>
+                </div>
+
+                <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="w-full py-3 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 mt-4"
+                >
+                    {loading ? <Loader2 className="animate-spin" size={18} /> : null}
+                    Create Tournament
+                </button>
             </div>
-        </div>
+        </ResponsiveModal>
     );
 }

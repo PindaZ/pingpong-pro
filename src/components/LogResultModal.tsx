@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X, Plus, Trash2, Loader2, AlertTriangle } from "lucide-react";
+import { Plus, Trash2, Loader2, AlertTriangle } from "lucide-react";
 import RulesModal from "./RulesModal";
+import ResponsiveModal from "@/components/ui/ResponsiveModal";
 
 interface LogResultModalProps {
     isOpen: boolean;
@@ -168,159 +169,149 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
 
     return (
         <>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+            <ResponsiveModal isOpen={isOpen} onClose={onClose} title="Log Match Result">
+                <div className="p-6 space-y-6">
 
-                <div className="relative w-full max-w-md bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl">
-                    <div className="p-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xl font-bold text-white">Log Match Result</h3>
-                            <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-                                <X size={20} className="text-slate-400" />
-                            </button>
+                    {error && (
+                        <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                                Opponent
+                            </label>
+                            <select
+                                value={opponentId}
+                                onChange={(e) => setOpponentId(e.target.value)}
+                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                            >
+                                <option value="">Select opponent...</option>
+                                {opponents.map((user) => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.name || user.email}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
-                        {error && (
-                            <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                                {error}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide">
+                                    Game Scores
+                                </label>
+                                <button
+                                    onClick={addGame}
+                                    disabled={games.length >= 5}
+                                    className="text-xs text-primary hover:text-primary flex items-center gap-1 disabled:opacity-50"
+                                >
+                                    <Plus size={14} /> Add Game
+                                </button>
+                            </div>
+
+                            <div className="space-y-2">
+                                {games.map((game, index) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                        <span className="text-xs text-slate-500 w-6">#{index + 1}</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max="99"
+                                            value={game.p1}
+                                            onChange={(e) => updateGame(index, "p1", e.target.value)}
+                                            placeholder="You"
+                                            className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
+                                        />
+                                        <span className="text-slate-500">-</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max="99"
+                                            value={game.p2}
+                                            onChange={(e) => updateGame(index, "p2", e.target.value)}
+                                            placeholder="Opp"
+                                            className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
+                                        />
+                                        {games.length > 1 && (
+                                            <button
+                                                onClick={() => removeGame(index)}
+                                                className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-colors"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Validation Warnings */}
+                        {validationWarnings.length > 0 && (
+                            <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                <div className="flex items-start gap-2">
+                                    <AlertTriangle size={16} className="text-amber-400 mt-0.5 flex-shrink-0" />
+                                    <div className="flex-1">
+                                        {validationWarnings.map((w, i) => (
+                                            <p key={i} className="text-amber-400 text-sm">{w}</p>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowRules(true)}
+                                            className="text-xs text-primary hover:text-primary underline mt-2"
+                                        >
+                                            View Official Rules
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         )}
 
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                    Opponent
-                                </label>
-                                <select
-                                    value={opponentId}
-                                    onChange={(e) => setOpponentId(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                                >
-                                    <option value="">Select opponent...</option>
-                                    {opponents.map((user) => (
-                                        <option key={user.id} value={user.id}>
-                                            {user.name || user.email}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                        <p className="text-xs text-slate-500">
+                            {skipValidation
+                                ? "Match will be validated immediately and ELO updated."
+                                : "Your opponent will need to verify this result before ELO is updated."
+                            }
+                        </p>
 
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide">
-                                        Game Scores
-                                    </label>
-                                    <button
-                                        onClick={addGame}
-                                        disabled={games.length >= 5}
-                                        className="text-xs text-primary hover:text-primary flex items-center gap-1 disabled:opacity-50"
-                                    >
-                                        <Plus size={14} /> Add Game
-                                    </button>
-                                </div>
-
-                                <div className="space-y-2">
-                                    {games.map((game, index) => (
-                                        <div key={index} className="flex items-center gap-2">
-                                            <span className="text-xs text-slate-500 w-6">#{index + 1}</span>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max="99"
-                                                value={game.p1}
-                                                onChange={(e) => updateGame(index, "p1", e.target.value)}
-                                                placeholder="You"
-                                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
-                                            />
-                                            <span className="text-slate-500">-</span>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max="99"
-                                                value={game.p2}
-                                                onChange={(e) => updateGame(index, "p2", e.target.value)}
-                                                placeholder="Opp"
-                                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
-                                            />
-                                            {games.length > 1 && (
-                                                <button
-                                                    onClick={() => removeGame(index)}
-                                                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-colors"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Validation Warnings */}
-                            {validationWarnings.length > 0 && (
-                                <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                                    <div className="flex items-start gap-2">
-                                        <AlertTriangle size={16} className="text-amber-400 mt-0.5 flex-shrink-0" />
-                                        <div className="flex-1">
-                                            {validationWarnings.map((w, i) => (
-                                                <p key={i} className="text-amber-400 text-sm">{w}</p>
-                                            ))}
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowRules(true)}
-                                                className="text-xs text-primary hover:text-primary underline mt-2"
-                                            >
-                                                View Official Rules
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            <p className="text-xs text-slate-500">
-                                {skipValidation
-                                    ? "Match will be validated immediately and ELO updated."
-                                    : "Your opponent will need to verify this result before ELO is updated."
-                                }
-                            </p>
-
-                            <div className="flex items-center gap-2 pt-2">
-                                <input
-                                    type="checkbox"
-                                    id="skipValidation"
-                                    checked={skipValidation}
-                                    onChange={(e) => setSkipValidation(e.target.checked)}
-                                    className="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500"
-                                />
-                                <label htmlFor="skipValidation" className="text-sm text-slate-400 select-none cursor-pointer">
-                                    Skip validation (auto-confirm)
-                                </label>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="friendlyMatch"
-                                    checked={isFriendlyMatch}
-                                    onChange={(e) => setIsFriendlyMatch(e.target.checked)}
-                                    className="rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-500"
-                                />
-                                <label htmlFor="friendlyMatch" className="text-sm text-slate-400 select-none cursor-pointer">
-                                    🎯 Friendly match (no ELO impact)
-                                </label>
-                            </div>
-
-                            <button
-                                onClick={handleSubmit}
-                                disabled={loading}
-                                className="w-full py-3 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                            >
-                                {loading ? <Loader2 className="animate-spin" size={18} /> : null}
-                                {isFriendlyMatch ? "Log Friendly Match" : "Submit Match"}
-                            </button>
+                        <div className="flex items-center gap-2 pt-2">
+                            <input
+                                type="checkbox"
+                                id="skipValidation"
+                                checked={skipValidation}
+                                onChange={(e) => setSkipValidation(e.target.checked)}
+                                className="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <label htmlFor="skipValidation" className="text-sm text-slate-400 select-none cursor-pointer">
+                                Skip validation (auto-confirm)
+                            </label>
                         </div>
+
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="friendlyMatch"
+                                checked={isFriendlyMatch}
+                                onChange={(e) => setIsFriendlyMatch(e.target.checked)}
+                                className="rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-500"
+                            />
+                            <label htmlFor="friendlyMatch" className="text-sm text-slate-400 select-none cursor-pointer">
+                                🎯 Friendly match (no ELO impact)
+                            </label>
+                        </div>
+
+                        <button
+                            onClick={handleSubmit}
+                            disabled={loading}
+                            className="w-full py-3 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                        >
+                            {loading ? <Loader2 className="animate-spin" size={18} /> : null}
+                            {isFriendlyMatch ? "Log Friendly Match" : "Submit Match"}
+                        </button>
                     </div>
                 </div>
-            </div>
+            </ResponsiveModal>
 
             <RulesModal isOpen={showRules} onClose={() => setShowRules(false)} />
         </>

@@ -1,6 +1,8 @@
 "use client";
 
-import { X, Trophy, Target, Zap, Award } from "lucide-react";
+import { Trophy, Target, Zap, Award } from "lucide-react";
+import ResponsiveModal from "@/components/ui/ResponsiveModal";
+import { X } from "lucide-react";
 
 interface RulesModalProps {
     isOpen: boolean;
@@ -11,17 +13,10 @@ export default function RulesModal({ isOpen, onClose }: RulesModalProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                onClick={onClose}
-            />
-
-            {/* Modal */}
-            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-3xl shadow-2xl">
-                {/* Header */}
-                <div className="sticky top-0 gradient-primary p-6 rounded-t-3xl">
+        <ResponsiveModal isOpen={isOpen} onClose={onClose} className="max-w-2xl bg-slate-900/95">
+            <div className="relative">
+                {/* Custom Header (Sticky) */}
+                <div className="sticky top-0 z-10 gradient-primary p-6 rounded-t-2xl md:rounded-t-2xl">
                     <button
                         onClick={onClose}
                         className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors"
@@ -126,6 +121,6 @@ export default function RulesModal({ isOpen, onClose }: RulesModalProps) {
                     </button>
                 </div>
             </div>
-        </div>
+        </ResponsiveModal>
     );
 }
