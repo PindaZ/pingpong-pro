@@ -118,6 +118,9 @@ model Match {
   // Adjustment approval tracking
   adjustmentRequest   Json?        // Stores { newScores, newOpponentId, type: 'UPDATE' }
 
+  // Friendly match (no ELO impact)
+  isValidated   Boolean      @default(true)  // false = friendly/practice match
+
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 

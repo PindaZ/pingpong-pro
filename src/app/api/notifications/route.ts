@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-// Get pending match validations as "notifications" for the current user
+// Get pending match validations and challenges as "notifications" for the current user
 export async function GET() {
     try {
         const session = await getServerSession(authOptions);
@@ -12,7 +12,7 @@ export async function GET() {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Get pending matches where user is player2 (the one who needs to validate)
+        // Get pending matches where user is player2 (the one who needs to validate/accept)
         const pendingMatches = await db.match.findMany({
             where: {
                 player2Id: session.user.id,
@@ -26,14 +26,22 @@ export async function GET() {
         });
 
         // Transform to notification format
-        const notifications = pendingMatches.map((match) => ({
-            id: match.id,
-            type: "MATCH_VALIDATION" as const,
-            message: `${match.player1.name || "Someone"} submitted a match result against you`,
-            matchId: match.id,
-            read: false,
-            createdAt: match.createdAt.toISOString(),
-        }));
+        // Distinguish between challenges (no games) and match validations (has games)
+        const notifications = pendingMatches.map((match) => {
+            const isChallenge = match.games.length === 0 && match.winnerId === null;
+
+            return {
+                id: match.id,
+                type: isChallenge ? "CHALLENGE" : "MATCH_VALIDATION" as const,
+                message: isChallenge
+                    ? `${match.player1.name || "Someone"} challenged you to a match!`
+                    : `${match.player1.name || "Someone"} submitted a match result against you`,
+                matchId: match.id,
+                challengerId: isChallenge ? match.player1Id : undefined,
+                read: false,
+                createdAt: match.createdAt.toISOString(),
+            };
+        });
 
         return NextResponse.json({ notifications });
     } catch (error) {

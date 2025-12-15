@@ -111,6 +111,7 @@ function MatchCard({
 }) {
     const isPending = match.status === "PENDING";
     const isValidated = match.status === "VALIDATED";
+    const isFriendly = match.isValidated === false && isValidated; // Friendly matches have isValidated=false but status=VALIDATED
 
     // Validation: P2 can validate PENDING matches
     const canValidate = isPending && match.player2Id === currentUserId;
@@ -139,16 +140,25 @@ function MatchCard({
                 "group relative overflow-hidden rounded-2xl border p-5 transition-all",
                 isPending
                     ? "bg-slate-900/80 border-amber-900/30 hover:border-amber-500/30"
-                    : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
+                    : isFriendly
+                        ? "bg-slate-900/50 border-amber-700/30 hover:border-amber-600/40"
+                        : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
             )}
         >
             {/* Status Indicator Stripe */}
             <div
                 className={cn(
                     "absolute left-0 top-0 bottom-0 w-1",
-                    match.status === "REJECTED" ? "bg-red-500" : isPending ? "bg-amber-500" : "bg-emerald-500"
+                    match.status === "REJECTED" ? "bg-red-500" : isPending ? "bg-amber-500" : isFriendly ? "bg-amber-400" : "bg-emerald-500"
                 )}
             />
+
+            {/* FRIENDLY Badge */}
+            {isFriendly && (
+                <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wide border border-amber-500/30">
+                    🎯 Friendly
+                </div>
+            )}
 
             <div className="flex flex-col md:flex-row items-center gap-6 pl-3">
                 {/* Date */}

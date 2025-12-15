@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Swords } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import ChallengeButton from "@/components/ChallengeButton";
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -42,6 +45,10 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     const recentMatches = [...user.matchesAsPlayer1, ...user.matchesAsPlayer2]
         .sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime())
         .slice(0, 10);
+
+    // Get current session to check if viewing own profile
+    const session = await getServerSession(authOptions);
+    const isOwnProfile = session?.user?.id === id;
 
     return (
         <div className="space-y-8 max-w-4xl mx-auto">
@@ -101,10 +108,15 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                             <div className="text-xs text-slate-500">Losses</div>
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-center">
-                            <div className="text-lg font-bold text-indigo-400">{winRate}%</div>
+                            <div className="text-lg font-bold text-primary">{winRate}%</div>
                             <div className="text-xs text-slate-500">Win Rate</div>
                         </div>
                     </div>
+
+                    {/* Challenge Button */}
+                    {!isOwnProfile && session && (
+                        <ChallengeButton challengedUserId={id} challengedUserName={user.name || "Player"} />
+                    )}
                 </div>
 
                 {/* Match History */}

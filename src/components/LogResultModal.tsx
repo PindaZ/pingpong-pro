@@ -62,6 +62,7 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
     const [opponentId, setOpponentId] = useState("");
     const [games, setGames] = useState([{ p1: "", p2: "" }]);
     const [skipValidation, setSkipValidation] = useState(false);
+    const [isFriendlyMatch, setIsFriendlyMatch] = useState(false);
     const [showRules, setShowRules] = useState(false);
     const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
 
@@ -143,6 +144,7 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                         p2: parseInt(g.p2),
                     })),
                     skipValidation,
+                    isFriendlyMatch,
                 }),
             });
 
@@ -294,13 +296,26 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                                 </label>
                             </div>
 
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="friendlyMatch"
+                                    checked={isFriendlyMatch}
+                                    onChange={(e) => setIsFriendlyMatch(e.target.checked)}
+                                    className="rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-500"
+                                />
+                                <label htmlFor="friendlyMatch" className="text-sm text-slate-400 select-none cursor-pointer">
+                                    🎯 Friendly match (no ELO impact)
+                                </label>
+                            </div>
+
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                                className="w-full py-3 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                             >
                                 {loading ? <Loader2 className="animate-spin" size={18} /> : null}
-                                Submit Match
+                                {isFriendlyMatch ? "Log Friendly Match" : "Submit Match"}
                             </button>
                         </div>
                     </div>

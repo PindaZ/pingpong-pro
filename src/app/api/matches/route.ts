@@ -10,7 +10,7 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const { opponentId, games, tournamentId, skipValidation } = await req.json(); // games: [{p1: 11, p2: 5}, ...]
+        const { opponentId, games, tournamentId, skipValidation, isFriendlyMatch } = await req.json(); // games: [{p1: 11, p2: 5}, ...]
 
         if (!opponentId || !games || !Array.isArray(games)) {
             return new NextResponse("Missing data", { status: 400 });
@@ -32,6 +32,22 @@ export async function POST(req: Request) {
 
         const winnerId = player1Wins > player2Wins ? session.user.id : opponentId;
 
+        // Friendly match: No ELO impact, auto-validated, marked as not validated
+        if (isFriendlyMatch) {
+            const match = await db.match.create({
+                data: {
+                    player1Id: session.user.id,
+                    player2Id: opponentId as string,
+                    status: "VALIDATED", // No need for approval
+                    winnerId,
+                    isValidated: false, // Mark as friendly (no ELO impact)
+                    tournamentId: tournamentId || null,
+                    games: { create: formattedGames }
+                },
+            });
+            return NextResponse.json(match);
+        }
+
         if (!skipValidation) {
             // Standard flow: Create pending match
             const match = await db.match.create({
@@ -45,7 +61,7 @@ export async function POST(req: Request) {
             });
             return NextResponse.json(match);
         } else {
-            // Auto-validation flow
+            // Auto-validation flow with ELO update
             // 1. Get current ELOs
             const player1 = await db.user.findUnique({ where: { id: session.user.id } });
             const player2 = await db.user.findUnique({ where: { id: opponentId } });
@@ -72,6 +88,7 @@ export async function POST(req: Request) {
                         player2Id: opponentId as string,
                         status: "VALIDATED",
                         winnerId,
+                        isValidated: true, // Ranked match
                         tournamentId: tournamentId || null,
                         games: { create: formattedGames }
                     },
@@ -97,6 +114,7 @@ export async function POST(req: Request) {
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
+
 
 export async function GET(req: Request) {
     try {

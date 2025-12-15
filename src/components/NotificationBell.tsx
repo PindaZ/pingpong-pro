@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Bell, Check, X, Trophy } from "lucide-react";
+import { Bell, Check, X, Trophy, Swords } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 interface Notification {
     id: string;
-    type: "MATCH_VALIDATION";
+    type: "MATCH_VALIDATION" | "CHALLENGE";
     message: string;
     matchId: string;
+    challengerId?: string;
     read: boolean;
     createdAt: string;
 }
@@ -56,6 +57,27 @@ export default function NotificationBell() {
             }
         } catch (error) {
             console.error("Validation failed:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleChallengeResponse = async (matchId: string, action: "accept" | "decline") => {
+        setLoading(true);
+        try {
+            if (action === "decline") {
+                // Delete the challenge match
+                await fetch(`/api/matches/${matchId}`, {
+                    method: "DELETE",
+                });
+                fetchNotifications();
+            } else {
+                // Accept: redirect to matches page to log the result
+                setOpen(false);
+                router.push(`/matches?challenge=${matchId}`);
+            }
+        } catch (error) {
+            console.error("Challenge response failed:", error);
         } finally {
             setLoading(false);
         }
@@ -152,6 +174,25 @@ export default function NotificationBell() {
                                                                 className="flex-1 py-2 bg-slate-700 hover:bg-red-600/90 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 disabled:opacity-50 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/20 border border-slate-600 hover:border-transparent"
                                                             >
                                                                 <X size={14} /> Reject
+                                                            </button>
+                                                        </div>
+                                                    )}
+
+                                                    {notification.type === "CHALLENGE" && !notification.read && (
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => handleChallengeResponse(notification.matchId, "accept")}
+                                                                disabled={loading}
+                                                                className="flex-1 py-2 btn-primary text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 disabled:opacity-50 transition-all hover:scale-[1.02]"
+                                                            >
+                                                                <Swords size={14} /> Accept
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleChallengeResponse(notification.matchId, "decline")}
+                                                                disabled={loading}
+                                                                className="flex-1 py-2 bg-slate-700 hover:bg-red-600/90 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 disabled:opacity-50 transition-all hover:scale-[1.02] border border-slate-600 hover:border-transparent"
+                                                            >
+                                                                <X size={14} /> Decline
                                                             </button>
                                                         </div>
                                                     )}
