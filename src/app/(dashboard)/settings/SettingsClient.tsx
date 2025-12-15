@@ -167,17 +167,17 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
                 </div>
 
                 {/* Custom Colors */}
-                <div className="grid grid-cols-2 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
                     <div>
                         <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
                             Primary Color
                         </label>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 md:gap-3">
                             <input
                                 type="color"
                                 value={primaryColor}
                                 onChange={(e) => setPrimaryColor(e.target.value)}
-                                className="w-12 h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent flex-shrink-0"
                             />
                             <input
                                 type="text"
@@ -192,12 +192,12 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
                         <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
                             Secondary Color
                         </label>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 md:gap-3">
                             <input
                                 type="color"
                                 value={secondaryColor}
                                 onChange={(e) => setSecondaryColor(e.target.value)}
-                                className="w-12 h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent flex-shrink-0"
                             />
                             <input
                                 type="text"
@@ -215,20 +215,20 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
                     <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-3">
                         Preview
                     </label>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center gap-4">
                         <button
-                            className="px-4 py-2 rounded-lg font-medium text-white transition-all"
+                            className="w-full md:w-auto px-4 py-2 rounded-lg font-medium text-white transition-all"
                             style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
                         >
                             Primary Button
                         </button>
                         <div
-                            className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl"
+                            className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0"
                             style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
                         >
                             JD
                         </div>
-                        <div className="flex-1 h-2 rounded-full" style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }} />
+                        <div className="w-full md:flex-1 h-2 rounded-full" style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }} />
                     </div>
                 </div>
 

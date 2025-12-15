@@ -50,7 +50,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 });
 
                 if (!uploadRes.ok) {
-                    throw new Error("Failed to upload image");
+                    const uploadErr = await uploadRes.json().catch(() => ({}));
+                    throw new Error(uploadErr.error || "Failed to upload image");
                 }
 
                 const uploadData = await uploadRes.json();
@@ -72,9 +73,9 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 setAvatarUrl(currentAvatarUrl);
                 router.refresh();
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            setError("Something went wrong");
+            setError(err.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
