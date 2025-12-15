@@ -61,8 +61,27 @@ model User {
   bracketWins        BracketMatch[] @relation("BracketWinner")
   
   rankingLogs        RankingLog[]
+  
+  // User settings (colors, preferences)
+  settings           UserSettings?
 
   @@map("users")
+}
+
+model UserSettings {
+  id              String   @id @default(cuid())
+  
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Color preferences
+  primaryColor    String   @default("#6366f1")   // indigo-500
+  secondaryColor  String   @default("#8b5cf6")   // purple-500
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("user_settings")
 }
 
 model Match {

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { LayoutDashboard, Swords, Trophy, Award, User, Menu, X, LogOut } from "lucide-react";
+import { LayoutDashboard, Swords, Trophy, Award, User, Menu, X, LogOut, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import NotificationBell from "./NotificationBell";
@@ -12,6 +12,9 @@ export default function MobileNav() {
     const pathname = usePathname();
     const { data: session } = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
+
+    // Check if user is admin
+    const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
 
     const navItems = [
         { href: "/dashboard", icon: LayoutDashboard, label: "Home" },
@@ -83,6 +86,16 @@ export default function MobileNav() {
                                 <User size={20} />
                                 <span>My Profile</span>
                             </Link>
+                            {isAdmin && (
+                                <Link
+                                    href="/settings"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 active:bg-slate-700 transition-colors"
+                                >
+                                    <Settings size={20} />
+                                    <span>Settings</span>
+                                </Link>
+                            )}
                             <div className="px-4 py-3">
                                 <NotificationBell />
                             </div>

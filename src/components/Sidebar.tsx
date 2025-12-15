@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { Trophy, Swords, LayoutDashboard, User, LogOut, Disc, Award } from "lucide-react";
+import { Trophy, Swords, LayoutDashboard, User, LogOut, Disc, Award, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "./NotificationBell";
 
@@ -12,6 +12,9 @@ import { Logo } from "@/components/Logo";
 export default function Sidebar() {
     const pathname = usePathname();
     const { data: session } = useSession();
+
+    // Check if user is admin
+    const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
 
     return (
         <aside className="w-72 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800/60 hidden md:flex flex-col relative z-50">
@@ -39,6 +42,9 @@ export default function Sidebar() {
                 <NavItem href="/tournaments" icon={<Trophy size={20} />} label="Tournaments" active={pathname === "/tournaments"} />
                 <NavItem href="/rankings" icon={<Award size={20} />} label="Rankings" active={pathname === "/rankings"} />
                 <NavItem href="/profile" icon={<User size={20} />} label="My Profile" active={pathname === "/profile"} />
+                {isAdmin && (
+                    <NavItem href="/settings" icon={<Settings size={20} />} label="Settings" active={pathname === "/settings"} />
+                )}
             </nav>
 
             <div className="px-4 mb-2">
