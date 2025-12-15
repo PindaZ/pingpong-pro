@@ -94,12 +94,12 @@ export default async function RankingsPage({
             {/* Leaderboard */}
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
                 {/* Table Header */}
-                <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <div className="grid grid-cols-3 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     <div className="col-span-1">Rank</div>
-                    <div className="col-span-5">Player</div>
-                    <div className="col-span-2 text-center">{isYearly ? "Wins" : "ELO"}</div>
-                    <div className="col-span-2 text-center">W/L</div>
-                    <div className="col-span-2 text-center">Win Rate</div>
+                    <div className="col-span-1 md:col-span-5">Player</div>
+                    <div className="col-span-1 md:col-span-2 text-right md:text-center">{isYearly ? "Wins" : "ELO"}</div>
+                    <div className="hidden md:block col-span-2 text-center">W/L</div>
+                    <div className="hidden md:block col-span-2 text-center">Win Rate</div>
                 </div>
 
                 {/* Players */}
@@ -109,7 +109,7 @@ export default async function RankingsPage({
                             <div
                                 key={user.id}
                                 className={cn(
-                                    "grid grid-cols-12 gap-4 px-6 py-4 items-center transition-colors hover:bg-slate-800/30",
+                                    "grid grid-cols-3 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 items-center transition-colors hover:bg-slate-800/30",
                                     idx < 3 && "bg-gradient-to-r from-slate-800/20 to-transparent"
                                 )}
                             >
@@ -133,41 +133,41 @@ export default async function RankingsPage({
                                 </div>
 
                                 {/* Player */}
-                                <div className="col-span-5">
-                                    <Link href={`/profile/${user.id}`} className="flex items-center gap-3 group">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold group-hover:ring-2 group-hover:ring-indigo-400 transition-all overflow-hidden">
+                                <div className="col-span-1 md:col-span-5">
+                                    <Link href={`/profile/${user.id}`} className="flex items-center gap-2 md:gap-3 group">
+                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs md:text-sm font-bold group-hover:ring-2 group-hover:ring-indigo-400 transition-all overflow-hidden flex-shrink-0">
                                             {user.avatarUrl ? (
                                                 <img src={user.avatarUrl} alt={user.name || "Avatar"} className="w-full h-full object-cover" />
                                             ) : (
                                                 user.name?.charAt(0)?.toUpperCase() || "?"
                                             )}
                                         </div>
-                                        <div>
-                                            <p className="font-semibold text-white group-hover:text-indigo-400 transition-colors">{user.name || "Anonymous"}</p>
-                                            <p className="text-xs text-slate-500">{user.email}</p>
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-white group-hover:text-indigo-400 transition-colors text-sm truncate">{user.name || "Anonymous"}</p>
+                                            <p className="text-[10px] md:text-xs text-slate-500 truncate hidden md:block">{user.email}</p>
                                         </div>
                                     </Link>
                                 </div>
 
                                 {/* Main Metric (ELO or Wins) */}
-                                <div className="col-span-2 text-center">
+                                <div className="col-span-1 md:col-span-2 text-right md:text-center">
                                     <span className={cn(
-                                        "font-mono font-bold text-lg",
+                                        "font-mono font-bold text-base md:text-lg",
                                         idx === 0 ? "text-amber-400" : idx < 3 ? "text-slate-200" : "text-slate-400"
                                     )}>
                                         {isYearly ? user.stats.wins : user.elo}
                                     </span>
                                 </div>
 
-                                {/* W/L */}
-                                <div className="col-span-2 text-center">
+                                {/* W/L - Hidden on mobile */}
+                                <div className="hidden md:block col-span-2 text-center">
                                     <span className="text-emerald-400 font-medium">{user.stats.wins}</span>
                                     <span className="text-slate-600 mx-1">/</span>
                                     <span className="text-red-400 font-medium">{user.stats.losses}</span>
                                 </div>
 
-                                {/* Win Rate */}
-                                <div className="col-span-2 text-center">
+                                {/* Win Rate - Hidden on mobile */}
+                                <div className="hidden md:block col-span-2 text-center">
                                     <div className="flex items-center justify-center gap-1">
                                         {user.stats.winRate > 50 ? (
                                             <TrendingUp size={14} className="text-emerald-400" />

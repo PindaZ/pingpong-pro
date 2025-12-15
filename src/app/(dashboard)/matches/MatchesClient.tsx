@@ -162,172 +162,197 @@ function MatchCard({
                 </div>
 
                 {/* Match Content */}
-                <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                    {/* Players & Score */}
-                    <div className="md:col-span-2 flex items-center justify-between md:justify-start gap-8">
-                        {/* Player 1 */}
-                        <div
-                            className={cn(
-                                "flex items-center justify-end gap-3 flex-1 md:flex-none md:w-40 transition-colors",
-                                match.winnerId === match.player1Id
-                                    ? "text-white font-bold"
-                                    : "text-slate-400 font-medium"
-                            )}
-                        >
-                            <div className="flex flex-col items-end">
-                                <Link href={`/profile/${match.player1Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
-                                    {match.player1?.name?.split(" ")[0] || "Player 1"}
-                                    {match.player1Id === currentUserId && (
-                                        <span className="text-indigo-400 text-xs">(you)</span>
+                <div className="flex-1 w-full">
+                    {/* Mobile Layout: Vertical Stack */}
+                    <div className="md:hidden space-y-3">
+                        {/* Players Row */}
+                        <div className="flex items-center justify-between gap-2">
+                            {/* Player 1 */}
+                            <Link href={`/profile/${match.player1Id}`} className="flex items-center gap-2 flex-1 min-w-0">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                    {match.player1?.avatarUrl ? (
+                                        <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        match.player1?.name?.charAt(0)?.toUpperCase() || <User size={14} />
                                     )}
-                                </Link>
-                            </div>
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
-                                {match.player1?.avatarUrl ? (
-                                    <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                    match.player1?.name?.charAt(0)?.toUpperCase() || <User size={14} />
-                                )}
-                            </div>
-                        </div>
+                                </div>
+                                <span className={cn("truncate text-sm", match.winnerId === match.player1Id ? "text-white font-bold" : "text-slate-400")}>
+                                    {match.player1?.name || "Player 1"}
+                                    {match.player1Id === currentUserId && <span className="text-indigo-400 text-xs ml-1">(you)</span>}
+                                </span>
+                            </Link>
 
-                        {/* Middle Score */}
-                        <div className="flex flex-col items-center gap-1">
-                            <div className="flex items-center gap-1">
+                            {/* Score Badges */}
+                            <div className="flex items-center gap-1 flex-shrink-0">
                                 {match.games?.map((g: any, i: number) => (
-                                    <div
-                                        key={i}
-                                        className={cn(
-                                            "flex flex-col items-center justify-center w-8 h-10 rounded bg-slate-950 border text-xs font-mono",
-                                            isPending
-                                                ? "border-slate-800 text-slate-500"
-                                                : "border-slate-700 text-slate-300"
-                                        )}
-                                    >
+                                    <div key={i} className={cn("flex flex-col items-center justify-center w-7 h-9 rounded bg-slate-950 border text-[10px] font-mono", isPending ? "border-slate-800 text-slate-500" : "border-slate-700 text-slate-300")}>
                                         <span>{g.scorePlayer1}</span>
-                                        <div className="h-[1px] w-4 bg-slate-800" />
+                                        <div className="h-[1px] w-3 bg-slate-800" />
                                         <span>{g.scorePlayer2}</span>
                                     </div>
                                 ))}
                             </div>
-                        </div>
 
-                        {/* Player 2 */}
-                        <div
-                            className={cn(
-                                "flex items-center justify-start gap-3 flex-1 md:flex-none md:w-40 transition-colors",
-                                match.winnerId === match.player2Id
-                                    ? "text-white font-bold"
-                                    : "text-slate-400 font-medium"
-                            )}
-                        >
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
-                                {match.player2?.avatarUrl ? (
-                                    <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                    match.player2?.name?.charAt(0)?.toUpperCase() || <User size={14} />
-                                )}
-                            </div>
-                            <div className="flex flex-col items-start">
-                                <Link href={`/profile/${match.player2Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
-                                    {match.player2?.name?.split(" ")[0] || "Player 2"}
-                                    {match.player2Id === currentUserId && (
-                                        <span className="text-indigo-400 text-xs">(you)</span>
-                                    )}
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Meta & Status */}
-                    <div className="flex items-center justify-between md:justify-end gap-4 w-full border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
-                        <div className="md:hidden text-xs text-slate-500">
-                            {new Date(match.playedAt).toLocaleDateString()}
-                        </div>
-
-                        {/* Adjustment Approval UI */}
-                        {showAdjustmentApproval && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-amber-500 flex items-center gap-1 animate-pulse">
-                                    <AlertCircle size={12} /> Adjustment Requested
+                            {/* Player 2 */}
+                            <Link href={`/profile/${match.player2Id}`} className="flex items-center gap-2 flex-1 min-w-0 justify-end">
+                                <span className={cn("truncate text-sm text-right", match.winnerId === match.player2Id ? "text-white font-bold" : "text-slate-400")}>
+                                    {match.player2?.name || "Player 2"}
+                                    {match.player2Id === currentUserId && <span className="text-indigo-400 text-xs ml-1">(you)</span>}
                                 </span>
-                                {validating ? (
-                                    <Loader2 className="animate-spin text-slate-400" size={18} />
-                                ) : (
-                                    <>
-                                        <button onClick={() => onValidate(match.id, "approve_adjustment")} className="p-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded shadow-lg transition-all" title="Approve Changes">
-                                            <CheckCircle2 size={16} />
-                                        </button>
-                                        <button onClick={() => onValidate(match.id, "reject_adjustment")} className="p-1.5 bg-red-600 hover:bg-red-500 text-white rounded shadow-lg transition-all" title="Reject Changes">
-                                            <X size={16} />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Rejection/Pending Request Status for Requester */}
-                        {isRequester && hasAdjustment && (
-                            <span className="text-xs font-bold text-slate-500 italic flex items-center gap-1">
-                                <Loader2 size={12} className="animate-spin" /> Adjustment Pending Approval
-                            </span>
-                        )}
-
-                        {canValidate ? (
-                            <div className="flex items-center gap-2">
-                                {validating ? (
-                                    <Loader2 className="animate-spin text-slate-400" size={18} />
-                                ) : (
-                                    <>
-                                        <span className="text-xs font-bold text-amber-500 animate-pulse">
-                                            VALIDATE
-                                        </span>
-                                        <button
-                                            onClick={() => onValidate(match.id, "confirm")}
-                                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-lg shadow-emerald-500/20 transition-all"
-                                        >
-                                            CONFIRM
-                                        </button>
-                                        <button
-                                            onClick={() => onValidate(match.id, "reject")}
-                                            className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow-lg shadow-red-500/20 transition-all"
-                                        >
-                                            REJECT
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        ) : !showAdjustmentApproval && !hasAdjustment && (
-                            match.status === "PENDING" ? (
-                                <div className="flex items-center gap-2 text-amber-500/80">
-                                    <span className="text-xs font-bold">PENDING</span>
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                    {match.player2?.avatarUrl ? (
+                                        <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        match.player2?.name?.charAt(0)?.toUpperCase() || <User size={14} />
+                                    )}
                                 </div>
-                            ) : match.status === "REJECTED" ? (
-                                <div className="flex items-center gap-2 text-red-500/80">
-                                    <X size={16} />
-                                    <span className="text-xs font-bold">REJECTED</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2 text-emerald-500/80">
-                                    <CheckCircle2 size={16} />
-                                    <span className="text-xs font-bold">VERIFIED</span>
-                                </div>
-                            )
-                        )}
-
-                        {/* Edit Button */}
-                        {canEdit && !hasAdjustment && (
-                            <button
-                                onClick={onEdit}
-                                className="p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
-                                title="Adjust Match"
-                            >
-                                <Edit3 size={16} />
-                            </button>
-                        )}
+                            </Link>
+                        </div>
                     </div>
+
+                    {/* Desktop Layout: Horizontal */}
+                    <div className="hidden md:grid grid-cols-3 gap-6 items-center">
+                        {/* Players & Score */}
+                        <div className="col-span-2 flex items-center justify-start gap-8">
+                            {/* Player 1 */}
+                            <div className={cn("flex items-center justify-end gap-3 w-40 transition-colors", match.winnerId === match.player1Id ? "text-white font-bold" : "text-slate-400 font-medium")}>
+                                <div className="flex flex-col items-end">
+                                    <Link href={`/profile/${match.player1Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
+                                        {match.player1?.name?.split(" ")[0] || "Player 1"}
+                                        {match.player1Id === currentUserId && (<span className="text-indigo-400 text-xs">(you)</span>)}
+                                    </Link>
+                                </div>
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                    {match.player1?.avatarUrl ? (
+                                        <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        match.player1?.name?.charAt(0)?.toUpperCase() || <User size={14} />
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Middle Score */}
+                            <div className="flex flex-col items-center gap-1">
+                                <div className="flex items-center gap-1">
+                                    {match.games?.map((g: any, i: number) => (
+                                        <div key={i} className={cn("flex flex-col items-center justify-center w-8 h-10 rounded bg-slate-950 border text-xs font-mono", isPending ? "border-slate-800 text-slate-500" : "border-slate-700 text-slate-300")}>
+                                            <span>{g.scorePlayer1}</span>
+                                            <div className="h-[1px] w-4 bg-slate-800" />
+                                            <span>{g.scorePlayer2}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Player 2 */}
+                            <div className={cn("flex items-center justify-start gap-3 w-40 transition-colors", match.winnerId === match.player2Id ? "text-white font-bold" : "text-slate-400 font-medium")}>
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                    {match.player2?.avatarUrl ? (
+                                        <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        match.player2?.name?.charAt(0)?.toUpperCase() || <User size={14} />
+                                    )}
+                                </div>
+                                <div className="flex flex-col items-start">
+                                    <Link href={`/profile/${match.player2Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
+                                        {match.player2?.name?.split(" ")[0] || "Player 2"}
+                                        {match.player2Id === currentUserId && (<span className="text-indigo-400 text-xs">(you)</span>)}
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Meta & Status - Shared for mobile and desktop */}
+                <div className="flex items-center justify-between md:justify-end gap-4 w-full border-t border-slate-800 pt-3 mt-3">
+                    <div className="md:hidden text-xs text-slate-500">
+                        {new Date(match.playedAt).toLocaleDateString()}
+                    </div>
+
+                    {/* Adjustment Approval UI */}
+                    {showAdjustmentApproval && (
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-amber-500 flex items-center gap-1 animate-pulse">
+                                <AlertCircle size={12} /> Adjustment Requested
+                            </span>
+                            {validating ? (
+                                <Loader2 className="animate-spin text-slate-400" size={18} />
+                            ) : (
+                                <>
+                                    <button onClick={() => onValidate(match.id, "approve_adjustment")} className="p-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded shadow-lg transition-all" title="Approve Changes">
+                                        <CheckCircle2 size={16} />
+                                    </button>
+                                    <button onClick={() => onValidate(match.id, "reject_adjustment")} className="p-1.5 bg-red-600 hover:bg-red-500 text-white rounded shadow-lg transition-all" title="Reject Changes">
+                                        <X size={16} />
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Rejection/Pending Request Status for Requester */}
+                    {isRequester && hasAdjustment && (
+                        <span className="text-xs font-bold text-slate-500 italic flex items-center gap-1">
+                            <Loader2 size={12} className="animate-spin" /> Adjustment Pending Approval
+                        </span>
+                    )}
+
+                    {canValidate ? (
+                        <div className="flex items-center gap-2">
+                            {validating ? (
+                                <Loader2 className="animate-spin text-slate-400" size={18} />
+                            ) : (
+                                <>
+                                    <span className="text-xs font-bold text-amber-500 animate-pulse">
+                                        VALIDATE
+                                    </span>
+                                    <button
+                                        onClick={() => onValidate(match.id, "confirm")}
+                                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-lg shadow-emerald-500/20 transition-all"
+                                    >
+                                        CONFIRM
+                                    </button>
+                                    <button
+                                        onClick={() => onValidate(match.id, "reject")}
+                                        className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow-lg shadow-red-500/20 transition-all"
+                                    >
+                                        REJECT
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    ) : !showAdjustmentApproval && !hasAdjustment && (
+                        match.status === "PENDING" ? (
+                            <div className="flex items-center gap-2 text-amber-500/80">
+                                <span className="text-xs font-bold">PENDING</span>
+                            </div>
+                        ) : match.status === "REJECTED" ? (
+                            <div className="flex items-center gap-2 text-red-500/80">
+                                <X size={16} />
+                                <span className="text-xs font-bold">REJECTED</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2 text-emerald-500/80">
+                                <CheckCircle2 size={16} />
+                                <span className="text-xs font-bold">VERIFIED</span>
+                            </div>
+                        )
+                    )}
+
+                    {/* Edit Button */}
+                    {canEdit && !hasAdjustment && (
+                        <button
+                            onClick={onEdit}
+                            className="p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
+                            title="Adjust Match"
+                        >
+                            <Edit3 size={16} />
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
     );
 }
+

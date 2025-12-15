@@ -142,7 +142,9 @@ export default function TournamentBracket({
 
     return (
         <div className="overflow-x-auto pb-4">
-            <div className="flex gap-16 min-w-max p-4">
+            {/* Mobile scroll hint */}
+            <p className="md:hidden text-xs text-slate-500 mb-2 text-center">← Swipe to view bracket →</p>
+            <div className="flex gap-6 md:gap-16 min-w-max p-2 md:p-4">
                 {Array.from({ length: maxRound }, (_, i) => i + 1).map((round) => (
                     <div key={round} className="flex flex-col gap-4">
                         <h4 className="text-sm font-semibold text-slate-400 uppercase tracking-wider text-center mb-2">
@@ -220,7 +222,7 @@ function MatchCard({
     return (
         <div
             className={cn(
-                "relative w-64 bg-slate-900/80 border rounded-xl overflow-hidden transition-all",
+                "relative w-48 md:w-64 bg-slate-900/80 border rounded-xl overflow-hidden transition-all",
                 match.status === "PLAYED"
                     ? "border-emerald-500/30"
                     : match.status === "BYE"

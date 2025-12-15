@@ -112,7 +112,7 @@ export default async function DashboardPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
                 <StatCard
                     title="Current ELO"
                     value={currentUser.elo.toString()}
