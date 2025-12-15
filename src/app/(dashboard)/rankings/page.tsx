@@ -135,7 +135,7 @@ export default async function RankingsPage({
                                 {/* Player */}
                                 <div className="col-span-1 md:col-span-5">
                                     <Link href={`/profile/${user.id}`} className="flex items-center gap-2 md:gap-3 group">
-                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs md:text-sm font-bold group-hover:ring-2 group-hover:ring-indigo-400 transition-all overflow-hidden flex-shrink-0">
+                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full gradient-primary flex items-center justify-center text-white text-xs md:text-sm font-bold group-hover:ring-2 group-hover:ring-primary-20 transition-all overflow-hidden flex-shrink-0">
                                             {user.avatarUrl ? (
                                                 <img src={user.avatarUrl} alt={user.name || "Avatar"} className="w-full h-full object-cover" />
                                             ) : (

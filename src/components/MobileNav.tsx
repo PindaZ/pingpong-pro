@@ -16,12 +16,12 @@ export default function MobileNav() {
     // Check if user is admin
     const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
 
-    // Reordered: Home, Tourneys, Matches (center/highlighted), Rankings, More
+    // Reordered: Home, Tournaments, Matches (center/highlighted), Rankings, More
     const navItems = [
         { href: "/dashboard", icon: LayoutDashboard, label: "Home", highlight: false },
-        { href: "/tournaments", icon: Trophy, label: "Tourneys", highlight: false },
+        { href: "/tournaments", icon: Trophy, label: "Tourney", highlight: false },
         { href: "/matches", icon: Swords, label: "Matches", highlight: true },
-        { href: "/rankings", icon: Award, label: "Rankings", highlight: false },
+        { href: "/rankings", icon: Award, label: "Rank", highlight: false },
     ];
 
     return (
@@ -34,17 +34,15 @@ export default function MobileNav() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[60px] transition-all",
-                                item.highlight && pathname === item.href
-                                    ? "gradient-primary shadow-lg scale-105"
-                                    : item.highlight
-                                        ? "bg-slate-800 text-white"
-                                        : pathname === item.href
-                                            ? "text-indigo-400"
-                                            : "text-slate-400 active:text-white"
+                                "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[56px] transition-all",
+                                item.highlight
+                                    ? "gradient-primary shadow-lg shadow-primary text-white"
+                                    : pathname === item.href
+                                        ? "text-primary"
+                                        : "text-slate-400 active:text-white"
                             )}
                         >
-                            <item.icon size={item.highlight ? 22 : 20} className={item.highlight ? "text-white" : ""} />
+                            <item.icon size={item.highlight ? 24 : 20} className={item.highlight ? "text-white" : ""} />
                             <span className={cn("text-[10px] font-medium", item.highlight && "text-white")}>{item.label}</span>
                         </Link>
                     ))}

@@ -55,7 +55,7 @@ export default function TournamentDetailClient({
                 <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center">
                                 <Trophy size={24} className="text-white" />
                             </div>
                             <div>
@@ -117,7 +117,7 @@ export default function TournamentDetailClient({
                                     key={p.id}
                                     className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-3 hover:bg-slate-800 transition-colors group"
                                 >
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden group-hover:ring-2 group-hover:ring-indigo-500 transition-all">
+                                    <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden group-hover:ring-2 group-hover:ring-primary transition-all">
                                         {p.user.avatarUrl ? (
                                             <img src={p.user.avatarUrl} alt="" className="w-full h-full object-cover" />
                                         ) : (

@@ -6,6 +6,9 @@
   /* Custom color palette - can be overridden by user settings */
   --color-primary: #6366f1;
   --color-secondary: #8b5cf6;
+  /* Computed colors for variations */
+  --color-primary-10: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --color-primary-20: color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
 @theme inline {
@@ -28,7 +31,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Primary button using CSS variables */
+/* ============================================
+   THEME COLOR UTILITIES
+   ============================================ */
+
+/* Primary button with gradient */
 .btn-primary {
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   color: white;
@@ -41,10 +48,67 @@ body {
   transform: translateY(-1px);
 }
 
-/* Primary gradient for various elements */
+/* Gradient backgrounds */
 .gradient-primary {
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 }
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-primary-10 {
+  background-color: var(--color-primary-10);
+}
+
+.bg-primary-20 {
+  background-color: var(--color-primary-20);
+}
+
+/* Text colors */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+/* Border colors */
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.border-primary-20 {
+  border-color: var(--color-primary-20);
+}
+
+/* Ring colors */
+.ring-primary {
+  --tw-ring-color: var(--color-primary);
+}
+
+.ring-primary-20 {
+  --tw-ring-color: var(--color-primary-20);
+}
+
+/* Shadow with primary color glow */
+.shadow-primary {
+  box-shadow: 0 4px 14px -3px var(--color-primary-20);
+}
+
+/* Glow effect for backgrounds */
+.glow-primary {
+  background: radial-gradient(ellipse at center, var(--color-primary-20), transparent 70%);
+}
+
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
 
 /* Safe area for notched devices (iPhone X+) */
 .safe-area-bottom {

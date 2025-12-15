@@ -169,7 +169,7 @@ function MatchCard({
                         <div className="flex items-center justify-between gap-2">
                             {/* Player 1 */}
                             <Link href={`/profile/${match.player1Id}`} className="flex items-center gap-2 flex-1 min-w-0">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
                                     {match.player1?.avatarUrl ? (
                                         <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
                                     ) : (
@@ -199,7 +199,7 @@ function MatchCard({
                                     {match.player2?.name || "Player 2"}
                                     {match.player2Id === currentUserId && <span className="text-indigo-400 text-xs ml-1">(you)</span>}
                                 </span>
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
                                     {match.player2?.avatarUrl ? (
                                         <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
                                     ) : (
@@ -222,7 +222,7 @@ function MatchCard({
                                         {match.player1Id === currentUserId && (<span className="text-indigo-400 text-xs">(you)</span>)}
                                     </Link>
                                 </div>
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
                                     {match.player1?.avatarUrl ? (
                                         <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
                                     ) : (
@@ -246,7 +246,7 @@ function MatchCard({
 
                             {/* Player 2 */}
                             <div className={cn("flex items-center justify-start gap-3 w-40 transition-colors", match.winnerId === match.player2Id ? "text-white font-bold" : "text-slate-400 font-medium")}>
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
+                                <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
                                     {match.player2?.avatarUrl ? (
                                         <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
                                     ) : (

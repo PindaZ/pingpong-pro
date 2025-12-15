@@ -322,7 +322,7 @@ function PlayerSlot({
             <div className="flex items-center gap-2 min-w-0">
                 {player ? (
                     <>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0">
                             {player.avatarUrl ? (
                                 <img src={player.avatarUrl} alt="" className="w-full h-full object-cover" />
                             ) : (
