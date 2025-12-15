@@ -32,11 +32,11 @@ export function MatchItem({ match, currentUserId }: MatchItemProps) {
                     {/* Players */}
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-3">
-                            <Link href={`/profile/${match.player1.id}`} className={cn("text-base font-semibold hover:underline hover:text-indigo-400 transition-colors", match.winnerId === match.player1Id ? "text-white" : "text-slate-400")}>
+                            <Link href={`/profile/${match.player1.id}`} className={cn("text-base font-semibold hover:underline hover:text-primary transition-colors", match.winnerId === match.player1Id ? "text-white" : "text-slate-400")}>
                                 {match.player1.name}
                             </Link>
                             <span className="text-xs text-slate-600 font-medium">vs</span>
-                            <Link href={`/profile/${match.player2.id}`} className={cn("text-base font-semibold hover:underline hover:text-indigo-400 transition-colors", match.winnerId === match.player2Id ? "text-white" : "text-slate-400")}>
+                            <Link href={`/profile/${match.player2.id}`} className={cn("text-base font-semibold hover:underline hover:text-primary transition-colors", match.winnerId === match.player2Id ? "text-white" : "text-slate-400")}>
                                 {match.player2.name}
                             </Link>
                         </div>

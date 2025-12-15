@@ -60,7 +60,7 @@ export function EloHistoryChart({ data }: EloHistoryChartProps) {
                     <span className="text-xs font-normal text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">Last {chartData.length} games</span>
                 </h3>
                 {hoveredPoint ? (
-                    <div className="text-sm font-mono text-indigo-400">
+                    <div className="text-sm font-mono text-primary">
                         {hoveredPoint.value} <span className="text-slate-500">on {hoveredPoint.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                     </div>
                 ) : (

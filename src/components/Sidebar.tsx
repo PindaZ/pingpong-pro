@@ -29,7 +29,7 @@ export default function Sidebar() {
                         <Logo className="text-white animate-spin-slow w-6 h-6" />
                     </div>
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent tracking-tight">
-                        PingPong<span className="text-indigo-400">&apos;r</span>
+                        PingPong<span className="text-primary">&apos;r</span>
                     </h1>
                 </div>
 
@@ -67,7 +67,7 @@ export default function Sidebar() {
                         <p className="text-sm font-semibold text-white truncate">
                             {session?.user?.name || "Loading..."}
                         </p>
-                        <p className="text-xs text-indigo-400 truncate">
+                        <p className="text-xs text-primary truncate">
                             {session?.user?.email || ""}
                         </p>
                     </div>
@@ -91,11 +91,11 @@ function NavItem({ href, icon, label, active }: { href: string; icon: React.Reac
             className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
                 active
-                    ? "bg-indigo-600/10 text-white border border-indigo-500/20"
+                    ? "bg-primary/10 text-white border border-primary/20"
                     : "text-slate-400 hover:text-white hover:bg-white/5"
             )}
         >
-            <span className={cn("transition-colors duration-200", active ? "text-indigo-400" : "group-hover:text-indigo-400")}>
+            <span className={cn("transition-colors duration-200", active ? "text-primary" : "group-hover:text-primary")}>
                 {icon}
             </span>
             <span className="font-medium tracking-wide">{label}</span>

@@ -188,7 +188,7 @@ function MatchCard({
                                 </div>
                                 <span className={cn("truncate text-sm", match.winnerId === match.player1Id ? "text-white font-bold" : "text-slate-400")}>
                                     {match.player1?.name || "Player 1"}
-                                    {match.player1Id === currentUserId && <span className="text-indigo-400 text-xs ml-1">(you)</span>}
+                                    {match.player1Id === currentUserId && <span className="text-primary text-xs ml-1">(you)</span>}
                                 </span>
                             </Link>
 
@@ -207,7 +207,7 @@ function MatchCard({
                             <Link href={`/profile/${match.player2Id}`} className="flex items-center gap-2 flex-1 min-w-0 justify-end">
                                 <span className={cn("truncate text-sm text-right", match.winnerId === match.player2Id ? "text-white font-bold" : "text-slate-400")}>
                                     {match.player2?.name || "Player 2"}
-                                    {match.player2Id === currentUserId && <span className="text-indigo-400 text-xs ml-1">(you)</span>}
+                                    {match.player2Id === currentUserId && <span className="text-primary text-xs ml-1">(you)</span>}
                                 </span>
                                 <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
                                     {match.player2?.avatarUrl ? (
@@ -227,9 +227,9 @@ function MatchCard({
                             {/* Player 1 */}
                             <div className={cn("flex items-center justify-end gap-3 w-40 transition-colors", match.winnerId === match.player1Id ? "text-white font-bold" : "text-slate-400 font-medium")}>
                                 <div className="flex flex-col items-end">
-                                    <Link href={`/profile/${match.player1Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
+                                    <Link href={`/profile/${match.player1Id}`} className="hover:text-primary hover:underline transition-colors flex items-center gap-2">
                                         {match.player1?.name?.split(" ")[0] || "Player 1"}
-                                        {match.player1Id === currentUserId && (<span className="text-indigo-400 text-xs">(you)</span>)}
+                                        {match.player1Id === currentUserId && (<span className="text-primary text-xs">(you)</span>)}
                                     </Link>
                                 </div>
                                 <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 border border-slate-700">
@@ -264,9 +264,9 @@ function MatchCard({
                                     )}
                                 </div>
                                 <div className="flex flex-col items-start">
-                                    <Link href={`/profile/${match.player2Id}`} className="hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2">
+                                    <Link href={`/profile/${match.player2Id}`} className="hover:text-primary hover:underline transition-colors flex items-center gap-2">
                                         {match.player2?.name?.split(" ")[0] || "Player 2"}
-                                        {match.player2Id === currentUserId && (<span className="text-indigo-400 text-xs">(you)</span>)}
+                                        {match.player2Id === currentUserId && (<span className="text-primary text-xs">(you)</span>)}
                                     </Link>
                                 </div>
                             </div>

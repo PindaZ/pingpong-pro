@@ -173,7 +173,7 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
                         <div className="space-y-4">
                             {isValidated && (
                                 <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg flex items-start gap-2">
-                                    <AlertTriangle size={16} className="text-indigo-400 mt-0.5 flex-shrink-0" />
+                                    <AlertTriangle size={16} className="text-primary mt-0.5 flex-shrink-0" />
                                     <p className="text-xs text-indigo-300">
                                         Since this match is verified, any changes (including deletion) request approval from the opponent. ELO will be reverted and re-applied manually if needed by the system logic.
                                     </p>
@@ -196,7 +196,7 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
                             <div>
                                 <div className="flex items-center justify-between mb-2">
                                     <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide">Scores</label>
-                                    <button onClick={addGame} disabled={games.length >= 5} className="text-xs text-indigo-400 flex items-center gap-1 disabled:opacity-50"><Plus size={14} /> Add Game</button>
+                                    <button onClick={addGame} disabled={games.length >= 5} className="text-xs text-primary flex items-center gap-1 disabled:opacity-50"><Plus size={14} /> Add Game</button>
                                 </div>
                                 <div className="space-y-2">
                                     {games.map((game, index) => (

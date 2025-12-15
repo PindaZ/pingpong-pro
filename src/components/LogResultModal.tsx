@@ -194,7 +194,7 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                                 <select
                                     value={opponentId}
                                     onChange={(e) => setOpponentId(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
                                 >
                                     <option value="">Select opponent...</option>
                                     {opponents.map((user) => (
@@ -213,7 +213,7 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                                     <button
                                         onClick={addGame}
                                         disabled={games.length >= 5}
-                                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 disabled:opacity-50"
+                                        className="text-xs text-primary hover:text-primary flex items-center gap-1 disabled:opacity-50"
                                     >
                                         <Plus size={14} /> Add Game
                                     </button>
@@ -230,7 +230,7 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                                                 value={game.p1}
                                                 onChange={(e) => updateGame(index, "p1", e.target.value)}
                                                 placeholder="You"
-                                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
                                             />
                                             <span className="text-slate-500">-</span>
                                             <input
@@ -240,7 +240,7 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                                                 value={game.p2}
                                                 onChange={(e) => updateGame(index, "p2", e.target.value)}
                                                 placeholder="Opp"
-                                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
                                             />
                                             {games.length > 1 && (
                                                 <button
@@ -267,7 +267,7 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                                             <button
                                                 type="button"
                                                 onClick={() => setShowRules(true)}
-                                                className="text-xs text-indigo-400 hover:text-indigo-300 underline mt-2"
+                                                className="text-xs text-primary hover:text-primary underline mt-2"
                                             >
                                                 View Official Rules
                                             </button>

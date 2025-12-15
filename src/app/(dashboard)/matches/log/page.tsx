@@ -132,7 +132,7 @@ export default function LogMatchPage() {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <label className="text-sm font-medium text-slate-400 uppercase tracking-wider">Score (Sets)</label>
-                        <button onClick={addSet} className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                        <button onClick={addSet} className="text-xs font-bold text-primary hover:text-indigo-300 flex items-center gap-1">
                             <Plus size={14} /> ADD SET
                         </button>
                     </div>

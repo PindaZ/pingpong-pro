@@ -84,7 +84,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                         <div className="space-y-4 border-t border-slate-800 pt-4">
                             <div className="flex items-center justify-between">
                                 <span className="text-slate-400 text-sm">ELO Rating</span>
-                                <span className="font-mono font-bold text-indigo-400">{user.elo}</span>
+                                <span className="font-mono font-bold text-primary">{user.elo}</span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-slate-400 text-sm">Global Rank</span>
@@ -92,7 +92,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-slate-400 text-sm">Role</span>
-                                <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase">{user.role}</span>
+                                <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-primary text-xs font-semibold uppercase">{user.role}</span>
                             </div>
                         </div>
                     </div>
@@ -123,7 +123,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 <div className="md:col-span-2 space-y-6">
                     <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
                         <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <Swords size={18} className="text-indigo-400" />
+                            <Swords size={18} className="text-primary" />
                             Recent Matches
                         </h4>
 

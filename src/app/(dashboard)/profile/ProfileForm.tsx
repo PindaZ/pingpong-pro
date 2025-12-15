@@ -85,13 +85,13 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         <div id="edit-profile" className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm scroll-mt-8">
             <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Edit2 size={18} className="text-indigo-400" />
+                    <Edit2 size={18} className="text-primary" />
                     Edit Profile
                 </h4>
                 {!editing ? (
                     <button
                         onClick={() => setEditing(true)}
-                        className="text-sm text-indigo-400 hover:text-indigo-300 font-medium"
+                        className="text-sm text-primary hover:text-primary font-medium"
                     >
                         Edit
                     </button>

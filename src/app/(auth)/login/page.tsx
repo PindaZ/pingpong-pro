@@ -71,28 +71,28 @@ export default function LoginPage() {
                             type="email"
                             placeholder="you@company.com"
                             required
-                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                         />
                     </div>
 
                     <div className="space-y-1">
                         <div className="flex justify-between items-center ml-1">
                             <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">Password</label>
-                            <Link href="#" className="text-xs text-indigo-400 hover:text-indigo-300">Forgot?</Link>
+                            <Link href="#" className="text-xs text-primary hover:text-primary">Forgot?</Link>
                         </div>
                         <input
                             name="password"
                             type="password"
                             placeholder="••••••••"
                             required
-                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
+                        className="w-full py-3.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
                     >
                         {loading ? <Loader2 className="animate-spin" size={20} /> : "Sign In"}
                     </button>
@@ -100,7 +100,7 @@ export default function LoginPage() {
 
                 <div className="mt-8 pt-6 border-t border-slate-800 text-center text-sm text-slate-500">
                     Don't have an account?{" "}
-                    <Link href="/register" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
+                    <Link href="/register" className="text-primary font-semibold hover:text-primary transition-colors">
                         Register for free
                     </Link>
                 </div>

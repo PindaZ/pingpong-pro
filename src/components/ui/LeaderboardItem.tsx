@@ -35,7 +35,7 @@ export function LeaderboardItem({ user, rank }: LeaderboardItemProps) {
                     {rankIcon || rank}
                 </div>
                 <div>
-                    <Link href={`/profile/${user.id}`} className="font-medium text-slate-200 group-hover:text-white transition-colors hover:underline hover:text-indigo-400">
+                    <Link href={`/profile/${user.id}`} className="font-medium text-slate-200 group-hover:text-white transition-colors hover:underline hover:text-primary">
                         {user.name}
                     </Link>
                     <div className="text-xs text-slate-500">ELO {user.elo}</div>

@@ -67,7 +67,7 @@ export default function RegisterPage() {
                             type="text"
                             placeholder="Alex Chen"
                             required
-                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                         />
                     </div>
 
@@ -78,7 +78,7 @@ export default function RegisterPage() {
                             type="email"
                             placeholder="you@company.com"
                             required
-                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                         />
                     </div>
 
@@ -89,14 +89,14 @@ export default function RegisterPage() {
                             type="password"
                             placeholder="Create a strong password"
                             required
-                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
+                        className="w-full py-3.5 rounded-xl btn-primary text-white font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
                     >
                         {loading ? <Loader2 className="animate-spin" size={20} /> : "Create Account"}
                     </button>
@@ -104,7 +104,7 @@ export default function RegisterPage() {
 
                 <div className="mt-8 pt-6 border-t border-slate-800 text-center text-sm text-slate-500">
                     Already have an account?{" "}
-                    <Link href="/login" className="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">
+                    <Link href="/login" className="text-primary font-semibold hover:text-primary transition-colors">
                         Sign in
                     </Link>
                 </div>

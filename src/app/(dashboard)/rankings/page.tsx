@@ -74,7 +74,7 @@ export default async function RankingsPage({
                         href="/rankings?period=all-time"
                         className={cn(
                             "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                            !isYearly ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "text-slate-400 hover:text-white"
+                            !isYearly ? "btn-primary shadow-primary" : "text-slate-400 hover:text-white"
                         )}
                     >
                         All Time
@@ -83,7 +83,7 @@ export default async function RankingsPage({
                         href="/rankings?period=yearly"
                         className={cn(
                             "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                            isYearly ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "text-slate-400 hover:text-white"
+                            isYearly ? "btn-primary shadow-primary" : "text-slate-400 hover:text-white"
                         )}
                     >
                         {currentYear} Season
@@ -143,7 +143,7 @@ export default async function RankingsPage({
                                             )}
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="font-semibold text-white group-hover:text-indigo-400 transition-colors text-sm truncate">{user.name || "Anonymous"}</p>
+                                            <p className="font-semibold text-white group-hover:text-primary transition-colors text-sm truncate">{user.name || "Anonymous"}</p>
                                             <p className="text-[10px] md:text-xs text-slate-500 truncate hidden md:block">{user.email}</p>
                                         </div>
                                     </Link>

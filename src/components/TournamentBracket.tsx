@@ -273,7 +273,7 @@ function MatchCard({
 
                 {isAdmin && showActions && match.player1 && match.player2 && (
                     <button
-                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                        className="text-xs text-primary hover:text-primary flex items-center gap-1"
                         onClick={(e) => {
                             e.stopPropagation();
                             onManage(match);
@@ -286,7 +286,7 @@ function MatchCard({
 
                 {!isAdmin && isParticipant && match.status !== "PLAYED" && match.status !== "BYE" && showActions && match.player1 && match.player2 && (
                     <button
-                        className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                        className="text-xs text-primary hover:text-primary flex items-center gap-1"
                         onClick={(e) => {
                             e.stopPropagation();
                             onLogResult(match);
@@ -454,7 +454,7 @@ function ManageMatchModal({
 
                 <div className="grid grid-cols-3 gap-4 items-center">
                     <div className="text-center space-y-2">
-                        <div className="font-bold text-indigo-400 truncate text-sm">{match.player1?.name || "TBD"}</div>
+                        <div className="font-bold text-primary truncate text-sm">{match.player1?.name || "TBD"}</div>
                         <input
                             type="number"
                             value={score1}

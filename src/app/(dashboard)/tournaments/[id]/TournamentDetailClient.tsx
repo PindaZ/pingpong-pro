@@ -50,7 +50,7 @@ export default function TournamentDetailClient({
 
             {/* Tournament Header */}
             <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl p-8">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="space-y-4">
@@ -81,7 +81,7 @@ export default function TournamentDetailClient({
                                 {tournament.participants.length} / {tournament.maxParticipants} participants
                             </span>
                             {tournament.bracketGenerated && (
-                                <span className="flex items-center gap-1.5 text-indigo-400">
+                                <span className="flex items-center gap-1.5 text-primary">
                                     <Shield size={14} />
                                     {tournament.seedingType} seeding
                                 </span>
@@ -99,7 +99,7 @@ export default function TournamentDetailClient({
                         {isAdmin && (
                             <button
                                 onClick={() => setShowManageModal(true)}
-                                className="px-3 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 text-sm font-semibold hover:bg-indigo-600/30 transition-colors border border-indigo-500/30 active:scale-95 flex items-center gap-2"
+                                className="px-3 py-1.5 rounded-lg bg-primary/20 text-primary text-sm font-semibold hover:bg-primary/30 transition-colors border border-primary/30 active:scale-95 flex items-center gap-2"
                             >
                                 <Plus size={16} />
                                 Add Player
@@ -125,7 +125,7 @@ export default function TournamentDetailClient({
                                         )}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-sm font-medium text-white truncate group-hover:text-indigo-300 transition-colors">{p.user.name}</p>
+                                        <p className="text-sm font-medium text-white truncate group-hover:text-primary transition-colors">{p.user.name}</p>
                                         <p className="text-xs text-slate-500">{p.user.elo} ELO</p>
                                     </div>
                                 </Link>

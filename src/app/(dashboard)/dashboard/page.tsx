@@ -157,7 +157,7 @@ export default async function DashboardPage() {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
                         <h3 className="font-semibold text-lg text-white">Recent Activity</h3>
-                        <Link href="/matches" className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">View All</Link>
+                        <Link href="/matches" className="text-sm text-primary hover:text-indigo-300 transition-colors">View All</Link>
                     </div>
 
                     <div className="space-y-4">

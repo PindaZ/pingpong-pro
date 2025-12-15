@@ -107,7 +107,7 @@ export default function NotificationBell() {
                         <div className="px-5 py-4 border-b border-slate-800/50 flex items-center justify-between">
                             <h4 className="font-semibold text-white">Notifications</h4>
                             {unreadCount > 0 && (
-                                <span className="text-xs font-medium text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-full border border-indigo-500/20">
+                                <span className="text-xs font-medium text-primary bg-primary-10 px-2 py-1 rounded-full border border-primary-20">
                                     {unreadCount} pending
                                 </span>
                             )}
@@ -129,15 +129,15 @@ export default function NotificationBell() {
                                             key={notification.id}
                                             className={cn(
                                                 "p-4 transition-colors hover:bg-slate-800/30",
-                                                !notification.read ? "bg-indigo-500/5 relative" : ""
+                                                !notification.read ? "bg-primary-10 relative" : ""
                                             )}
                                         >
                                             {!notification.read && (
-                                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500" />
+                                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
                                             )}
                                             <div className="flex gap-4">
                                                 <div className="mt-1">
-                                                    <div className="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                                    <div className="w-8 h-8 rounded-full bg-primary-10 border border-primary-20 flex items-center justify-center text-primary">
                                                         <Trophy size={14} />
                                                     </div>
                                                 </div>

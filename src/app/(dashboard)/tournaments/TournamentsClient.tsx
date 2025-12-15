@@ -122,7 +122,7 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
 
                                 <div className="grid lg:grid-cols-2 gap-8 relative z-10 p-8 md:p-10">
                                     <div className="space-y-6">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-sm font-semibold">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-primary border border-indigo-500/20 text-sm font-semibold">
                                             <span className="relative flex h-2 w-2">
                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
@@ -324,7 +324,7 @@ function TournamentCard({
                                 ? "bg-slate-800 text-slate-400 border-slate-700/50"
                                 : tournament.status === "ONGOING"
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                    : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+                                    : "bg-indigo-500/10 text-primary border-indigo-500/20"
                         )}
                     >
                         {tournament.status}
@@ -368,7 +368,7 @@ function TournamentCard({
                             <button
                                 onClick={onJoin}
                                 disabled={joining}
-                                className="text-indigo-400 hover:text-indigo-300 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
+                                className="text-primary hover:text-indigo-300 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
                             >
                                 {joining ? <Loader2 className="animate-spin" size={14} /> : null}
                                 Join <ArrowRight size={14} />

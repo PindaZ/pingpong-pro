@@ -104,7 +104,7 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-16">
-                <Loader2 className="animate-spin text-indigo-400" size={32} />
+                <Loader2 className="animate-spin text-primary" size={32} />
             </div>
         );
     }
@@ -114,7 +114,7 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
             {/* Header */}
             <div>
                 <h2 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                    <Settings className="text-indigo-400" />
+                    <Settings className="text-primary" />
                     Settings
                 </h2>
                 <p className="text-slate-400 mt-1">Customize the app appearance</p>
