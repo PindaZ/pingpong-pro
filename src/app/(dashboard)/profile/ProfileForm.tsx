@@ -82,7 +82,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     };
 
     return (
-        <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
+        <div id="edit-profile" className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm scroll-mt-8">
             <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg font-semibold text-white flex items-center gap-2">
                     <Edit2 size={18} className="text-indigo-400" />
@@ -184,7 +184,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/20"
+                        className="w-full py-2.5 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-lg"
                     >
                         {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
                         Save Changes

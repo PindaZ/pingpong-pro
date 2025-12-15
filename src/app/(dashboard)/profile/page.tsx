@@ -58,7 +58,7 @@ export default async function ProfilePage() {
                 <div className="md:col-span-1 space-y-6">
                     <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
                         <div className="flex flex-col items-center text-center mb-6">
-                            <div className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white text-3xl font-bold mb-4 ring-4 ring-indigo-500/20 overflow-hidden relative">
+                            <a href="#edit-profile" className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white text-3xl font-bold mb-4 ring-4 ring-indigo-500/20 overflow-hidden relative cursor-pointer hover:ring-indigo-500/50 hover:scale-105 transition-all group">
                                 {user.avatarUrl ? (
                                     <img
                                         src={user.avatarUrl}
@@ -68,7 +68,11 @@ export default async function ProfilePage() {
                                 ) : (
                                     user.name?.charAt(0)?.toUpperCase() || "?"
                                 )}
-                            </div>
+                                {/* Hover overlay hint */}
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <span className="text-white text-xs font-medium">Edit</span>
+                                </div>
+                            </a>
                             <h3 className="text-xl font-bold text-white">{user.name || "Anonymous"}</h3>
                             <p className="text-slate-400 text-sm">{user.email}</p>
                             {user.bio && (

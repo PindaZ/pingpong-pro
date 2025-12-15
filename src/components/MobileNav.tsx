@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { LayoutDashboard, Swords, Trophy, Award, User, Menu, X, LogOut, Settings } from "lucide-react";
+import { LayoutDashboard, Swords, Trophy, Award, User, Menu, X, LogOut, Settings, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import NotificationBell from "./NotificationBell";
@@ -16,11 +16,12 @@ export default function MobileNav() {
     // Check if user is admin
     const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
 
+    // Reordered: Home, Tourneys, Matches (center/highlighted), Rankings, More
     const navItems = [
-        { href: "/dashboard", icon: LayoutDashboard, label: "Home" },
-        { href: "/matches", icon: Swords, label: "Matches" },
-        { href: "/tournaments", icon: Trophy, label: "Tourneys" },
-        { href: "/rankings", icon: Award, label: "Rankings" },
+        { href: "/dashboard", icon: LayoutDashboard, label: "Home", highlight: false },
+        { href: "/tournaments", icon: Trophy, label: "Tourneys", highlight: false },
+        { href: "/matches", icon: Swords, label: "Matches", highlight: true },
+        { href: "/rankings", icon: Award, label: "Rankings", highlight: false },
     ];
 
     return (
@@ -33,14 +34,18 @@ export default function MobileNav() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg min-w-[60px] transition-colors",
-                                pathname === item.href
-                                    ? "text-indigo-400"
-                                    : "text-slate-400 active:text-white"
+                                "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[60px] transition-all",
+                                item.highlight && pathname === item.href
+                                    ? "gradient-primary shadow-lg scale-105"
+                                    : item.highlight
+                                        ? "bg-slate-800 text-white"
+                                        : pathname === item.href
+                                            ? "text-indigo-400"
+                                            : "text-slate-400 active:text-white"
                             )}
                         >
-                            <item.icon size={20} />
-                            <span className="text-[10px] font-medium">{item.label}</span>
+                            <item.icon size={item.highlight ? 22 : 20} className={item.highlight ? "text-white" : ""} />
+                            <span className={cn("text-[10px] font-medium", item.highlight && "text-white")}>{item.label}</span>
                         </Link>
                     ))}
                     <button
@@ -96,8 +101,9 @@ export default function MobileNav() {
                                     <span>Settings</span>
                                 </Link>
                             )}
-                            <div className="px-4 py-3">
+                            <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 active:bg-slate-700 transition-colors">
                                 <NotificationBell />
+                                <span>Notifications</span>
                             </div>
                             <button
                                 onClick={() => signOut({ callbackUrl: "/login" })}

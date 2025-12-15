@@ -91,7 +91,7 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                     {isAdmin && (
                         <button
                             onClick={() => setShowCreateModal(true)}
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/20 flex items-center gap-2 text-sm font-semibold transition-all hover:scale-105"
+                            className="btn-primary text-white px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 text-sm font-semibold transition-all hover:scale-105"
                         >
                             <Plus size={18} />
                             Create Tournament
