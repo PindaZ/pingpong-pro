@@ -172,9 +172,9 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
                     ) : (
                         <div className="space-y-4">
                             {isValidated && (
-                                <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg flex items-start gap-2">
+                                <div className="p-3 bg-primary/10 border-primary/20 rounded-lg flex items-start gap-2">
                                     <AlertTriangle size={16} className="text-primary mt-0.5 flex-shrink-0" />
-                                    <p className="text-xs text-indigo-300">
+                                    <p className="text-xs text-primary">
                                         Since this match is verified, any changes (including deletion) request approval from the opponent. ELO will be reverted and re-applied manually if needed by the system logic.
                                     </p>
                                 </div>
@@ -230,7 +230,7 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
                                 <button
                                     onClick={handleUpdate}
                                     disabled={loading}
-                                    className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                                    className="flex-1 py-3 btn-primary text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                                 >
                                     {loading && <Loader2 className="animate-spin" size={18} />}
                                     {isValidated ? "Request Changes" : "Save Changes"}

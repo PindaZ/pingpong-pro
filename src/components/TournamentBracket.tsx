@@ -105,7 +105,7 @@ export default function TournamentBracket({
                                 className={cn(
                                     "px-4 py-2 rounded-lg font-medium transition-all",
                                     seedingType === "RANDOM"
-                                        ? "bg-indigo-600 text-white"
+                                        ? "bg-primary text-white"
                                         : "bg-slate-800 text-slate-400 hover:bg-slate-700"
                                 )}
                             >
@@ -129,7 +129,7 @@ export default function TournamentBracket({
                         <button
                             onClick={handleGenerate}
                             disabled={generating}
-                            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all disabled:opacity-50"
+                            className="gradient-primary text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all disabled:opacity-50"
                         >
                             {generating && <Loader2 className="animate-spin" size={18} />}
                             Generate Bracket
@@ -459,7 +459,7 @@ function ManageMatchModal({
                             type="number"
                             value={score1}
                             onChange={(e) => setScore1(e.target.value)}
-                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-indigo-500 focus:outline-none"
+                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-center font-mono text-xl focus:border-primary focus:outline-none"
                             placeholder="0"
                         />
                     </div>
@@ -487,7 +487,7 @@ function ManageMatchModal({
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-all flex items-center justify-center gap-2"
+                        className="flex-1 py-3 rounded-xl btn-primary text-white font-bold transition-all flex items-center justify-center gap-2"
                     >
                         {loading ? <Loader2 className="animate-spin" /> : <><Shield size={18} /> Update</>}
                     </button>

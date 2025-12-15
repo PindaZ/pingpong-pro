@@ -112,11 +112,11 @@ export default function TournamentLogResultModal({
                         <button
                             onClick={() => handleSelectWinner(currentUserId)}
                             className={`relative group p-6 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-4 ${selectedWinnerId === currentUserId
-                                    ? "bg-indigo-600/10 border-indigo-500 shadow-lg shadow-indigo-500/20"
-                                    : "bg-slate-950/50 border-slate-800 hover:border-slate-600 hover:bg-slate-900"
+                                ? "bg-primary-10 border-primary-20"
+                                : "bg-slate-950/50 border-slate-800 hover:border-slate-600 hover:bg-slate-900"
                                 }`}
                         >
-                            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold overflow-hidden transition-transform group-hover:scale-105 ${selectedWinnerId === currentUserId ? "ring-4 ring-indigo-500/30" : ""
+                            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold overflow-hidden transition-transform group-hover:scale-105 ${selectedWinnerId === currentUserId ? "ring-4 ring-primary-20" : ""
                                 }`}>
                                 {me?.avatarUrl ? (
                                     <img src={me.avatarUrl} alt="Me" className="w-full h-full object-cover" />
@@ -141,11 +141,11 @@ export default function TournamentLogResultModal({
                         <button
                             onClick={() => handleSelectWinner(opponent?.id || "")}
                             className={`relative group p-6 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-4 ${selectedWinnerId === opponent?.id
-                                    ? "bg-indigo-600/10 border-indigo-500 shadow-lg shadow-indigo-500/20"
-                                    : "bg-slate-950/50 border-slate-800 hover:border-slate-600 hover:bg-slate-900"
+                                ? "bg-primary-10 border-primary-20"
+                                : "bg-slate-950/50 border-slate-800 hover:border-slate-600 hover:bg-slate-900"
                                 }`}
                         >
-                            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold overflow-hidden transition-transform group-hover:scale-105 ${selectedWinnerId === opponent?.id ? "ring-4 ring-indigo-500/30" : ""
+                            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold overflow-hidden transition-transform group-hover:scale-105 ${selectedWinnerId === opponent?.id ? "ring-4 ring-primary-20" : ""
                                 }`}>
                                 {opponent?.avatarUrl ? (
                                     <img src={opponent.avatarUrl} alt="Opponent" className="w-full h-full object-cover" />
@@ -170,7 +170,7 @@ export default function TournamentLogResultModal({
                     <button
                         onClick={handleSubmit}
                         disabled={loading || !selectedWinnerId}
-                        className="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40"
+                        className="w-full py-4 rounded-xl btn-primary shadow-primary"
                     >
                         {loading ? <Loader2 className="animate-spin" size={24} /> : "Submit Result"}
                     </button>

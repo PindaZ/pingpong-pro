@@ -13,7 +13,7 @@ export default function LandingPage() {
       {/* Background Effects */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px]" />
       </div>
 
       <div className="z-10 text-center space-y-8 px-4 max-w-2xl">
@@ -29,7 +29,7 @@ export default function LandingPage() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/dashboard"
-            className="group flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105"
+            className="group flex items-center gap-2 btn-primary px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105"
           >
             Start Playing
             <ArrowRight className="group-hover:translate-x-1 transition-transform" />

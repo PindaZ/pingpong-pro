@@ -183,7 +183,7 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
                                 type="text"
                                 value={primaryColor}
                                 onChange={(e) => setPrimaryColor(e.target.value)}
-                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                                 placeholder="#6366f1"
                             />
                         </div>
@@ -203,7 +203,7 @@ export default function SettingsClient({ isAdmin }: { isAdmin: boolean }) {
                                 type="text"
                                 value={secondaryColor}
                                 onChange={(e) => setSecondaryColor(e.target.value)}
-                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                                 placeholder="#8b5cf6"
                             />
                         </div>

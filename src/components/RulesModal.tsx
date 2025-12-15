@@ -120,7 +120,7 @@ export default function RulesModal({ isOpen, onClose }: RulesModalProps) {
                 <div className="p-6 pt-0">
                     <button
                         onClick={onClose}
-                        className="w-full py-3 gradient-primary hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl transition-all hover:scale-[1.02] active:scale-100"
+                        className="w-full py-3 gradient-primary text-white font-bold rounded-xl transition-all hover:scale-[1.02] active:scale-100"
                     >
                         Got it, let&apos;s play!
                     </button>

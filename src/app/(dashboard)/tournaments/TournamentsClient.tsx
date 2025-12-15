@@ -117,15 +117,15 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                         {featuredTournament && (
                             <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl">
                                 {/* Background Effects */}
-                                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/20 blur-[100px] rounded-full pointer-events-none" />
+                                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
                                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 blur-[100px] rounded-full pointer-events-none" />
 
                                 <div className="grid lg:grid-cols-2 gap-8 relative z-10 p-8 md:p-10">
                                     <div className="space-y-6">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-primary border border-indigo-500/20 text-sm font-semibold">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold">
                                             <span className="relative flex h-2 w-2">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/75 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                                             </span>
                                             {featuredTournament.status}
                                         </div>
@@ -245,7 +245,7 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                         className="hidden lg:flex items-center justify-center relative cursor-pointer"
                                         onClick={() => router.push(`/tournaments/${featuredTournament.id}`)}
                                     >
-                                        <div className="w-full max-w-md aspect-video bg-slate-950/50 rounded-2xl border border-slate-800 p-6 relative overflow-hidden group hover:border-indigo-500/50 transition-all">
+                                        <div className="w-full max-w-md aspect-video bg-slate-950/50 rounded-2xl border border-slate-800 p-6 relative overflow-hidden group hover:border-primary/50 transition-all">
                                             <div className="absolute inset-0 flex items-center justify-between px-10 opacity-30 group-hover:opacity-50 transition-opacity">
                                                 <div className="flex flex-col justify-around h-full py-4">
                                                     <div className="w-24 h-8 bg-slate-800 rounded mb-4" />
@@ -258,11 +258,11 @@ export default function TournamentsClient({ tournaments, currentUserId, isAdmin 
                                                     <div className="w-24 h-8 bg-slate-800 rounded" />
                                                 </div>
                                                 <div className="flex flex-col justify-center h-full">
-                                                    <div className="w-28 h-10 bg-indigo-600 rounded shadow-lg shadow-indigo-500/20" />
+                                                    <div className="w-28 h-10 bg-primary rounded shadow-lg shadow-primary/20" />
                                                 </div>
                                             </div>
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <span className="px-4 py-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg text-slate-300 font-medium text-sm group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 transition-all">
+                                                <span className="px-4 py-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg text-slate-300 font-medium text-sm group-hover:btn-primary transition-all">
                                                     View Bracket →
                                                 </span>
                                             </div>
@@ -324,7 +324,7 @@ function TournamentCard({
                                 ? "bg-slate-800 text-slate-400 border-slate-700/50"
                                 : tournament.status === "ONGOING"
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                    : "bg-indigo-500/10 text-primary border-indigo-500/20"
+                                    : "bg-primary/10 text-primary border-primary/20"
                         )}
                     >
                         {tournament.status}
@@ -368,7 +368,7 @@ function TournamentCard({
                             <button
                                 onClick={onJoin}
                                 disabled={joining}
-                                className="text-primary hover:text-indigo-300 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
+                                className="text-primary hover:text-primary/80 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
                             >
                                 {joining ? <Loader2 className="animate-spin" size={14} /> : null}
                                 Join <ArrowRight size={14} />

@@ -90,7 +90,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Winter Championship 2024"
-                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
 
@@ -103,7 +103,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Enter tournament details, rules, prizes..."
                                 rows={3}
-                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                             />
                         </div>
 
@@ -117,7 +117,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
                                     type="date"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
                                 />
                             </div>
                             <div>
@@ -128,7 +128,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
                                     type="date"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
                                 />
                             </div>
                         </div>
@@ -141,7 +141,7 @@ export default function CreateTournamentModal({ isOpen, onClose }: CreateTournam
                             <select
                                 value={maxParticipants}
                                 onChange={(e) => setMaxParticipants(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
                             >
                                 <option value="8">8 Players</option>
                                 <option value="16">16 Players</option>

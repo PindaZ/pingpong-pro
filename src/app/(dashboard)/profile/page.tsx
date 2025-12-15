@@ -58,7 +58,7 @@ export default async function ProfilePage() {
                 <div className="md:col-span-1 space-y-6">
                     <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
                         <div className="flex flex-col items-center text-center mb-6">
-                            <a href="#edit-profile" className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white text-3xl font-bold mb-4 ring-4 ring-indigo-500/20 overflow-hidden relative cursor-pointer hover:ring-indigo-500/50 hover:scale-105 transition-all group">
+                            <a href="#edit-profile" className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white text-3xl font-bold mb-4 ring-4 ring-primary/20 overflow-hidden relative cursor-pointer hover:ring-primary/50 hover:scale-105 transition-all group">
                                 {user.avatarUrl ? (
                                     <img
                                         src={user.avatarUrl}

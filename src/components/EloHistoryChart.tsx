@@ -107,7 +107,7 @@ export function EloHistoryChart({ data }: EloHistoryChartProps) {
                             {/* Visible Dot on Hover */}
                             <circle
                                 cx={p.x} cy={p.y} r="4"
-                                className={`transition-all duration-200 fill-slate-900 stroke-indigo-500 stroke-2 ${hoveredPoint === p ? "r-6 stroke-white fill-indigo-500" : "opacity-0 group-hover:opacity-100"}`}
+                                className={`transition-all duration-200 fill-slate-900 stroke-primary stroke-2 ${hoveredPoint === p ? "r-6 stroke-white fill-primary" : "opacity-0 group-hover:opacity-100"}`}
                             />
                             {/* Invisible interaction target */}
                             <rect

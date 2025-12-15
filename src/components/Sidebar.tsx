@@ -20,12 +20,12 @@ export default function Sidebar() {
         <aside className="w-72 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800/60 hidden md:flex flex-col relative z-50">
             {/* Decorative background glow */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-                <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-indigo-600/20 rounded-full blur-[80px]" />
+                <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-primary/20 rounded-full blur-[80px]" />
             </div>
 
             <div className="p-8 pb-4">
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
+                    <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
                         <Logo className="text-white animate-spin-slow w-6 h-6" />
                     </div>
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent tracking-tight">
@@ -54,7 +54,7 @@ export default function Sidebar() {
             <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="relative">
-                        <div className="w-10 h-10 rounded-full ring-2 ring-indigo-500/50 gradient-primary flex items-center justify-center text-white font-bold overflow-hidden">
+                        <div className="w-10 h-10 rounded-full ring-2 ring-primary/50 gradient-primary flex items-center justify-center text-white font-bold overflow-hidden">
                             {session?.user?.image ? (
                                 <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
