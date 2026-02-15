@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Settings, Palette, Save, Loader2, Check, RefreshCw, Users, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserManagement from "@/components/UserManagement";
+import OrganizationManagement from "@/components/OrganizationManagement";
 
 interface UserSettings {
     id: string;
@@ -22,7 +23,7 @@ const presetColors = [
 ];
 
 export default function SettingsClient({ isAdmin, currentUserRole }: { isAdmin: boolean; currentUserRole: string }) {
-    const [activeTab, setActiveTab] = useState<"appearance" | "admin">("appearance");
+    const [activeTab, setActiveTab] = useState<"appearance" | "admin" | "organization">("appearance");
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -149,6 +150,18 @@ export default function SettingsClient({ isAdmin, currentUserRole }: { isAdmin: 
                         <Shield size={16} />
                         Admin Panel
                     </button>
+                    <button
+                        onClick={() => setActiveTab("organization")}
+                        className={cn(
+                            "flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all",
+                            activeTab === "organization"
+                                ? "bg-slate-800 text-white shadow-lg"
+                                : "text-slate-400 hover:text-white"
+                        )}
+                    >
+                        <Users size={16} />
+                        Organization
+                    </button>
                 </div>
             )}
 
@@ -158,141 +171,145 @@ export default function SettingsClient({ isAdmin, currentUserRole }: { isAdmin: 
                 </div>
             )}
 
-            {activeTab === "appearance" ? (
-                /* Color Palette Section */
-                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
-                    <div className="flex items-center gap-2 mb-6">
-                        <Palette className="text-purple-400" size={20} />
-                        <h3 className="text-lg font-semibold text-white">Project Identity</h3>
-                    </div>
+            {
+                activeTab === "appearance" ? (
+                    /* Color Palette Section */
+                    <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Palette className="text-purple-400" size={20} />
+                            <h3 className="text-lg font-semibold text-white">Project Identity</h3>
+                        </div>
 
-                    {/* Preset Colors */}
-                    <div className="mb-6">
-                        <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-3">
-                            Presets
-                        </label>
-                        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-                            {presetColors.map((preset) => (
+                        {/* Preset Colors */}
+                        <div className="mb-6">
+                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-3">
+                                Presets
+                            </label>
+                            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                                {presetColors.map((preset) => (
+                                    <button
+                                        key={preset.name}
+                                        onClick={() => applyPreset(preset)}
+                                        className={cn(
+                                            "p-3 rounded-xl border transition-all hover:scale-105",
+                                            primaryColor === preset.primary && secondaryColor === preset.secondary
+                                                ? "border-white ring-2 ring-white/20"
+                                                : "border-slate-700 hover:border-slate-600"
+                                        )}
+                                    >
+                                        <div className="flex gap-1 mb-2">
+                                            <div
+                                                className="w-4 h-4 rounded-full"
+                                                style={{ backgroundColor: preset.primary }}
+                                            />
+                                            <div
+                                                className="w-4 h-4 rounded-full"
+                                                style={{ backgroundColor: preset.secondary }}
+                                            />
+                                        </div>
+                                        <span className="text-xs text-slate-400">{preset.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Custom Colors */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                                    Primary Color
+                                </label>
+                                <div className="flex items-center gap-2 md:gap-3">
+                                    <input
+                                        type="color"
+                                        value={primaryColor}
+                                        onChange={(e) => setPrimaryColor(e.target.value)}
+                                        className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent flex-shrink-0"
+                                    />
+                                    <input
+                                        type="text"
+                                        value={primaryColor}
+                                        onChange={(e) => setPrimaryColor(e.target.value)}
+                                        className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                        placeholder="#6366f1"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                                    Secondary Color
+                                </label>
+                                <div className="flex items-center gap-2 md:gap-3">
+                                    <input
+                                        type="color"
+                                        value={secondaryColor}
+                                        onChange={(e) => setSecondaryColor(e.target.value)}
+                                        className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent flex-shrink-0"
+                                    />
+                                    <input
+                                        type="text"
+                                        value={secondaryColor}
+                                        onChange={(e) => setSecondaryColor(e.target.value)}
+                                        className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                        placeholder="#8b5cf6"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Preview */}
+                        <div className="mb-6 p-4 bg-slate-950 rounded-xl border border-slate-800">
+                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-3">
+                                Preview
+                            </label>
+                            <div className="flex flex-col md:flex-row items-center gap-4">
                                 <button
-                                    key={preset.name}
-                                    onClick={() => applyPreset(preset)}
-                                    className={cn(
-                                        "p-3 rounded-xl border transition-all hover:scale-105",
-                                        primaryColor === preset.primary && secondaryColor === preset.secondary
-                                            ? "border-white ring-2 ring-white/20"
-                                            : "border-slate-700 hover:border-slate-600"
-                                    )}
+                                    className="w-full md:w-auto px-4 py-2 rounded-lg font-medium text-white transition-all"
+                                    style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
                                 >
-                                    <div className="flex gap-1 mb-2">
-                                        <div
-                                            className="w-4 h-4 rounded-full"
-                                            style={{ backgroundColor: preset.primary }}
-                                        />
-                                        <div
-                                            className="w-4 h-4 rounded-full"
-                                            style={{ backgroundColor: preset.secondary }}
-                                        />
-                                    </div>
-                                    <span className="text-xs text-slate-400">{preset.name}</span>
+                                    Primary Button
                                 </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Custom Colors */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
-                        <div>
-                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                Primary Color
-                            </label>
-                            <div className="flex items-center gap-2 md:gap-3">
-                                <input
-                                    type="color"
-                                    value={primaryColor}
-                                    onChange={(e) => setPrimaryColor(e.target.value)}
-                                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent flex-shrink-0"
-                                />
-                                <input
-                                    type="text"
-                                    value={primaryColor}
-                                    onChange={(e) => setPrimaryColor(e.target.value)}
-                                    className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                                    placeholder="#6366f1"
-                                />
+                                <div
+                                    className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0"
+                                    style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                                >
+                                    JD
+                                </div>
+                                <div className="w-full md:flex-1 h-2 rounded-full" style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }} />
                             </div>
                         </div>
-                        <div>
-                            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
-                                Secondary Color
-                            </label>
-                            <div className="flex items-center gap-2 md:gap-3">
-                                <input
-                                    type="color"
-                                    value={secondaryColor}
-                                    onChange={(e) => setSecondaryColor(e.target.value)}
-                                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-slate-700 cursor-pointer bg-transparent flex-shrink-0"
-                                />
-                                <input
-                                    type="text"
-                                    value={secondaryColor}
-                                    onChange={(e) => setSecondaryColor(e.target.value)}
-                                    className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                                    placeholder="#8b5cf6"
-                                />
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Preview */}
-                    <div className="mb-6 p-4 bg-slate-950 rounded-xl border border-slate-800">
-                        <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide mb-3">
-                            Preview
-                        </label>
-                        <div className="flex flex-col md:flex-row items-center gap-4">
+                        {/* Actions */}
+                        <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-3">
                             <button
-                                className="w-full md:w-auto px-4 py-2 rounded-lg font-medium text-white transition-all"
-                                style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                                onClick={resetToDefault}
+                                className="px-4 py-2.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
                             >
-                                Primary Button
+                                <RefreshCw size={16} />
+                                Reset
                             </button>
-                            <div
-                                className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0"
-                                style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                            <button
+                                onClick={handleSave}
+                                disabled={saving}
+                                className="flex-1 py-2.5 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-lg"
                             >
-                                JD
-                            </div>
-                            <div className="w-full md:flex-1 h-2 rounded-full" style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }} />
+                                {saving ? (
+                                    <Loader2 className="animate-spin" size={18} />
+                                ) : saved ? (
+                                    <Check size={18} />
+                                ) : (
+                                    <Save size={18} />
+                                )}
+                                {saved ? "Saved!" : "Save Changes"}
+                            </button>
                         </div>
                     </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-3">
-                        <button
-                            onClick={resetToDefault}
-                            className="px-4 py-2.5 rounded-lg bg-slate-800 text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
-                        >
-                            <RefreshCw size={16} />
-                            Reset
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            disabled={saving}
-                            className="flex-1 py-2.5 rounded-lg btn-primary text-white font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-lg"
-                        >
-                            {saving ? (
-                                <Loader2 className="animate-spin" size={18} />
-                            ) : saved ? (
-                                <Check size={18} />
-                            ) : (
-                                <Save size={18} />
-                            )}
-                            {saved ? "Saved!" : "Save Changes"}
-                        </button>
-                    </div>
-                </div>
-            ) : (
-                <UserManagement currentUserRole={currentUserRole} />
-            )}
-        </div>
+                ) : activeTab === "admin" ? (
+                    <UserManagement currentUserRole={currentUserRole} />
+                ) : (
+                    <OrganizationManagement />
+                )
+            }
+        </div >
     );
 }

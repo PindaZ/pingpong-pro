@@ -7,6 +7,7 @@ import { LayoutDashboard, Swords, Trophy, Award, User, Menu, X, LogOut, Settings
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import NotificationBell from "./NotificationBell";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export default function MobileNav() {
     const pathname = usePathname();
@@ -16,39 +17,63 @@ export default function MobileNav() {
     // Check if user is admin
     const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
 
-    // Reordered: Home, Tournaments, Matches (center/highlighted), Rankings, More
+    // Reordered: Home, Matches, Notifications (new), Rankings, More
     const navItems = [
         { href: "/dashboard", icon: LayoutDashboard, label: "Home", highlight: false },
-        { href: "/tournaments", icon: Trophy, label: "Tourney", highlight: false },
         { href: "/matches", icon: Swords, label: "Matches", highlight: true },
         { href: "/rankings", icon: Award, label: "Rank", highlight: false },
     ];
+
+    const { unreadCount } = useNotifications();
 
     return (
         <>
             {/* Bottom Navigation Bar */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 safe-area-bottom">
                 <div className="flex items-center justify-around h-16 px-2">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                "flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[56px] transition-all",
-                                item.highlight
-                                    ? "gradient-primary shadow-lg shadow-primary text-white"
-                                    : pathname === item.href
-                                        ? "text-primary"
-                                        : "text-slate-400 active:text-white"
-                            )}
-                        >
-                            <item.icon size={item.highlight ? 24 : 20} className={item.highlight ? "text-white" : ""} />
-                            <span className={cn("text-[10px] font-medium", item.highlight && "text-white")}>{item.label}</span>
-                        </Link>
-                    ))}
+                    {/* Home */}
+                    <Link
+                        href="/dashboard"
+                        className={cn(
+                            "flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl min-w-[50px] transition-all",
+                            pathname === "/dashboard" ? "text-primary" : "text-slate-400 active:text-white"
+                        )}
+                    >
+                        <LayoutDashboard size={20} />
+                        <span className="text-[10px] font-medium">Home</span>
+                    </Link>
+
+                    {/* Matches (Highlighted) */}
+                    <Link
+                        href="/matches"
+                        className="flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl min-w-[56px] gradient-primary shadow-lg shadow-primary text-white transition-all transform active:scale-95"
+                    >
+                        <Swords size={24} className="text-white" />
+                        <span className="text-[10px] font-medium text-white">Matches</span>
+                    </Link>
+
+                    {/* Notifications (Mobile Bell) */}
+                    <div className="flex flex-col items-center justify-center min-w-[50px]">
+                        <NotificationBell />
+                        <span className="text-[10px] font-medium text-slate-400 -mt-1">Alerts</span>
+                    </div>
+
+                    {/* Rankings */}
+                    <Link
+                        href="/rankings"
+                        className={cn(
+                            "flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl min-w-[50px] transition-all",
+                            pathname === "/rankings" ? "text-primary" : "text-slate-400 active:text-white"
+                        )}
+                    >
+                        <Award size={20} />
+                        <span className="text-[10px] font-medium">Rank</span>
+                    </Link>
+
+                    {/* More Menu */}
                     <button
                         onClick={() => setMenuOpen(true)}
-                        className="flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg min-w-[60px] text-slate-400 active:text-white"
+                        className="flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-lg min-w-[50px] text-slate-400 active:text-white"
                     >
                         <Menu size={20} />
                         <span className="text-[10px] font-medium">More</span>
@@ -88,6 +113,14 @@ export default function MobileNav() {
                             >
                                 <User size={20} />
                                 <span>My Profile</span>
+                            </Link>
+                            <Link
+                                href="/tournaments"
+                                onClick={() => setMenuOpen(false)}
+                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 active:bg-slate-700 transition-colors"
+                            >
+                                <Trophy size={20} />
+                                <span>Tournaments</span>
                             </Link>
                             {isAdmin && (
                                 <Link

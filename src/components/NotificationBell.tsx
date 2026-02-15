@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface Notification {
     id: string;
-    type: "MATCH_VALIDATION" | "CHALLENGE";
+    type: "MATCH_VALIDATION" | "CHALLENGE" | any;
     message: string;
     matchId: string;
     challengerId?: string;
@@ -16,33 +16,18 @@ interface Notification {
     createdAt: string;
 }
 
+import { useNotifications } from "@/hooks/useNotifications";
+
 export default function NotificationBell() {
     const router = useRouter();
     const [open, setOpen] = useState(false);
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { notifications, unreadCount, loading: hookLoading, refresh } = useNotifications();
+    const [localLoading, setLocalLoading] = useState(false);
 
-    useEffect(() => {
-        fetchNotifications();
-        // Poll every 30 seconds for new notifications
-        const interval = setInterval(fetchNotifications, 30000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const fetchNotifications = async () => {
-        try {
-            const res = await fetch("/api/notifications");
-            if (res.ok) {
-                const data = await res.json();
-                setNotifications(data.notifications || []);
-            }
-        } catch (error) {
-            console.error("Failed to fetch notifications:", error);
-        }
-    };
+    const loading = hookLoading || localLoading;
 
     const handleValidate = async (matchId: string, action: "confirm" | "reject") => {
-        setLoading(true);
+        setLocalLoading(true);
         try {
             const res = await fetch(`/api/matches/${matchId}`, {
                 method: "PATCH",
@@ -52,25 +37,25 @@ export default function NotificationBell() {
 
             if (res.ok) {
                 // Match validation automatically clears the notification (status changes from PENDING)
-                fetchNotifications();
+                refresh();
                 router.refresh();
             }
         } catch (error) {
             console.error("Validation failed:", error);
         } finally {
-            setLoading(false);
+            setLocalLoading(false);
         }
     };
 
     const handleChallengeResponse = async (matchId: string, action: "accept" | "decline") => {
-        setLoading(true);
+        setLocalLoading(true);
         try {
             if (action === "decline") {
                 // Delete the challenge match
                 await fetch(`/api/matches/${matchId}`, {
                     method: "DELETE",
                 });
-                fetchNotifications();
+                refresh();
             } else {
                 // Accept: redirect to matches page to log the result
                 setOpen(false);
@@ -79,11 +64,11 @@ export default function NotificationBell() {
         } catch (error) {
             console.error("Challenge response failed:", error);
         } finally {
-            setLoading(false);
+            setLocalLoading(false);
         }
     };
 
-    const unreadCount = notifications.filter((n) => !n.read).length;
+
 
     return (
         <div className="relative">

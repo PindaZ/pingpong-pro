@@ -24,13 +24,16 @@ export default function Sidebar() {
             </div>
 
             <div className="p-8 pb-4">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
-                        <Logo className="text-white animate-spin-slow w-6 h-6" />
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
+                            <Logo className="text-white animate-spin-slow w-6 h-6" />
+                        </div>
+                        <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent tracking-tight">
+                            PingPong<span className="text-primary">&apos;r</span>
+                        </h1>
                     </div>
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent tracking-tight">
-                        PingPong<span className="text-primary">&apos;r</span>
-                    </h1>
+                    <NotificationBell />
                 </div>
 
 
@@ -47,9 +50,7 @@ export default function Sidebar() {
                 )}
             </nav>
 
-            <div className="px-4 mb-2">
-                <NotificationBell />
-            </div>
+
 
             <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
