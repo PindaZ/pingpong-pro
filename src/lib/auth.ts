@@ -26,6 +26,17 @@ export const authOptions: NextAuthOptions = {
                     where: {
                         email: credentials.email,
                     },
+                    include: {
+                        memberships: {
+                            include: {
+                                organization: true,
+                            },
+                            orderBy: {
+                                joinedAt: 'desc',
+                            },
+                            take: 1,
+                        },
+                    },
                 });
 
                 if (!user || !user.password) {
@@ -41,12 +52,17 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
 
+                // Get the user's primary organization (most recent membership)
+                const primaryMembership = user.memberships[0];
+
                 return {
                     id: user.id,
                     email: user.email,
                     name: user.name,
                     role: user.role,
                     image: user.avatarUrl,
+                    activeOrganizationId: primaryMembership?.organizationId,
+                    orgRole: primaryMembership?.role,
                 };
             },
         }),
@@ -56,6 +72,8 @@ export const authOptions: NextAuthOptions = {
             if (token) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
+                session.user.activeOrganizationId = token.activeOrganizationId as string;
+                session.user.orgRole = token.orgRole as string;
             }
             return session;
         },
@@ -63,6 +81,8 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.id = user.id;
                 token.role = (user as any).role;
+                token.activeOrganizationId = (user as any).activeOrganizationId;
+                token.orgRole = (user as any).orgRole;
             }
             return token;
         }

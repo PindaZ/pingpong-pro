@@ -27,6 +27,35 @@ enum MatchStatus {
 // MODELS
 // ---------------------------------------------------------
 
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  inviteCode  String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     OrganizationMember[]
+  matches     Match[]
+  tournaments Tournament[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role           Role         @default(USER)
+  elo            Int          @default(1200)
+  joinedAt       DateTime     @default(now())
+
+  @@unique([userId, organizationId])
+  @@map("organization_members")
+}
+
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -64,6 +93,9 @@ model User {
   
   // User settings (colors, preferences)
   settings           UserSettings?
+  
+  // Organization memberships
+  memberships        OrganizationMember[]
 
   @@map("users")
 }
@@ -86,6 +118,10 @@ model UserSettings {
 
 model Match {
   id          String       @id @default(cuid())
+  
+  // Organization scope
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   
   // Metadata
   playedAt    DateTime     @default(now())
@@ -128,6 +164,7 @@ model Match {
   @@index([player2Id])
   @@index([winnerId])
   @@index([status])
+  @@index([organizationId])
   @@map("matches")
 }
 
@@ -151,6 +188,10 @@ model Tournament {
   name        String
   description String?  @db.Text
   
+  // Organization scope
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
   startDate   DateTime
   endDate     DateTime
   maxParticipants Int @default(32)
@@ -169,6 +210,7 @@ model Tournament {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@index([organizationId])
   @@map("tournaments")
 }
 
@@ -197,6 +239,9 @@ model RankingLog {
   
   matchId   String?
   match     Match?   @relation(fields: [matchId], references: [id])
+  
+  // Organization scope (for filtering history)
+  organizationId String?
   
   eloBefore Int
   eloAfter  Int

@@ -20,12 +20,13 @@ export default function RegisterPage() {
         const name = formData.get("name") as string;
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
+        const organizationCode = formData.get("organizationCode") as string;
 
         try {
             const res = await fetch("/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password }),
+                body: JSON.stringify({ name, email, password, organizationCode }),
             });
 
             if (!res.ok) {
@@ -91,6 +92,18 @@ export default function RegisterPage() {
                             required
                             className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                         />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium text-slate-400 uppercase tracking-wide ml-1">Organization Code</label>
+                        <input
+                            name="organizationCode"
+                            type="text"
+                            placeholder="Enter code from your ping pong table"
+                            required
+                            className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all uppercase"
+                        />
+                        <p className="text-xs text-slate-500 ml-1 mt-1">Ask your admin for the organization invite code</p>
                     </div>
 
                     <button
