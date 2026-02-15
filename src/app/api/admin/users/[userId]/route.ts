@@ -6,9 +6,10 @@ import { Role } from "@prisma/client";
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
+        const { userId } = await params;
         const session = await getServerSession(authOptions);
         if (!session) {
             return new NextResponse("Unauthorized", { status: 401 });
@@ -31,7 +32,7 @@ export async function PATCH(
 
         // Target user
         const targetUser = await db.user.findUnique({
-            where: { id: params.userId },
+            where: { id: userId },
         });
 
         if (!targetUser) {
@@ -55,7 +56,7 @@ export async function PATCH(
         }
 
         const updatedUser = await db.user.update({
-            where: { id: params.userId },
+            where: { id: userId },
             data: { role },
         });
 
@@ -68,9 +69,10 @@ export async function PATCH(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
+        const { userId } = await params;
         const session = await getServerSession(authOptions);
         if (!session) {
             return new NextResponse("Unauthorized", { status: 401 });
@@ -85,7 +87,7 @@ export async function DELETE(
         }
 
         const targetUser = await db.user.findUnique({
-            where: { id: params.userId },
+            where: { id: userId },
         });
 
         if (!targetUser) {
@@ -104,7 +106,7 @@ export async function DELETE(
         }
 
         await db.user.delete({
-            where: { id: params.userId },
+            where: { id: userId },
         });
 
         return new NextResponse(null, { status: 204 });
