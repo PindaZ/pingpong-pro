@@ -233,6 +233,7 @@ export async function PATCH(
                     eloBefore: player1Elo,
                     eloAfter: newPlayer1Elo,
                     change: newPlayer1Elo - player1Elo,
+                    organizationId: (session.user as any).activeOrganizationId,
                 },
             }),
             db.rankingLog.create({
@@ -242,6 +243,7 @@ export async function PATCH(
                     eloBefore: player2Elo,
                     eloAfter: newPlayer2Elo,
                     change: newPlayer2Elo - player2Elo,
+                    organizationId: (session.user as any).activeOrganizationId,
                 },
             }),
         ]);

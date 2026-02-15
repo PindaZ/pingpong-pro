@@ -77,6 +77,7 @@ export async function POST(
                 player2Id: bracketMatch.player2Id!,
                 tournamentId,
                 status: "PENDING", // Always requires validation in tournaments
+                organizationId: (session.user as any).activeOrganizationId,
                 games: {
                     create: validatedGames,
                 },
