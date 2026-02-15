@@ -13,10 +13,12 @@ export async function GET() {
         }
 
         // Get pending matches where user is player2 (the one who needs to validate/accept)
+        // and only for the active organization
         const pendingMatches = await db.match.findMany({
             where: {
                 player2Id: session.user.id,
                 status: "PENDING",
+                organizationId: (session.user as any).activeOrganizationId,
             },
             include: {
                 player1: { select: { name: true } },

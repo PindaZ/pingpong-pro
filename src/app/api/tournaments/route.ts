@@ -10,10 +10,10 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        // Optional: Check for admin role
-        // if (session.user.role !== 'ADMIN' && session.user.role !== 'SUPERADMIN') {
-        //   return new NextResponse("Forbidden", { status: 403 });
-        // }
+        // Check for admin/superadmin role
+        if (session.user.role !== 'ADMIN' && session.user.role !== 'SUPERADMIN') {
+            return new NextResponse("Forbidden", { status: 403 });
+        }
 
         const { name, startDate, endDate, maxParticipants } = await req.json();
 
@@ -28,6 +28,7 @@ export async function POST(req: Request) {
                 endDate: new Date(endDate),
                 maxParticipants: maxParticipants ? parseInt(maxParticipants) : 32,
                 creatorId: session.user.id,
+                organizationId: (session.user as any).activeOrganizationId,
             },
         });
 
@@ -40,7 +41,15 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const tournaments = await db.tournament.findMany({
+            where: {
+                organizationId: (session.user as any).activeOrganizationId
+            },
             include: {
                 creator: { select: { name: true } },
                 _count: {

@@ -42,6 +42,7 @@ export async function POST(req: Request) {
                     winnerId,
                     isValidated: false, // Mark as friendly (no ELO impact)
                     tournamentId: tournamentId || null,
+                    organizationId: (session.user as any).activeOrganizationId,
                     games: { create: formattedGames }
                 },
             });
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
                     player2Id: opponentId as string,
                     status: "PENDING",
                     tournamentId: tournamentId || null,
+                    organizationId: (session.user as any).activeOrganizationId,
                     games: { create: formattedGames }
                 },
             });
@@ -90,6 +92,7 @@ export async function POST(req: Request) {
                         winnerId,
                         isValidated: true, // Ranked match
                         tournamentId: tournamentId || null,
+                        organizationId: (session.user as any).activeOrganizationId,
                         games: { create: formattedGames }
                     },
                 });
@@ -99,8 +102,8 @@ export async function POST(req: Request) {
 
                 await tx.rankingLog.createMany({
                     data: [
-                        { userId: player1.id, matchId: match.id, eloBefore: p1Elo, eloAfter: newP1Elo, change: newP1Elo - p1Elo },
-                        { userId: player2.id, matchId: match.id, eloBefore: p2Elo, eloAfter: newP2Elo, change: newP2Elo - p2Elo }
+                        { userId: player1.id, matchId: match.id, eloBefore: p1Elo, eloAfter: newP1Elo, change: newP1Elo - p1Elo, organizationId: (session.user as any).activeOrganizationId },
+                        { userId: player2.id, matchId: match.id, eloBefore: p2Elo, eloAfter: newP2Elo, change: newP2Elo - p2Elo, organizationId: (session.user as any).activeOrganizationId }
                     ]
                 });
 
@@ -118,11 +121,18 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const { searchParams } = new URL(req.url);
         const userId = searchParams.get('userId');
         const status = searchParams.get('status');
 
-        let whereClause: any = {};
+        let whereClause: any = {
+            organizationId: (session.user as any).activeOrganizationId
+        };
 
         if (userId) {
             whereClause.OR = [

@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
                 player1Id: session.user.id, // Challenger
                 player2Id: challengedUserId, // Challenged
                 status: "PENDING",
+                organizationId: (session.user as any).activeOrganizationId,
                 // No winner, no games = indicates this is a challenge
             },
         });

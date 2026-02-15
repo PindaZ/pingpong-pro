@@ -15,5 +15,5 @@ export default async function SettingsPage() {
 
     const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";
 
-    return <SettingsClient isAdmin={isAdmin} />;
+    return <SettingsClient isAdmin={isAdmin} currentUserRole={user?.role || "USER"} />;
 }
