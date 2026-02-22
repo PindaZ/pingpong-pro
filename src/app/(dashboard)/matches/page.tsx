@@ -8,6 +8,12 @@ export default async function MatchesPage() {
     const session = await getServerSession(authOptions);
     if (!session) redirect("/login");
 
+    const user = await db.user.findUnique({
+        where: { id: session.user.id },
+    });
+
+    if (!user) redirect("/login");
+
     const matches = await db.match.findMany({
         orderBy: { playedAt: 'desc' },
         include: {

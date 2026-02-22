@@ -38,6 +38,7 @@ export default async function TournamentDetailPage({
     if (!tournament) notFound();
 
     const user = await db.user.findUnique({ where: { id: session.user.id } });
+    if (!user) redirect("/login");
     const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";
 
     // Serialize dates

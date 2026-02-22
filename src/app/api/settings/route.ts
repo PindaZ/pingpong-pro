@@ -11,6 +11,15 @@ export async function GET() {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
+        // Verify user exists
+        const user = await db.user.findUnique({
+            where: { id: session.user.id },
+        });
+
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 401 });
+        }
+
         // Get or create settings for user
         let settings = await db.userSettings.findUnique({
             where: { userId: session.user.id },

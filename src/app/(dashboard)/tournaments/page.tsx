@@ -12,6 +12,8 @@ export default async function TournamentsPage() {
         where: { id: session.user.id },
     });
 
+    if (!user) redirect("/login");
+
     const tournamentsData = await db.tournament.findMany({
         orderBy: { startDate: 'desc' },
         include: {
