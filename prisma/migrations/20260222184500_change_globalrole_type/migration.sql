@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "users" ALTER COLUMN "globalRole" DROP DEFAULT;
+ALTER TABLE "users" ALTER COLUMN "globalRole" SET DATA TYPE TEXT;
+ALTER TABLE "users" ALTER COLUMN "globalRole" SET DEFAULT 'USER';

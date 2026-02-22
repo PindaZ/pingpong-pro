@@ -69,7 +69,7 @@ model User {
   
   // Security & Permissions
   role          Role      @default(USER)
-  globalRole    Role      @default(USER)
+  globalRole    String?   @default("USER")
   
   // Stats
   elo           Int       @default(1200)
