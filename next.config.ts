@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   generateBuildId: async () => {
-    return process.env.BUILD_ID || "stable-build-id";
+    return "build-" + Date.now();
   },
 
   async headers() {
