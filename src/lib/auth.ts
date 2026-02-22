@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
 
                 // Hardcoded Superadmin logic
                 const isSuperadmin = user.email === "jeroendekker635@gmail.com";
-                const globalRole = isSuperadmin ? "SUPERADMIN" : user.globalRole;
+                const globalRole = isSuperadmin ? "SUPERADMIN" : (user.globalRole || "USER");
 
                 return {
                     id: user.id,
@@ -77,7 +77,7 @@ export const authOptions: NextAuthOptions = {
             if (token) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
-                session.user.globalRole = token.globalRole as string;
+                session.user.globalRole = token.globalRole as (string | null);
                 session.user.activeOrganizationId = token.activeOrganizationId as string;
                 session.user.orgRole = token.orgRole as string;
             }
