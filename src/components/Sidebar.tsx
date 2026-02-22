@@ -6,7 +6,6 @@ import { signOut, useSession } from "next-auth/react";
 import { Trophy, Swords, LayoutDashboard, User, LogOut, Disc, Award, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "./NotificationBell";
-
 import { Logo } from "@/components/Logo";
 
 export default function Sidebar() {
@@ -35,8 +34,6 @@ export default function Sidebar() {
                     </div>
                     <NotificationBell />
                 </div>
-
-
             </div>
 
             <nav className="flex-1 px-4 space-y-2">
@@ -49,8 +46,6 @@ export default function Sidebar() {
                     <NavItem href="/settings" icon={<Settings size={20} />} label="Settings" active={pathname === "/settings"} />
                 )}
             </nav>
-
-
 
             <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
