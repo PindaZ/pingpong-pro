@@ -19,7 +19,17 @@ export async function GET() {
             return new NextResponse("Forbidden", { status: 403 });
         }
 
+        const isSuperadmin = session.user.globalRole === Role.SUPERADMIN;
+        const orgId = (session.user as any).activeOrganizationId;
+
         const users = await db.user.findMany({
+            where: isSuperadmin ? {} : {
+                memberships: {
+                    some: {
+                        organizationId: orgId
+                    }
+                }
+            },
             select: {
                 id: true,
                 name: true,

@@ -46,9 +46,12 @@ export async function GET(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
+        const isSuperadmin = session.user.globalRole === 'SUPERADMIN';
+        const orgId = (session.user as any).activeOrganizationId;
+
         const tournaments = await db.tournament.findMany({
-            where: {
-                organizationId: (session.user as any).activeOrganizationId
+            where: isSuperadmin ? {} : {
+                organizationId: orgId
             },
             include: {
                 creator: { select: { name: true } },

@@ -24,6 +24,30 @@ export async function PATCH(
             return NextResponse.json({ error: "Invalid action" }, { status: 400 });
         }
 
+        // ------------------------------------------------------------------
+        // ACTION: ACCEPT_CHALLENGE (Move from PENDING to ACCEPTED)
+        // ------------------------------------------------------------------
+        if (action === "accept_challenge") {
+            const match = await db.match.findUnique({
+                where: { id },
+            });
+
+            if (!match) {
+                return NextResponse.json({ error: "Match not found" }, { status: 404 });
+            }
+
+            if (match.player2Id !== session.user.id) {
+                return NextResponse.json({ error: "Only the challenged player can accept" }, { status: 403 });
+            }
+
+            await db.match.update({
+                where: { id },
+                data: { status: "ACCEPTED" }
+            });
+
+            return NextResponse.json({ success: true, status: "ACCEPTED" });
+        }
+
         // Get the match
         const match = await db.match.findUnique({
             where: { id },
@@ -297,10 +321,11 @@ export async function PUT(
             return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
 
-        // PENDING or REJECTED: Direct Update
-        if (match.status === "PENDING" || match.status === "REJECTED") {
-            // Only creator (player1) can edit usually
-            if (match.player1Id !== session.user.id) {
+        // PENDING, ACCEPTED, or REJECTED: Direct Update / Result Logging
+        if (match.status === "PENDING" || match.status === "ACCEPTED" || match.status === "REJECTED") {
+            // Either participant can log result for ACCEPTED
+            // For PENDING/REJECTED, only creator usually edits
+            if (match.status !== "ACCEPTED" && match.player1Id !== session.user.id) {
                 return NextResponse.json({ error: "Only match creator can edit details" }, { status: 403 });
             }
 
@@ -310,19 +335,21 @@ export async function PUT(
                     data: games.map((game: any, index: number) => ({
                         matchId: id,
                         setNumber: index + 1,
-                        scorePlayer1: game.scorePlayer1,
-                        scorePlayer2: game.scorePlayer2,
+                        scorePlayer1: game.scorePlayer1 || game.p1 || 0,
+                        scorePlayer2: game.scorePlayer2 || game.p2 || 0,
                     })),
                 }),
                 db.match.update({
                     where: { id },
                     data: {
-                        player2Id: opponentId // Update opponent if passed
+                        player2Id: opponentId,
+                        status: "PENDING", // Move to PENDING for verification
+                        playedAt: new Date(), // Set time to when result was logged
                     }
                 })
             ]);
 
-            return NextResponse.json({ success: true, message: "Match updated successfully" });
+            return NextResponse.json({ success: true, message: "Match result logged successfully" });
         }
 
         // VALIDATED: Create Adjustment Request

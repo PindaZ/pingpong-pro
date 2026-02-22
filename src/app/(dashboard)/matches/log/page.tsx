@@ -1,44 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, User, Trophy, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function LogMatchPage() {
+function LogMatchContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    const [opponentId, setOpponentId] = useState("");
+    const initialOpponentId = searchParams.get("opponentId") || "";
+    const matchId = searchParams.get("matchId");
+
+    const [opponentId, setOpponentId] = useState(initialOpponentId);
     // Fixed 3 sets for now or dynamic? Let's do dynamic sets
     const [scores, setScores] = useState([{ p1: 0, p2: 0 }]);
-    const [currentUser, setCurrentUser] = useState<any>(null);
 
     useEffect(() => {
-        // Fetch users for opponent selection
-        // In a real app we'd also fetch current user to exclude them, 
-        // but the API could just return others or we filter client side if we know current ID.
-        // Ideally we fetch 'others'.
-        // For now, let's just fetch all and filter out 'me' if possible, or just list everyone (MVP).
-        // Actually, get /api/users returns everyone.
+        if (initialOpponentId) setOpponentId(initialOpponentId);
+    }, [initialOpponentId]);
 
-        // We also need to know 'who am I' to display properly.
-        // We can get this from session but easier to just assume the user knows who they are
-        // or fetch from an endpoint.
-
-        // Let's implement /api/users/me later or just rely on the user picking "Opponent" 
-        // and we assume "Player 1" is "Me".
-
+    useEffect(() => {
         const fetchUsers = async () => {
             setLoading(true);
             try {
                 const res = await fetch("/api/users");
                 const data = await res.json();
                 setUsers(data);
-                // We'll filter out the current user if we can, but we don't have ID here easily without session prop or another call.
-                // MVP: Just list all, user picks opponent.
             } catch (error) {
                 console.error(error);
             } finally {
@@ -69,12 +60,16 @@ export default function LogMatchPage() {
         setSubmitting(true);
 
         try {
-            const res = await fetch("/api/matches", {
-                method: "POST",
+            const url = matchId ? `/api/matches/${matchId}` : "/api/matches";
+            const method = matchId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method: method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     opponentId,
-                    scores
+                    scores,
+                    games: scores
                 })
             });
 
@@ -190,5 +185,17 @@ export default function LogMatchPage() {
 
             </div>
         </div>
+    );
+}
+
+export default function LogMatchPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center py-20">
+                <Loader2 className="animate-spin text-primary" size={32} />
+            </div>
+        }>
+            <LogMatchContent />
+        </Suspense>
     );
 }

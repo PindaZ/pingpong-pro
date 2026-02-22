@@ -10,13 +10,18 @@ export async function GET() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
+        const isSuperadmin = session.user.globalRole === 'SUPERADMIN';
         const orgId = (session.user as any).activeOrganizationId;
-        if (!orgId) {
+        
+        if (!orgId && !isSuperadmin) {
             return new NextResponse("No active organization", { status: 400 });
         }
 
+        // If Superadmin and no orgId in session, maybe they want a list? 
+        // For this specific route, we usually expect a single org.
+        
         const organization = await db.organization.findUnique({
-            where: { id: orgId },
+            where: { id: orgId || 'unknown' },
             include: {
                 _count: {
                     select: { members: true }

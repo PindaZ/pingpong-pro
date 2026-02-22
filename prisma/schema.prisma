@@ -19,6 +19,7 @@ enum Role {
 
 enum MatchStatus {
   PENDING   // Waiting for opponent confirmation
+  ACCEPTED  // Challenge accepted, waiting to be played
   VALIDATED // Confirmed and counted towards ELO
   REJECTED  // Declined by opponent
 }
@@ -68,6 +69,7 @@ model User {
   
   // Security & Permissions
   role          Role      @default(USER)
+  globalRole    Role      @default(USER)
   
   // Stats
   elo           Int       @default(1200)

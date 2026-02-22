@@ -57,9 +57,17 @@ export default function NotificationBell() {
                 });
                 refresh();
             } else {
-                // Accept: redirect to matches page to log the result
-                setOpen(false);
-                router.push(`/matches?challenge=${matchId}`);
+                // Accept: Update status to ACCEPTED
+                const res = await fetch(`/api/matches/${matchId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: "accept_challenge" }),
+                });
+
+                if (res.ok) {
+                    refresh();
+                    router.push(`/dashboard?challengeAccepted=${matchId}`);
+                }
             }
         } catch (error) {
             console.error("Challenge response failed:", error);
@@ -79,8 +87,8 @@ export default function NotificationBell() {
                 <Bell size={20} className={cn("text-slate-400 transition-colors", open && "text-white")} />
                 {unreadCount > 0 && (
                     <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/75 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary border-2 border-slate-950"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600 border-2 border-slate-950 shadow-[0_0_10px_rgba(225,29,72,0.5)]"></span>
                     </span>
                 )}
             </button>

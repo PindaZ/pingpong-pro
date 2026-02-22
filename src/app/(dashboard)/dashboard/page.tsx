@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TrendingUp, Award, Activity, Flame } from "lucide-react";
+import { TrendingUp, Award, Activity, Flame, Swords, Trophy } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -34,6 +34,9 @@ export default async function DashboardPage() {
     });
 
     const recentMatches = await db.match.findMany({
+        where: {
+            status: { in: ['VALIDATED', 'REJECTED'] }
+        },
         take: 5,
         orderBy: { playedAt: 'desc' },
         include: {
@@ -42,6 +45,23 @@ export default async function DashboardPage() {
             winner: true,
             games: true,
         }
+    });
+
+    // Fetch Active Challenges (ACCEPTED status)
+    const activeMissions = await db.match.findMany({
+        where: {
+            status: 'ACCEPTED',
+            OR: [
+                { player1Id: currentUser.id },
+                { player2Id: currentUser.id }
+            ]
+        },
+        include: {
+            player1: true,
+            player2: true,
+            games: true,
+        },
+        orderBy: { updatedAt: 'desc' }
     });
 
     // Fetch ELO History
@@ -151,6 +171,44 @@ export default async function DashboardPage() {
             <div className="w-full">
                 <EloHistoryChart data={eloHistoryData} />
             </div>
+
+            {/* Active Missions (ACCEPTED Challenges) */}
+            {activeMissions.length > 0 && (
+                <div className="space-y-6">
+                    <div className="flex items-center gap-2">
+                        <Swords className="text-primary" size={24} />
+                        <h3 className="font-bold text-xl text-white uppercase tracking-tight">Active Missions</h3>
+                        <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-black border border-primary/20 animate-pulse">
+                            TO_PLAY: {activeMissions.length}
+                        </span>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {activeMissions.map((mission) => {
+                            const isPlayer1 = mission.player1Id === currentUser.id;
+                            const opponent = isPlayer1 ? mission.player2 : mission.player1;
+                            return (
+                                <div key={mission.id} className="relative overflow-hidden rounded-2xl border border-primary/30 bg-primary/5 backdrop-blur-md p-5 flex items-center justify-between group hover:border-primary/50 transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-primary border border-primary/20">
+                                            <Trophy size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">CHALLENGE_ACCEPTED</p>
+                                            <p className="text-white font-bold uppercase tracking-tight">vs {opponent.name}</p>
+                                        </div>
+                                    </div>
+                                    <Link 
+                                        href={`/matches/log?opponentId=${opponent.id}&matchId=${mission.id}`}
+                                        className="px-4 py-2 bg-primary text-white text-[10px] font-black rounded-lg shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all uppercase tracking-widest"
+                                    >
+                                        LOG RESULT
+                                    </Link>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            )}
 
             <div className="grid gap-8 lg:grid-cols-3">
                 {/* Recent Matches */}

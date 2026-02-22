@@ -55,11 +55,16 @@ export const authOptions: NextAuthOptions = {
                 // Get the user's primary organization (most recent membership)
                 const primaryMembership = user.memberships[0];
 
+                // Hardcoded Superadmin logic
+                const isSuperadmin = user.email === "jeroendekker635@gmail.com";
+                const globalRole = isSuperadmin ? "SUPERADMIN" : user.globalRole;
+
                 return {
                     id: user.id,
                     email: user.email,
                     name: user.name,
                     role: user.role,
+                    globalRole: globalRole,
                     image: user.avatarUrl,
                     activeOrganizationId: primaryMembership?.organizationId,
                     orgRole: primaryMembership?.role,
@@ -72,6 +77,7 @@ export const authOptions: NextAuthOptions = {
             if (token) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string;
+                session.user.globalRole = token.globalRole as string;
                 session.user.activeOrganizationId = token.activeOrganizationId as string;
                 session.user.orgRole = token.orgRole as string;
             }
@@ -81,6 +87,7 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.id = user.id;
                 token.role = (user as any).role;
+                token.globalRole = (user as any).globalRole;
                 token.activeOrganizationId = (user as any).activeOrganizationId;
                 token.orgRole = (user as any).orgRole;
             }
