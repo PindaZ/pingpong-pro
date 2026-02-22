@@ -24,17 +24,14 @@ export default function LoginPage() {
 
         try {
             const res = await signIn("credentials", {
-                redirect: false,
                 email,
                 password,
+                callbackUrl: "/dashboard"
             });
 
             if (res?.error) {
                 setError("Invalid email or password");
                 setLoading(false);
-            } else {
-                router.push("/dashboard");
-                router.refresh();
             }
         } catch (err) {
             setError("Something went wrong");
