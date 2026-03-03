@@ -14,8 +14,8 @@ export default function MobileNav() {
     const { data: session } = useSession();
     const [menuOpen, setMenuOpen] = useState(false);
 
-    // Check if user is admin
-    const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
+    // Check if user is superadmin
+    const isSuperadmin = (session?.user as any)?.globalRole === "SUPERADMIN";
 
     const { unreadCount } = useNotifications();
 
@@ -23,29 +23,41 @@ export default function MobileNav() {
         <>
             {/* Bottom Navigation Bar */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 safe-area-bottom">
-                <div className="grid grid-cols-5 items-center h-16 px-2">
+                <div className="grid grid-cols-6 items-center h-16 px-1">
                     {/* Home */}
                     <Link
                         href="/dashboard"
                         className={cn(
-                            "flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl transition-all",
+                            "flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all",
                             pathname === "/dashboard" ? "text-primary" : "text-slate-400 active:text-white"
                         )}
                     >
-                        <LayoutDashboard size={20} />
-                        <span className="text-[10px] font-medium">Home</span>
+                        <LayoutDashboard size={18} />
+                        <span className="text-[9px] font-medium">Home</span>
+                    </Link>
+
+                    {/* Tournaments */}
+                    <Link
+                        href="/tournaments"
+                        className={cn(
+                            "flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all",
+                            pathname === "/tournaments" ? "text-primary" : "text-slate-400 active:text-white"
+                        )}
+                    >
+                        <Trophy size={18} />
+                        <span className="text-[9px] font-medium">Tourney</span>
                     </Link>
 
                     {/* Rankings */}
                     <Link
                         href="/rankings"
                         className={cn(
-                            "flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl transition-all",
+                            "flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all",
                             pathname === "/rankings" ? "text-primary" : "text-slate-400 active:text-white"
                         )}
                     >
-                        <Award size={20} />
-                        <span className="text-[10px] font-medium">Rank</span>
+                        <Award size={18} />
+                        <span className="text-[9px] font-medium">Rank</span>
                     </Link>
 
                     {/* Matches (Highlighted & Centered) */}
@@ -53,14 +65,14 @@ export default function MobileNav() {
                         <Link
                             href="/matches"
                             className={cn(
-                                "flex items-center justify-center w-14 h-14 rounded-2xl shadow-lg transition-all transform active:scale-95",
+                                "flex items-center justify-center w-12 h-12 rounded-2xl shadow-lg transition-all transform active:scale-95",
                                 pathname === "/matches" ? "gradient-primary shadow-primary text-white" : "bg-slate-800 text-slate-400"
                             )}
                         >
-                            <Swords size={28} />
+                            <Swords size={24} />
                         </Link>
                         <span className={cn(
-                            "text-[10px] font-medium mt-1",
+                            "text-[9px] font-medium mt-1",
                             pathname === "/matches" ? "text-primary" : "text-slate-400"
                         )}>Matches</span>
                     </div>
@@ -68,16 +80,16 @@ export default function MobileNav() {
                     {/* Notifications (Mobile Bell) */}
                     <div className="flex flex-col items-center justify-center gap-1">
                         <NotificationBell />
-                        <span className="text-[10px] font-medium text-slate-400 -mt-1">Alerts</span>
+                        <span className="text-[9px] font-medium text-slate-400 -mt-1">Alerts</span>
                     </div>
 
                     {/* More Menu */}
                     <button
                         onClick={() => setMenuOpen(true)}
-                        className="flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-lg text-slate-400 active:text-white"
+                        className="flex flex-col items-center justify-center gap-1 py-2 rounded-lg text-slate-400 active:text-white"
                     >
-                        <Menu size={20} />
-                        <span className="text-[10px] font-medium">More</span>
+                        <Menu size={18} />
+                        <span className="text-[9px] font-medium">More</span>
                     </button>
                 </div>
             </nav>
@@ -96,9 +108,9 @@ export default function MobileNav() {
                                         session?.user?.name?.charAt(0)?.toUpperCase() || "?"
                                     )}
                                 </div>
-                                <div>
-                                    <p className="text-white font-medium">{session?.user?.name || "Loading..."}</p>
-                                    <p className="text-xs text-slate-400">{session?.user?.email}</p>
+                                <div className="min-w-0">
+                                    <p className="text-white font-medium truncate">{session?.user?.name || "Loading..."}</p>
+                                    <p className="text-xs text-slate-400 truncate">{session?.user?.email}</p>
                                 </div>
                             </div>
                             <button onClick={() => setMenuOpen(false)} className="p-2 text-slate-400 hover:text-white">
@@ -115,22 +127,17 @@ export default function MobileNav() {
                                 <User size={20} />
                                 <span>My Profile</span>
                             </Link>
-                            <Link
-                                href="/tournaments"
-                                onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 active:bg-slate-700 transition-colors"
-                            >
-                                <Trophy size={20} />
-                                <span>Tournaments</span>
-                            </Link>
-                            <Link
-                                href="/settings"
-                                onClick={() => setMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 active:bg-slate-700 transition-colors"
-                            >
-                                <Settings size={20} />
-                                <span>Settings</span>
-                            </Link>
+
+                            {isSuperadmin && (
+                                <Link
+                                    href="/settings"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 active:bg-slate-700 transition-colors"
+                                >
+                                    <Settings size={20} />
+                                    <span>Settings</span>
+                                </Link>
+                            )}
                             <button
                                 onClick={() => signOut({ callbackUrl: "/login" })}
                                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-slate-800 active:bg-slate-700 w-full transition-colors"
@@ -142,6 +149,7 @@ export default function MobileNav() {
                     </div>
                 </div>
             )}
+
         </>
     );
 }

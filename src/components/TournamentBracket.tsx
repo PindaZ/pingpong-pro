@@ -322,14 +322,15 @@ function PlayerSlot({
             <div className="flex items-center gap-2 min-w-0">
                 {player ? (
                     <>
-                        <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0">
+                        <Link href={`/profile/${player.id}`} className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold overflow-hidden flex-shrink-0 hover:ring-2 hover:ring-primary/50 transition-all shrink-0">
                             {player.avatarUrl ? (
                                 <img src={player.avatarUrl} alt="" className="w-full h-full object-cover" />
                             ) : (
                                 player.name?.charAt(0)?.toUpperCase() || "?"
                             )}
-                        </div>
+                        </Link>
                         <div className="min-w-0">
+
                             <Link href={`/profile/${player.id}`} className={cn("text-sm font-medium truncate hover:underline", isWinner ? "text-emerald-400" : "text-white")}>
                                 {player.name || "TBD"}
                             </Link>

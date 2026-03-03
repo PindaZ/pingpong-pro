@@ -49,6 +49,7 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
     if (!isOpen || !match) return null;
 
     const isPending = match.status === 'PENDING';
+    const isAccepted = match.status === 'ACCEPTED';
     const isValidated = match.status === 'VALIDATED';
 
     const addGame = () => {
@@ -187,24 +188,57 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
                         </div>
 
                         <div>
-                            <div className="flex items-center justify-between mb-2">
-                                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide">Scores</label>
-                                <button onClick={addGame} disabled={games.length >= 5} className="text-xs text-primary flex items-center gap-1 disabled:opacity-50"><Plus size={14} /> Add Game</button>
+                            <div className="flex items-center justify-between mb-4 mt-2">
+                                <div className="space-y-1">
+                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest">Game Scores</label>
+                                    {isAccepted && (
+                                        <p className="text-[11px] text-primary/80 font-medium">Enter game scores below to log the match result.</p>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={addGame}
+                                    disabled={games.length >= 5}
+                                    className="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 disabled:opacity-50"
+                                >
+                                    <Plus size={14} /> Add Game
+                                </button>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3 p-4 bg-slate-950/50 rounded-2xl border border-slate-800/50">
                                 {games.map((game, index) => (
-                                    <div key={index} className="flex items-center gap-2">
-                                        <span className="text-xs text-slate-500 w-6">#{index + 1}</span>
-                                        <input type="number" value={game.p1} onChange={(e) => updateGame(index, "p1", e.target.value)} className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center" placeholder="You" />
-                                        <span className="text-slate-500">-</span>
-                                        <input type="number" value={game.p2} onChange={(e) => updateGame(index, "p2", e.target.value)} className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center" placeholder="Opp" />
+                                    <div key={index} className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
+                                            <span className="text-[10px] font-black text-slate-500">#{index + 1}</span>
+                                        </div>
+                                        <div className="flex-1 flex items-center gap-2">
+                                            <input
+                                                type="number"
+                                                value={game.p1}
+                                                onChange={(e) => updateGame(index, "p1", e.target.value)}
+                                                className="flex-1 px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-center font-bold focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder:text-slate-600"
+                                                placeholder="You"
+                                            />
+                                            <div className="w-4 h-[2px] bg-slate-800" />
+                                            <input
+                                                type="number"
+                                                value={game.p2}
+                                                onChange={(e) => updateGame(index, "p2", e.target.value)}
+                                                className="flex-1 px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-center font-bold focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder:text-slate-600"
+                                                placeholder="Opp"
+                                            />
+                                        </div>
                                         {games.length > 1 && (
-                                            <button onClick={() => removeGame(index)} className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400"><Trash2 size={16} /></button>
+                                            <button
+                                                onClick={() => removeGame(index)}
+                                                className="p-2.5 hover:bg-red-500/10 rounded-xl text-slate-500 hover:text-red-400 transition-all active:scale-90"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         )}
                                     </div>
                                 ))}
                             </div>
                         </div>
+
 
                         {validationWarnings.length > 0 && (
                             <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm">

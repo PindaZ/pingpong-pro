@@ -209,8 +209,8 @@ function MatchCard({
                         "flex items-center gap-3 md:gap-5 flex-1 min-w-0",
                         p1Winner && "winner"
                     )}>
-                        <div className="relative shrink-0">
-                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl gradient-primary flex items-center justify-center text-white text-lg md:text-2xl font-black overflow-hidden avatar-ring border-2 border-white/10 shadow-lg">
+                        <Link href={`/profile/${match.player1Id}`} className="relative shrink-0 group/avatar">
+                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl gradient-primary flex items-center justify-center text-white text-lg md:text-2xl font-black overflow-hidden avatar-ring border-2 border-white/10 shadow-lg group-hover/avatar:ring-primary/50 transition-all">
                                 {match.player1?.avatarUrl ? (
                                     <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
                                 ) : (
@@ -218,11 +218,11 @@ function MatchCard({
                                 )}
                             </div>
                             {p1Winner && !isPending && !isRejected && (
-                                <div className="absolute -top-2 -left-2 bg-emerald-500 text-white p-1 rounded-lg shadow-lg border border-white/20">
+                                <div className="absolute -top-2 -left-2 bg-emerald-500 text-white p-1 rounded-lg shadow-lg border border-white/20 z-10">
                                     <CheckCircle2 size={12} fill="currentColor" fillOpacity={0.2} />
                                 </div>
                             )}
-                        </div>
+                        </Link>
                         <div className="flex flex-col min-w-0">
                             <Link href={`/profile/${match.player1Id}`} className={cn(
                                 "text-sm md:text-lg font-bold truncate transition-colors hover:text-primary",
@@ -271,8 +271,8 @@ function MatchCard({
                             </Link>
                             <span className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider truncate">Player 2</span>
                         </div>
-                        <div className="relative shrink-0">
-                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl gradient-primary flex items-center justify-center text-white text-lg md:text-2xl font-black overflow-hidden avatar-ring border-2 border-white/10 shadow-lg">
+                        <Link href={`/profile/${match.player2Id}`} className="relative shrink-0 group/avatar">
+                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl gradient-primary flex items-center justify-center text-white text-lg md:text-2xl font-black overflow-hidden avatar-ring border-2 border-white/10 shadow-lg group-hover/avatar:ring-primary/50 transition-all">
                                 {match.player2?.avatarUrl ? (
                                     <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
                                 ) : (
@@ -280,11 +280,11 @@ function MatchCard({
                                 )}
                             </div>
                             {p2Winner && !isPending && !isRejected && (
-                                <div className="absolute -top-2 -right-2 bg-emerald-500 text-white p-1 rounded-lg shadow-lg border border-white/20">
+                                <div className="absolute -top-2 -right-2 bg-emerald-500 text-white p-1 rounded-lg shadow-lg border border-white/20 z-10">
                                     <CheckCircle2 size={12} fill="currentColor" fillOpacity={0.2} />
                                 </div>
                             )}
-                        </div>
+                        </Link>
                     </div>
 
                 </div>

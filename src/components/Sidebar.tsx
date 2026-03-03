@@ -12,8 +12,8 @@ export default function Sidebar() {
     const pathname = usePathname();
     const { data: session } = useSession();
 
-    // Check if user is admin
-    const isAdmin = (session?.user as any)?.role === "ADMIN" || (session?.user as any)?.role === "SUPERADMIN";
+    // Check if user is superadmin
+    const isSuperadmin = (session?.user as any)?.globalRole === "SUPERADMIN";
 
     return (
         <aside className="w-72 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800/60 hidden md:flex flex-col relative z-50">
@@ -42,10 +42,11 @@ export default function Sidebar() {
                 <NavItem href="/tournaments" icon={<Trophy size={20} />} label="Tournaments" active={pathname === "/tournaments"} />
                 <NavItem href="/rankings" icon={<Award size={20} />} label="Rankings" active={pathname === "/rankings"} />
                 <NavItem href="/profile" icon={<User size={20} />} label="My Profile" active={pathname === "/profile"} />
-                {isAdmin && (
+                {isSuperadmin && (
                     <NavItem href="/settings" icon={<Settings size={20} />} label="Settings" active={pathname === "/settings"} />
                 )}
             </nav>
+
 
             <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 shadow-xl">
                 <div className="flex items-center gap-3 mb-4">
