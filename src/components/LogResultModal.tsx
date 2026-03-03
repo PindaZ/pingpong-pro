@@ -75,10 +75,10 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
 
     const addGame = () => {
         const status = getMatchStatus(games);
-        if (status.isComplete) {
-            setValidationWarnings(["Match is already decided. A third game is not possible."]);
-            return;
-        }
+        // Changed to advice, no longer strictly blocking
+        // if (status.isComplete) {
+        //     setValidationWarnings(["Match implies a decided format. Additional games might skew Best-of logic."]);
+        // }
         if (games.length < 5) {
             setGames([...games, { p1: "", p2: "" }]);
             setValidationWarnings([]);
@@ -181,32 +181,12 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
             }
         }
 
+        // Optional format warnings (Best of 3/5 logic is now advisory, not enforced)
         const status = getMatchStatus(validGames);
         if (!status.isComplete) {
-            setError(`Match is incomplete. A format of exactly Best of ${status.requiredWins * 2 - 1} is required to declare a definitive winner.`);
-            return;
-        }
-
-        let extraGames = false;
-        let runningP1 = 0;
-        let runningP2 = 0;
-        for (let i = 0; i < validGames.length; i++) {
-            const s1 = parseInt(validGames[i].p1);
-            const s2 = parseInt(validGames[i].p2);
-            if (s1 > s2) runningP1++;
-            else runningP2++;
-
-            if (runningP1 >= status.requiredWins || runningP2 >= status.requiredWins) {
-                if (i < validGames.length - 1) {
-                    extraGames = true;
-                }
-                break;
-            }
-        }
-
-        if (extraGames) {
-            setError("Invalid format: Games were played after a match winner was already decided.");
-            return;
+            // we no longer block submission for incomplete matches
+            // setError(`Match is incomplete. A format of exactly Best of ${status.requiredWins * 2 - 1} is required to declare a definitive winner.`);
+            // return;
         }
 
         setLoading(true);

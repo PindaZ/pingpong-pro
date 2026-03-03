@@ -18,7 +18,11 @@ interface Notification {
 
 import { useNotifications } from "@/hooks/useNotifications";
 
-export default function NotificationBell() {
+interface NotificationBellProps {
+    variant?: "default" | "menuItem";
+}
+
+export default function NotificationBell({ variant = "default" }: NotificationBellProps = {}) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const { notifications, unreadCount, loading: hookLoading, refresh } = useNotifications();
@@ -79,19 +83,36 @@ export default function NotificationBell() {
 
 
     return (
-        <div className="relative">
-            <button
-                onClick={() => setOpen(!open)}
-                className="relative p-2.5 rounded-xl hover:bg-slate-800 transition-all active:scale-95"
-            >
-                <Bell size={20} className={cn("text-slate-400 transition-colors", open && "text-white")} />
-                {unreadCount > 0 && (
-                    <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600 border-2 border-slate-950 shadow-[0_0_10px_rgba(225,29,72,0.5)]"></span>
-                    </span>
-                )}
-            </button>
+        <div className={cn(variant === "default" && "relative")}>
+            {variant === "default" ? (
+                <button
+                    onClick={() => setOpen(!open)}
+                    className="relative p-2.5 rounded-xl hover:bg-slate-800 transition-all active:scale-95"
+                >
+                    <Bell size={20} className={cn("text-slate-400 transition-colors", open && "text-white")} />
+                    {unreadCount > 0 && (
+                        <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600 border-2 border-slate-950 shadow-[0_0_10px_rgba(225,29,72,0.5)]"></span>
+                        </span>
+                    )}
+                </button>
+            ) : (
+                <button
+                    onClick={() => setOpen(!open)}
+                    className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 active:bg-slate-700 transition-colors"
+                >
+                    <div className="flex items-center gap-3">
+                        <Bell size={20} />
+                        <span>Notifications</span>
+                    </div>
+                    {unreadCount > 0 && (
+                        <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full overflow-hidden">
+                            {unreadCount}
+                        </span>
+                    )}
+                </button>
+            )}
 
             {open && typeof document !== 'undefined' && createPortal(
                 <>

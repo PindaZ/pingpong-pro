@@ -23,7 +23,7 @@ export default function MobileNav() {
         <>
             {/* Bottom Navigation Bar */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 safe-area-bottom">
-                <div className="grid grid-cols-6 items-center h-16 px-1">
+                <div className="grid grid-cols-5 items-center h-16 px-1">
                     {/* Home */}
                     <Link
                         href="/dashboard"
@@ -60,28 +60,17 @@ export default function MobileNav() {
                         <span className="text-[9px] font-medium">Rank</span>
                     </Link>
 
-                    {/* Matches (Highlighted & Centered) */}
-                    <div className="flex flex-col items-center justify-center relative -top-4">
-                        <Link
-                            href="/matches"
-                            className={cn(
-                                "flex items-center justify-center w-12 h-12 rounded-2xl shadow-lg transition-all transform active:scale-95",
-                                pathname === "/matches" ? "gradient-primary shadow-primary text-white" : "bg-slate-800 text-slate-400"
-                            )}
-                        >
-                            <Swords size={24} />
-                        </Link>
-                        <span className={cn(
-                            "text-[9px] font-medium mt-1",
-                            pathname === "/matches" ? "text-primary" : "text-slate-400"
-                        )}>Matches</span>
-                    </div>
-
-                    {/* Notifications (Mobile Bell) */}
-                    <div className="flex flex-col items-center justify-center gap-1">
-                        <NotificationBell />
-                        <span className="text-[9px] font-medium text-slate-400 -mt-1">Alerts</span>
-                    </div>
+                    {/* Matches */}
+                    <Link
+                        href="/matches"
+                        className={cn(
+                            "flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all",
+                            pathname === "/matches" ? "text-primary" : "text-slate-400 active:text-white"
+                        )}
+                    >
+                        <Swords size={18} />
+                        <span className="text-[9px] font-medium">Matches</span>
+                    </Link>
 
                     {/* More Menu */}
                     <button
@@ -119,6 +108,8 @@ export default function MobileNav() {
                         </div>
 
                         <div className="space-y-2">
+                            <NotificationBell variant="menuItem" />
+
                             <Link
                                 href="/profile"
                                 onClick={() => setMenuOpen(false)}

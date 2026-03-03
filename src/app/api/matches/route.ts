@@ -39,27 +39,9 @@ export async function POST(req: Request) {
         }
 
         const requiredWins = (games.length > 3 || Math.max(player1Wins, player2Wins) >= 3 || (player1Wins === 2 && player2Wins === 2)) ? 3 : 2;
-        if (player1Wins < requiredWins && player2Wins < requiredWins) {
-            return new NextResponse(`Match is incomplete. Format of Best of ${requiredWins * 2 - 1} required.`, { status: 400 });
-        }
-
-        // Check for extra games played
-        let runningP1 = 0;
-        let runningP2 = 0;
-        let hasExtraGames = false;
-        for (let i = 0; i < games.length; i++) {
-            const p1 = parseInt(games[i].p1);
-            const p2 = parseInt(games[i].p2);
-            if (p1 > p2) runningP1++; else runningP2++;
-            if ((runningP1 >= requiredWins || runningP2 >= requiredWins) && i < games.length - 1) {
-                hasExtraGames = true;
-                break;
-            }
-        }
-
-        if (hasExtraGames) {
-            return new NextResponse("Invalid format: Games were played after a match winner was already decided.", { status: 400 });
-        }
+        // Commented out to allow logging a single game
+        // if (player1Wins < requiredWins && player2Wins < requiredWins) { ... }
+        // if (hasExtraGames) { ... }
 
         const formattedGames = games.map((s: any, i: number) => {
             return {

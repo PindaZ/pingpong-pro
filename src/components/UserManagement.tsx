@@ -143,114 +143,103 @@ export default function UserManagement({ currentUserRole }: { currentUserRole: s
             )}
 
             <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="border-b border-slate-800 bg-slate-950/30">
-                                <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">User</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Role</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-800/50">
-                            {users.map((user) => (
-                                <tr key={user.id} className="hover:bg-white/5 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-white font-bold ring-2 ring-slate-800 group-hover:ring-primary/30 transition-all overflow-hidden flex-shrink-0">
-                                                {user.avatarUrl ? (
-                                                    <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    user.name?.charAt(0) || user.email.charAt(0)
-                                                )}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-sm font-semibold text-white truncate">
-                                                    {user.name || "Unnamed User"}
-                                                </p>
-                                                <p className="text-xs text-slate-500 truncate">{user.email}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-slate-700 bg-slate-800/50">
-                                            {user.role === "SUPERADMIN" ? (
-                                                <>
-                                                    <ShieldCheck size={12} className="text-amber-400" />
-                                                    <span className="text-amber-400">Owner</span>
-                                                </>
-                                            ) : user.role === "ADMIN" ? (
-                                                <>
-                                                    <Shield size={12} className="text-primary" />
-                                                    <span className="text-primary">Admin</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Users size={12} className="text-slate-400" />
-                                                    <span className="text-slate-400">User</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2 outline-none">
-                                            {user.role !== "SUPERADMIN" && (
-                                                <>
-                                                    {currentUserRole === "SUPERADMIN" && (
-                                                        <button
-                                                            onClick={() => updateRole(user.id, user.role === "ADMIN" ? "USER" : "ADMIN")}
-                                                            disabled={actioning === user.id}
-                                                            className={cn(
-                                                                "p-2 rounded-lg transition-all",
-                                                                user.role === "ADMIN"
-                                                                    ? "hover:bg-slate-700 text-slate-400 hover:text-white"
-                                                                    : "hover:bg-primary/20 text-slate-400 hover:text-primary"
-                                                            )}
-                                                            title={user.role === "ADMIN" ? "Revoke Admin" : "Make Admin"}
-                                                        >
-                                                            {actioning === user.id ? (
-                                                                <Loader2 size={16} className="animate-spin" />
-                                                            ) : user.role === "ADMIN" ? (
-                                                                <ShieldCheck size={16} />
-                                                            ) : (
-                                                                <Shield size={16} />
-                                                            )}
-                                                        </button>
+                <div className="divide-y divide-slate-800/50">
+                    {users.map((user) => (
+                        <div key={user.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-white/5 transition-colors group">
+                            {/* User Info */}
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white font-bold ring-2 ring-slate-800 group-hover:ring-primary/30 transition-all overflow-hidden flex-shrink-0">
+                                    {user.avatarUrl ? (
+                                        <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        user.name?.charAt(0) || user.email.charAt(0)
+                                    )}
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="text-sm font-semibold text-white truncate">
+                                        {user.name || "Unnamed User"}
+                                    </p>
+                                    <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                                </div>
+                            </div>
+
+                            {/* Role and Actions */}
+                            <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto border-t border-slate-800/50 sm:border-t-0 pt-3 sm:pt-0 mt-1 sm:mt-0">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border border-slate-700 bg-slate-800/50 shrink-0">
+                                    {user.role === "SUPERADMIN" ? (
+                                        <>
+                                            <ShieldCheck size={12} className="text-amber-400" />
+                                            <span className="text-amber-400">Owner</span>
+                                        </>
+                                    ) : user.role === "ADMIN" ? (
+                                        <>
+                                            <Shield size={12} className="text-primary" />
+                                            <span className="text-primary">Admin</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Users size={12} className="text-slate-400" />
+                                            <span className="text-slate-400">User</span>
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="flex items-center justify-end gap-1 outline-none">
+                                    {user.role !== "SUPERADMIN" && (
+                                        <>
+                                            {currentUserRole === "SUPERADMIN" && (
+                                                <button
+                                                    onClick={() => updateRole(user.id, user.role === "ADMIN" ? "USER" : "ADMIN")}
+                                                    disabled={actioning === user.id}
+                                                    className={cn(
+                                                        "p-2 rounded-lg transition-all",
+                                                        user.role === "ADMIN"
+                                                            ? "bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white"
+                                                            : "bg-primary/10 hover:bg-primary/20 text-slate-400 hover:text-primary"
                                                     )}
-
-                                                    <button
-                                                        onClick={() => resetPassword(user.id)}
-                                                        disabled={actioning === user.id || (user.role === "ADMIN" && currentUserRole !== "SUPERADMIN")}
-                                                        className="p-2 rounded-lg hover:bg-amber-500/20 text-slate-400 hover:text-amber-400 transition-all disabled:opacity-30"
-                                                        title="Reset Password"
-                                                    >
-                                                        {actioning === user.id ? (
-                                                            <Loader2 size={16} className="animate-spin" />
-                                                        ) : (
-                                                            <KeyRound size={16} />
-                                                        )}
-                                                    </button>
-
-                                                    <button
-                                                        onClick={() => deleteUser(user.id)}
-                                                        disabled={actioning === user.id || (user.role === "ADMIN" && currentUserRole !== "SUPERADMIN")}
-                                                        className="p-2 rounded-lg hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all disabled:opacity-30"
-                                                        title="Delete Member"
-                                                    >
-                                                        {actioning === user.id ? (
-                                                            <Loader2 size={16} className="animate-spin" />
-                                                        ) : (
-                                                            <Trash2 size={16} />
-                                                        )}
-                                                    </button>
-                                                </>
+                                                    title={user.role === "ADMIN" ? "Revoke Admin" : "Make Admin"}
+                                                >
+                                                    {actioning === user.id ? (
+                                                        <Loader2 size={16} className="animate-spin" />
+                                                    ) : user.role === "ADMIN" ? (
+                                                        <ShieldCheck size={16} />
+                                                    ) : (
+                                                        <Shield size={16} />
+                                                    )}
+                                                </button>
                                             )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+
+                                            <button
+                                                onClick={() => resetPassword(user.id)}
+                                                disabled={actioning === user.id || (user.role === "ADMIN" && currentUserRole !== "SUPERADMIN")}
+                                                className="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-500/70 hover:text-amber-400 transition-all disabled:opacity-30"
+                                                title="Reset Password"
+                                            >
+                                                {actioning === user.id ? (
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                ) : (
+                                                    <KeyRound size={16} />
+                                                )}
+                                            </button>
+
+                                            <button
+                                                onClick={() => deleteUser(user.id)}
+                                                disabled={actioning === user.id || (user.role === "ADMIN" && currentUserRole !== "SUPERADMIN")}
+                                                className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500/70 hover:text-red-400 transition-all disabled:opacity-30"
+                                                title="Delete Member"
+                                            >
+                                                {actioning === user.id ? (
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                ) : (
+                                                    <Trash2 size={16} />
+                                                )}
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
