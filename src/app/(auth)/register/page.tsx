@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
 export default function RegisterPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [registeredName, setRegisteredName] = useState("");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -34,12 +36,63 @@ export default function RegisterPage() {
                 throw new Error(msg);
             }
 
-            router.push("/login?registered=true");
+            setRegisteredName(name.split(" ")[0]);
+            setSuccess(true);
+
+            // Redirect to login after 2.5 seconds so the user can see the success state
+            setTimeout(() => {
+                router.push("/login?registered=true");
+            }, 2500);
         } catch (err: any) {
             setError(err.message || "Something went wrong");
             setLoading(false);
         }
     };
+
+    // Success state — shown after registration
+    if (success) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-100 p-4 relative overflow-hidden">
+                <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-emerald-600/20 rounded-full blur-[100px] pointer-events-none" />
+                <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+
+                <div className="w-full max-w-md bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-10 rounded-3xl shadow-2xl relative z-10 flex flex-col items-center text-center">
+                    {/* Animated checkmark */}
+                    <div className="relative mb-6">
+                        <div className="w-20 h-20 rounded-full bg-emerald-500/15 border-2 border-emerald-500/40 flex items-center justify-center animate-pulse">
+                            <CheckCircle2 className="text-emerald-400 w-10 h-10" strokeWidth={1.5} />
+                        </div>
+                        <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-xl" />
+                    </div>
+
+                    <h1 className="text-2xl font-bold text-white mb-2">
+                        Welcome, {registeredName}! 🎉
+                    </h1>
+                    <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                        Your account has been created successfully.<br />
+                        Redirecting you to sign in…
+                    </p>
+
+                    {/* Progress bar */}
+                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-emerald-500 rounded-full"
+                            style={{
+                                animation: "growWidth 2.5s linear forwards",
+                            }}
+                        />
+                    </div>
+
+                    <style>{`
+                        @keyframes growWidth {
+                            from { width: 0%; }
+                            to { width: 100%; }
+                        }
+                    `}</style>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-100 p-4 relative overflow-hidden">

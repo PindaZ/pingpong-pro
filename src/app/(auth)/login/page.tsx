@@ -1,17 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [justRegistered, setJustRegistered] = useState(false);
+
+    useEffect(() => {
+        if (searchParams.get("registered") === "true") {
+            setJustRegistered(true);
+        }
+    }, [searchParams]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -53,6 +60,17 @@ export default function LoginPage() {
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Welcome Back</h1>
                     <p className="text-slate-400 text-sm mt-1">Sign in to continue your streak</p>
                 </div>
+
+                {/* Registration success banner */}
+                {justRegistered && (
+                    <div className="mb-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3">
+                        <CheckCircle2 className="text-emerald-400 shrink-0 mt-0.5" size={18} />
+                        <div>
+                            <p className="text-emerald-400 text-sm font-semibold">Account created successfully!</p>
+                            <p className="text-emerald-500/70 text-xs mt-0.5">Sign in below to start playing.</p>
+                        </div>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {error && (
@@ -96,7 +114,7 @@ export default function LoginPage() {
                 </form>
 
                 <div className="mt-8 pt-6 border-t border-slate-800 text-center text-sm text-slate-500">
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <Link href="/register" className="text-primary font-semibold hover:text-primary transition-colors">
                         Register for free
                     </Link>
