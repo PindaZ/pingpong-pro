@@ -59,6 +59,10 @@ export default function MobileNav() {
                         >
                             <Swords size={28} />
                         </Link>
+                        <span className={cn(
+                            "text-[10px] font-medium mt-1",
+                            pathname === "/matches" ? "text-primary" : "text-slate-400"
+                        )}>Matches</span>
                     </div>
 
                     {/* Notifications (Mobile Bell) */}

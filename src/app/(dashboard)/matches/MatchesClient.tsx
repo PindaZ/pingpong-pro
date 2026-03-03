@@ -201,10 +201,10 @@ function MatchCard({
 
                     {/* Player 1 - Mobile Compact, Desktop Full */}
                     <div className={cn(
-                        "flex items-center gap-3 md:gap-5 flex-1",
+                        "flex items-center gap-3 md:gap-5 flex-1 min-w-0",
                         p1Winner && "winner"
                     )}>
-                        <div className="relative">
+                        <div className="relative shrink-0">
                             <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl gradient-primary flex items-center justify-center text-white text-lg md:text-2xl font-black overflow-hidden avatar-ring border-2 border-white/10 shadow-lg">
                                 {match.player1?.avatarUrl ? (
                                     <img src={match.player1.avatarUrl} alt="" className="w-full h-full object-cover" />
@@ -226,16 +226,16 @@ function MatchCard({
                                 {match.player1?.name || "Player 1"}
                                 {match.player1Id === currentUserId && <span className="text-primary text-[10px] md:text-xs ml-1.5 font-black uppercase opacity-80">(You)</span>}
                             </Link>
-                            <span className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider">Player 1</span>
+                            <span className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider truncate">Player 1</span>
                         </div>
                     </div>
 
                     {/* Scores Section */}
-                    <div className="flex flex-col items-center gap-2 shrink-0 px-2 md:px-0">
+                    <div className="flex flex-col items-center gap-2 shrink-0 px-1 md:px-0">
                         <div className="flex items-center gap-1.5 md:gap-3">
                             {match.games?.length > 0 ? (
                                 match.games.map((g: any, i: number) => (
-                                    <div key={i} className="score-box group">
+                                    <div key={i} className="score-box group shrink-0 scale-90 md:scale-100">
                                         <span className={cn(g.scorePlayer1 > g.scorePlayer2 ? "text-white" : "text-slate-500")}>
                                             {g.scorePlayer1}
                                         </span>
@@ -246,14 +246,14 @@ function MatchCard({
                                     </div>
                                 ))
                             ) : (
-                                <div className="h-14 flex items-center text-slate-700 font-black italic tracking-tighter text-xl">VS</div>
+                                <div className="h-10 md:h-14 flex items-center text-slate-700 font-black italic tracking-tighter text-base md:text-xl">VS</div>
                             )}
                         </div>
                     </div>
 
                     {/* Player 2 - Mobile Compact, Desktop Full */}
                     <div className={cn(
-                        "flex items-center gap-3 md:gap-5 flex-1 justify-end text-right",
+                        "flex items-center gap-3 md:gap-5 flex-1 min-w-0 justify-end text-right",
                         p2Winner && "winner"
                     )}>
                         <div className="flex flex-col min-w-0">
@@ -264,9 +264,9 @@ function MatchCard({
                                 {match.player2Id === currentUserId && <span className="text-primary text-[10px] md:text-xs mr-1.5 font-black uppercase opacity-80">(You)</span>}
                                 {match.player2?.name || "Player 2"}
                             </Link>
-                            <span className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider">Player 2</span>
+                            <span className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider truncate">Player 2</span>
                         </div>
-                        <div className="relative">
+                        <div className="relative shrink-0">
                             <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl gradient-primary flex items-center justify-center text-white text-lg md:text-2xl font-black overflow-hidden avatar-ring border-2 border-white/10 shadow-lg">
                                 {match.player2?.avatarUrl ? (
                                     <img src={match.player2.avatarUrl} alt="" className="w-full h-full object-cover" />
@@ -281,6 +281,7 @@ function MatchCard({
                             )}
                         </div>
                     </div>
+
                 </div>
 
                 {/* Footer Section: Metadata & Actions */}
