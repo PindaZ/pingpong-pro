@@ -141,3 +141,61 @@ body {
     min-width: 44px;
   }
 }
+
+/* ============================================
+   PREMIUM UI UTILITIES
+   ============================================ */
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-hover:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45), 0 0 20px 0 rgba(99, 102, 241, 0.1);
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status-badge {
+  @apply px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border;
+}
+
+.status-verified {
+  @apply bg-emerald-500/10 text-emerald-400 border-emerald-500/20;
+}
+
+.status-pending {
+  @apply bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse;
+}
+
+.status-rejected {
+  @apply bg-red-500/10 text-red-400 border-red-500/20;
+}
+
+.score-box {
+  @apply flex flex-col items-center justify-center w-10 h-14 rounded-xl bg-slate-950/80 border border-slate-800 text-sm font-bold font-mono transition-colors group-hover:border-slate-700;
+}
+
+.avatar-ring {
+  @apply ring-2 ring-offset-2 ring-offset-slate-950 ring-transparent transition-all duration-300;
+}
+
+.winner .avatar-ring {
+  @apply ring-emerald-500/50;
+}
