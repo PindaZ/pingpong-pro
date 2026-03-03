@@ -165,18 +165,21 @@ function MatchCard({
     onEdit: () => void;
 }) {
     const isPending = match.status === "PENDING";
+    const isAccepted = match.status === "ACCEPTED";
     const isValidated = match.status === "VALIDATED";
     const isFriendly = match.isValidated === false && isValidated;
     const isRejected = match.status === "REJECTED";
 
-    const canValidate = isPending && match.player2Id === currentUserId;
+    const canValidate = isPending && match.player2Id === currentUserId && match.games?.length > 0;
+    const canAcceptChallenge = isPending && match.player2Id === currentUserId && match.games?.length === 0;
+
     const hasAdjustment = !!match.adjustmentRequest;
     const canApproveAdjustment = isValidated && hasAdjustment && (match.player1Id === currentUserId || match.player2Id === currentUserId);
     const requestedBy = match.adjustmentRequest?.requestedBy;
     const isRequester = requestedBy === currentUserId;
     const showAdjustmentApproval = canApproveAdjustment && !isRequester;
 
-    const canEdit = (isPending && match.player1Id === currentUserId) || (isValidated && (match.player1Id === currentUserId || match.player2Id === currentUserId));
+    const canEdit = isAccepted || (isPending && match.player1Id === currentUserId) || (isValidated && (match.player1Id === currentUserId || match.player2Id === currentUserId));
 
     const p1Winner = match.winnerId === match.player1Id;
     const p2Winner = match.winnerId === match.player2Id;
@@ -184,15 +187,17 @@ function MatchCard({
     return (
         <div className={cn(
             "glass-card glass-card-hover group relative rounded-3xl overflow-hidden",
-            isPending && "ring-1 ring-amber-500/20"
+            isPending && "ring-1 ring-amber-500/20",
+            isAccepted && "ring-1 ring-primary/30 bg-primary/5"
         )}>
             {/* Left Status Bar */}
             <div className={cn(
                 "absolute left-0 top-0 bottom-0 w-1.5 transition-colors",
                 isRejected ? "bg-red-500" :
                     isPending ? "bg-amber-500" :
-                        isFriendly ? "bg-amber-400" :
-                            "bg-emerald-500"
+                        isAccepted ? "bg-primary" :
+                            isFriendly ? "bg-amber-400" :
+                                "bg-emerald-500"
             )} />
 
             <div className="flex flex-col p-4 md:p-6 gap-6">
@@ -299,7 +304,11 @@ function MatchCard({
                             </span>
                         ) : isPending ? (
                             <span className="status-badge status-pending flex items-center gap-1">
-                                <Clock size={10} /> Pending
+                                <Clock size={10} /> {match.games?.length === 0 ? "Challenged" : "Pending"}
+                            </span>
+                        ) : isAccepted ? (
+                            <span className="status-badge bg-primary/10 text-primary border-primary/20 flex items-center gap-1">
+                                <Swords size={10} /> Ready to Play
                             </span>
                         ) : isFriendly ? (
                             <span className="status-badge bg-amber-500/10 text-amber-400 border-amber-500/20 flex items-center gap-1">
@@ -361,14 +370,48 @@ function MatchCard({
                             </div>
                         ) : null}
 
-                        {/* Edit Button */}
+                        {canAcceptChallenge ? (
+                            <div className="flex items-center gap-2">
+                                {validating ? (
+                                    <Loader2 className="animate-spin text-slate-400" size={18} />
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => onValidate(match.id, "accept_challenge" as any)}
+                                            className="px-4 py-2 bg-primary hover:bg-indigo-500 text-white text-[10px] font-black rounded-xl shadow-lg shadow-primary/20 transition-all uppercase tracking-widest"
+                                        >
+                                            Accept
+                                        </button>
+                                        <button
+                                            onClick={() => onValidate(match.id, "reject")}
+                                            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black rounded-xl shadow-lg shadow-red-500/20 transition-all uppercase tracking-widest"
+                                        >
+                                            Decline
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ) : null}
+
+                        {/* Edit/Log Button */}
                         {canEdit && !hasAdjustment && (
                             <button
                                 onClick={onEdit}
-                                className="p-2.5 text-slate-500 hover:text-white hover:bg-white/10 rounded-xl transition-all"
-                                title="Adjust Match"
+                                className={cn(
+                                    "px-4 py-2 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-2",
+                                    isAccepted
+                                        ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+                                        : "text-slate-500 hover:text-white hover:bg-white/10"
+                                )}
+                                title={isAccepted ? "Log Result" : "Adjust Match"}
                             >
-                                <Edit3 size={16} />
+                                {isAccepted ? (
+                                    <>
+                                        <Plus size={14} /> Log Result
+                                    </>
+                                ) : (
+                                    <Edit3 size={16} />
+                                )}
                             </button>
                         )}
                     </div>
