@@ -43,18 +43,8 @@ jobs:
 
       - name: Trigger Dokploy deployment (production)
         if: github.ref_name == 'main'
-        run: |
-          curl -X POST "${{ secrets.DOKPLOY_PROD_URL }}/api/application.deploy" \
-            -H "accept: application/json" \
-            -H "Content-Type: application/json" \
-            -H "x-api-key: ${{ secrets.DOKPLOY_PROD_API_KEY }}" \
-            -d "{\"applicationId\": \"${{ secrets.DOKPLOY_PROD_APP_ID }}\"}"
+        run: curl --fail -X POST "${{ secrets.DOKPLOY_PROD_WEBHOOK_URL }}"
 
       - name: Trigger Dokploy deployment (staging)
         if: github.ref_name == 'staging'
-        run: |
-          curl -X POST "${{ secrets.DOKPLOY_STAGING_URL }}/api/application.deploy" \
-            -H "accept: application/json" \
-            -H "Content-Type: application/json" \
-            -H "x-api-key: ${{ secrets.DOKPLOY_STAGING_API_KEY }}" \
-            -d "{\"applicationId\": \"${{ secrets.DOKPLOY_STAGING_APP_ID }}\"}"
+        run: curl --fail -X POST "${{ secrets.DOKPLOY_STAGING_WEBHOOK_URL }}"
