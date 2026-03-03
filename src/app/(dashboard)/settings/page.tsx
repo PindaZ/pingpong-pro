@@ -15,7 +15,9 @@ export default async function SettingsPage() {
 
     if (!user) redirect("/login");
 
-    const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";
+    const globalRole = (session.user as any).globalRole;
+    const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN" || globalRole === "SUPERADMIN";
+    const currentUserRole = globalRole === "SUPERADMIN" ? "SUPERADMIN" : (user?.role || "USER");
 
-    return <SettingsClient isAdmin={isAdmin} currentUserRole={user?.role || "USER"} />;
+    return <SettingsClient isAdmin={isAdmin} currentUserRole={currentUserRole} />;
 }
