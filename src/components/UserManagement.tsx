@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Shield, ShieldCheck, Trash2, Loader2, Check, X, AlertTriangle } from "lucide-react";
+import { Users, Shield, ShieldCheck, Trash2, Loader2, Check, X, AlertTriangle, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface User {
@@ -84,6 +84,36 @@ export default function UserManagement({ currentUserRole }: { currentUserRole: s
             setActioning(null);
         }
     };
+
+    const resetPassword = async (userId: string) => {
+        const newPassword = prompt("Enter new password (min 6 characters):");
+        if (!newPassword || newPassword.length < 6) {
+            if (newPassword !== null) setError("Password must be at least 6 characters");
+            return;
+        }
+
+        setActioning(userId);
+        setError("");
+        try {
+            const res = await fetch(`/api/admin/users/${userId}/password`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ newPassword }),
+            });
+
+            if (res.ok) {
+                alert("Password reset successfully!");
+            } else {
+                const data = await res.text();
+                setError(data || "Failed to reset password");
+            }
+        } catch (err) {
+            setError("Action failed");
+        } finally {
+            setActioning(null);
+        }
+    };
+
 
     if (loading) {
         return (
@@ -187,6 +217,19 @@ export default function UserManagement({ currentUserRole }: { currentUserRole: s
                                                             )}
                                                         </button>
                                                     )}
+
+                                                    <button
+                                                        onClick={() => resetPassword(user.id)}
+                                                        disabled={actioning === user.id || (user.role === "ADMIN" && currentUserRole !== "SUPERADMIN")}
+                                                        className="p-2 rounded-lg hover:bg-amber-500/20 text-slate-400 hover:text-amber-400 transition-all disabled:opacity-30"
+                                                        title="Reset Password"
+                                                    >
+                                                        {actioning === user.id ? (
+                                                            <Loader2 size={16} className="animate-spin" />
+                                                        ) : (
+                                                            <KeyRound size={16} />
+                                                        )}
+                                                    </button>
 
                                                     <button
                                                         onClick={() => deleteUser(user.id)}

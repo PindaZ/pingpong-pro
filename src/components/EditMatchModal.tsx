@@ -25,6 +25,28 @@ function validateGameScore(p1: number, p2: number): string | null {
     return null;
 }
 
+function getMatchStatus(games: { p1: string; p2: string }[]): { p1Wins: number; p2Wins: number; isComplete: boolean; requiredWins: number } {
+    let p1Wins = 0;
+    let p2Wins = 0;
+
+    for (const game of games) {
+        if (game.p1 !== "" && game.p2 !== "") {
+            const s1 = parseInt(game.p1);
+            const s2 = parseInt(game.p2);
+            if (!isNaN(s1) && !isNaN(s2) && !validateGameScore(s1, s2)) {
+                if (s1 > s2) p1Wins++;
+                else if (s2 > s1) p2Wins++;
+            }
+        }
+    }
+
+    const requiredWins = (games.length > 3 || Math.max(p1Wins, p2Wins) >= 3 || (p1Wins === 2 && p2Wins === 2)) ? 3 : 2;
+    const isComplete = p1Wins >= requiredWins || p2Wins >= requiredWins;
+
+    return { p1Wins, p2Wins, isComplete, requiredWins };
+}
+
+
 export default function EditMatchModal({ isOpen, onClose, match, users, currentUserId }: EditMatchModalProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -79,6 +101,48 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
         });
         setValidationWarnings(warnings);
     };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number, field: "p1" | "p2") => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (field === "p1") {
+                document.getElementById(`edit-game-${index}-p2`)?.focus();
+            } else if (field === "p2") {
+                if (index < games.length - 1) {
+                    document.getElementById(`edit-game-${index + 1}-p1`)?.focus();
+                } else {
+                    addGame();
+                    setTimeout(() => document.getElementById(`edit-game-${index + 1}-p1`)?.focus(), 50);
+                }
+            }
+        }
+    };
+
+    const onInputChange = (index: number, field: "p1" | "p2", value: string) => {
+        updateGame(index, field, value);
+        if (value.length >= 2) {
+            if (field === "p1") {
+                document.getElementById(`edit-game-${index}-p2`)?.focus();
+            } else if (field === "p2" && index < games.length - 1) {
+                document.getElementById(`edit-game-${index + 1}-p1`)?.focus();
+            }
+        }
+    };
+
+    const quickFill = (index: number, p1Score: number, p2Score: number) => {
+        const newGames = [...games];
+        newGames[index].p1 = p1Score.toString();
+        newGames[index].p2 = p2Score.toString();
+        setGames(newGames);
+
+        if (index < games.length - 1) {
+            document.getElementById(`edit-game-${index + 1}-p1`)?.focus();
+        } else if (!getMatchStatus(newGames).isComplete) {
+            setGames([...newGames, { p1: "", p2: "" }]);
+            setTimeout(() => document.getElementById(`edit-game-${index + 1}-p1`)?.focus(), 50);
+        }
+    };
+
 
     const handleUpdate = async () => {
         if (!opponentId) return setError("Select an opponent");
@@ -203,37 +267,49 @@ export default function EditMatchModal({ isOpen, onClose, match, users, currentU
                                     <Plus size={14} /> Add Game
                                 </button>
                             </div>
-                            <div className="space-y-3 p-4 bg-slate-950/50 rounded-2xl border border-slate-800/50">
+                            <div className="space-y-4 p-4 bg-slate-950/50 rounded-2xl border border-slate-800/50">
                                 {games.map((game, index) => (
-                                    <div key={index} className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
-                                            <span className="text-[10px] font-black text-slate-500">#{index + 1}</span>
+                                    <div key={index} className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
+                                                <span className="text-[10px] font-black text-slate-500">#{index + 1}</span>
+                                            </div>
+                                            <div className="flex-1 flex items-center gap-2">
+                                                <input
+                                                    id={`edit-game-${index}-p1`}
+                                                    type="number"
+                                                    value={game.p1}
+                                                    onChange={(e) => onInputChange(index, "p1", e.target.value)}
+                                                    onKeyDown={(e) => handleKeyDown(e, index, "p1")}
+                                                    className="flex-1 px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-center font-bold focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder:text-slate-600 shadow-inner"
+                                                    placeholder="You"
+                                                />
+                                                <div className="w-4 h-[2px] bg-slate-800" />
+                                                <input
+                                                    id={`edit-game-${index}-p2`}
+                                                    type="number"
+                                                    value={game.p2}
+                                                    onChange={(e) => onInputChange(index, "p2", e.target.value)}
+                                                    onKeyDown={(e) => handleKeyDown(e, index, "p2")}
+                                                    className="flex-1 px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-center font-bold focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder:text-slate-600 shadow-inner"
+                                                    placeholder="Opp"
+                                                />
+                                            </div>
+                                            {games.length > 1 && (
+                                                <button
+                                                    onClick={() => removeGame(index)}
+                                                    className="p-2.5 hover:bg-red-500/10 rounded-xl text-slate-500 hover:text-red-400 transition-all active:scale-90"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            )}
                                         </div>
-                                        <div className="flex-1 flex items-center gap-2">
-                                            <input
-                                                type="number"
-                                                value={game.p1}
-                                                onChange={(e) => updateGame(index, "p1", e.target.value)}
-                                                className="flex-1 px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-center font-bold focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder:text-slate-600"
-                                                placeholder="You"
-                                            />
-                                            <div className="w-4 h-[2px] bg-slate-800" />
-                                            <input
-                                                type="number"
-                                                value={game.p2}
-                                                onChange={(e) => updateGame(index, "p2", e.target.value)}
-                                                className="flex-1 px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white text-center font-bold focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder:text-slate-600"
-                                                placeholder="Opp"
-                                            />
+                                        <div className="flex pl-11 gap-2 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
+                                            <button onClick={() => quickFill(index, 11, 0)} className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-primary text-slate-400">11-0</button>
+                                            <button onClick={() => quickFill(index, 11, 5)} className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-primary text-slate-400">11-5</button>
+                                            <button onClick={() => quickFill(index, 0, 11)} className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-red-400 text-slate-400">0-11</button>
+                                            <button onClick={() => quickFill(index, 5, 11)} className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-red-400 text-slate-400">5-11</button>
                                         </div>
-                                        {games.length > 1 && (
-                                            <button
-                                                onClick={() => removeGame(index)}
-                                                className="p-2.5 hover:bg-red-500/10 rounded-xl text-slate-500 hover:text-red-400 transition-all active:scale-90"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
-                                        )}
                                     </div>
                                 ))}
                             </div>

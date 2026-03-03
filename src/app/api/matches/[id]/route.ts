@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
+import { calculateElo } from "@/lib/elo";
 
 // Handle actions on matches (Confirm, Reject, Approve Adjustment)
 export async function PATCH(
@@ -42,7 +43,7 @@ export async function PATCH(
 
             await db.match.update({
                 where: { id },
-                data: { status: "ACCEPTED" }
+                data: { status: "ACCEPTED" as any }
             });
 
             return NextResponse.json({ success: true, status: "ACCEPTED" });
@@ -219,19 +220,18 @@ export async function PATCH(
         }
 
         // Standard Match: Update ELO ratings
-        const K = 32; // ELO K-factor
-        const player1Elo = match.player1.elo;
-        const player2Elo = match.player2.elo;
+        const gamesForElo = match.games.map((g) => ({
+            scoreWinner: player1Wins > player2Wins ? g.scorePlayer1 : g.scorePlayer2,
+            scoreLoser: player1Wins > player2Wins ? g.scorePlayer2 : g.scorePlayer1,
+        }));
 
-        const expectedPlayer1 = 1 / (1 + Math.pow(10, (player2Elo - player1Elo) / 400));
-        const expectedPlayer2 = 1 - expectedPlayer1;
+        const winnerElo = player1Wins > player2Wins ? match.player1.elo : match.player2.elo;
+        const loserElo = player1Wins > player2Wins ? match.player2.elo : match.player1.elo;
 
-        const player1Won = winnerId === match.player1Id;
-        const actualPlayer1 = player1Won ? 1 : 0;
-        const actualPlayer2 = player1Won ? 0 : 1;
+        const { eloChange } = calculateElo(winnerElo, loserElo, gamesForElo);
 
-        const newPlayer1Elo = Math.round(player1Elo + K * (actualPlayer1 - expectedPlayer1));
-        const newPlayer2Elo = Math.round(player2Elo + K * (actualPlayer2 - expectedPlayer2));
+        const newPlayer1Elo = match.player1.elo + (player1Wins > player2Wins ? eloChange : -eloChange);
+        const newPlayer2Elo = match.player2.elo + (player2Wins > player1Wins ? eloChange : -eloChange);
 
         // Update match and players in a transaction
         await db.$transaction([
@@ -254,9 +254,9 @@ export async function PATCH(
                 data: {
                     userId: match.player1Id,
                     matchId: id,
-                    eloBefore: player1Elo,
+                    eloBefore: match.player1.elo,
                     eloAfter: newPlayer1Elo,
-                    change: newPlayer1Elo - player1Elo,
+                    change: newPlayer1Elo - match.player1.elo,
                     organizationId: (session.user as any).activeOrganizationId,
                 },
             }),
@@ -264,9 +264,9 @@ export async function PATCH(
                 data: {
                     userId: match.player2Id,
                     matchId: id,
-                    eloBefore: player2Elo,
+                    eloBefore: match.player2.elo,
                     eloAfter: newPlayer2Elo,
-                    change: newPlayer2Elo - player2Elo,
+                    change: newPlayer2Elo - match.player2.elo,
                     organizationId: (session.user as any).activeOrganizationId,
                 },
             }),
@@ -277,8 +277,8 @@ export async function PATCH(
             status: "VALIDATED",
             winner: winnerId,
             eloChanges: {
-                player1: { from: player1Elo, to: newPlayer1Elo },
-                player2: { from: player2Elo, to: newPlayer2Elo },
+                player1: { from: match.player1.elo, to: newPlayer1Elo },
+                player2: { from: match.player2.elo, to: newPlayer2Elo },
             },
         });
     } catch (error) {
@@ -322,10 +322,10 @@ export async function PUT(
         }
 
         // PENDING, ACCEPTED, or REJECTED: Direct Update / Result Logging
-        if (match.status === "PENDING" || match.status === "ACCEPTED" || match.status === "REJECTED") {
+        if (match.status === "PENDING" || (match.status as any) === "ACCEPTED" || match.status === "REJECTED") {
             // Either participant can log result for ACCEPTED
             // For PENDING/REJECTED, only creator usually edits
-            if (match.status !== "ACCEPTED" && match.player1Id !== session.user.id) {
+            if ((match.status as any) !== "ACCEPTED" && match.player1Id !== session.user.id) {
                 return NextResponse.json({ error: "Only match creator can edit details" }, { status: 403 });
             }
 

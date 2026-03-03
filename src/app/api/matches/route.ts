@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { calculateElo } from "@/lib/elo";
 
 export async function POST(req: Request) {
     try {
@@ -10,23 +11,61 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const { opponentId, games, tournamentId, skipValidation, isFriendlyMatch } = await req.json(); // games: [{p1: 11, p2: 5}, ...]
+        const { opponentId, games, tournamentId, skipValidation, isFriendlyMatch } = await req.json();
 
-        if (!opponentId || !games || !Array.isArray(games)) {
+        if (!opponentId || !games || !Array.isArray(games) || games.length === 0) {
             return new NextResponse("Missing data", { status: 400 });
         }
 
-        // Calculate scores to determine winner
+        // Validate ITTF rules and Match Completion
         let player1Wins = 0;
         let player2Wins = 0;
+
+        for (let i = 0; i < games.length; i++) {
+            const s = games[i];
+            const p1 = parseInt(s.p1);
+            const p2 = parseInt(s.p2);
+
+            if (isNaN(p1) || isNaN(p2)) return new NextResponse(`Invalid score in game ${i + 1}`, { status: 400 });
+
+            const winner = Math.max(p1, p2);
+            const loser = Math.min(p1, p2);
+
+            if (winner - loser < 2) return new NextResponse(`Game ${i + 1}: Winner must lead by at least 2 points.`, { status: 400 });
+            if (loser <= 9 && winner !== 11) return new NextResponse(`Game ${i + 1}: Winner must reach exactly 11 points if opponent has 9 or less.`, { status: 400 });
+            if (loser >= 10 && winner - loser !== 2) return new NextResponse(`Game ${i + 1}: In deuce, winner must win by exactly 2 points.`, { status: 400 });
+
+            if (p1 > p2) player1Wins++; else player2Wins++;
+        }
+
+        const requiredWins = (games.length > 3 || Math.max(player1Wins, player2Wins) >= 3 || (player1Wins === 2 && player2Wins === 2)) ? 3 : 2;
+        if (player1Wins < requiredWins && player2Wins < requiredWins) {
+            return new NextResponse(`Match is incomplete. Format of Best of ${requiredWins * 2 - 1} required.`, { status: 400 });
+        }
+
+        // Check for extra games played
+        let runningP1 = 0;
+        let runningP2 = 0;
+        let hasExtraGames = false;
+        for (let i = 0; i < games.length; i++) {
+            const p1 = parseInt(games[i].p1);
+            const p2 = parseInt(games[i].p2);
+            if (p1 > p2) runningP1++; else runningP2++;
+            if ((runningP1 >= requiredWins || runningP2 >= requiredWins) && i < games.length - 1) {
+                hasExtraGames = true;
+                break;
+            }
+        }
+
+        if (hasExtraGames) {
+            return new NextResponse("Invalid format: Games were played after a match winner was already decided.", { status: 400 });
+        }
+
         const formattedGames = games.map((s: any, i: number) => {
-            const s1 = parseInt(s.p1);
-            const s2 = parseInt(s.p2);
-            if (s1 > s2) player1Wins++; else player2Wins++;
             return {
                 setNumber: i + 1,
-                scorePlayer1: s1,
-                scorePlayer2: s2,
+                scorePlayer1: parseInt(s.p1),
+                scorePlayer2: parseInt(s.p2),
             };
         });
 
@@ -71,16 +110,18 @@ export async function POST(req: Request) {
             if (!player1 || !player2) return new NextResponse("Players not found", { status: 404 });
 
             // 2. Calculate ELO change
-            const K = 32;
-            const p1Elo = player1.elo;
-            const p2Elo = player2.elo;
-            const expectedP1 = 1 / (1 + Math.pow(10, (p2Elo - p1Elo) / 400));
-            const expectedP2 = 1 - expectedP1;
-            const actualP1 = player1Wins > player2Wins ? 1 : 0;
-            const actualP2 = actualP1 === 1 ? 0 : 1;
+            const gamesForElo = formattedGames.map((g: any) => ({
+                scoreWinner: player1Wins > player2Wins ? g.scorePlayer1 : g.scorePlayer2,
+                scoreLoser: player1Wins > player2Wins ? g.scorePlayer2 : g.scorePlayer1,
+            }));
 
-            const newP1Elo = Math.round(p1Elo + K * (actualP1 - expectedP1));
-            const newP2Elo = Math.round(p2Elo + K * (actualP2 - expectedP2));
+            const winnerElo = player1Wins > player2Wins ? player1.elo : player2.elo;
+            const loserElo = player1Wins > player2Wins ? player2.elo : player1.elo;
+
+            const { eloChange } = calculateElo(winnerElo, loserElo, gamesForElo);
+
+            const newP1Elo = player1.elo + (player1Wins > player2Wins ? eloChange : -eloChange);
+            const newP2Elo = player2.elo + (player2Wins > player1Wins ? eloChange : -eloChange);
 
             // 3. Transaction
             const result = await db.$transaction(async (tx) => {
@@ -102,8 +143,8 @@ export async function POST(req: Request) {
 
                 await tx.rankingLog.createMany({
                     data: [
-                        { userId: player1.id, matchId: match.id, eloBefore: p1Elo, eloAfter: newP1Elo, change: newP1Elo - p1Elo, organizationId: (session.user as any).activeOrganizationId },
-                        { userId: player2.id, matchId: match.id, eloBefore: p2Elo, eloAfter: newP2Elo, change: newP2Elo - p2Elo, organizationId: (session.user as any).activeOrganizationId }
+                        { userId: player1.id, matchId: match.id, eloBefore: player1.elo, eloAfter: newP1Elo, change: newP1Elo - player1.elo, organizationId: (session.user as any).activeOrganizationId },
+                        { userId: player2.id, matchId: match.id, eloBefore: player2.elo, eloAfter: newP2Elo, change: newP2Elo - player2.elo, organizationId: (session.user as any).activeOrganizationId }
                     ]
                 });
 

@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
 
                 // Hardcoded Superadmin logic
                 const isSuperadmin = user.email === "jeroendekker635@gmail.com";
-                const globalRole = isSuperadmin ? "SUPERADMIN" : (user.globalRole || "USER");
+                const globalRole = isSuperadmin ? "SUPERADMIN" : ((user as any).globalRole || "USER");
 
                 return {
                     id: user.id,

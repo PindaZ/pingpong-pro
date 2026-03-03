@@ -4,6 +4,7 @@ import { Swords } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import ChallengeButton from "@/components/ChallengeButton";
+import { collectUserGames, calculateAveragePointsPerGame, calculatePointDifferential, calculateClutchFactor } from "@/lib/stats";
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -40,6 +41,11 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     }) + 1;
 
     const totalUsers = await db.user.count();
+
+    const gameStats = collectUserGames(user);
+    const avgPoints = calculateAveragePointsPerGame(gameStats);
+    const pointDiff = calculatePointDifferential(gameStats);
+    const clutchFactor = calculateClutchFactor(gameStats);
 
     // Combine recent matches and sort
     const recentMatches = [...user.matchesAsPlayer1, ...user.matchesAsPlayer2]
@@ -110,6 +116,25 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-center">
                             <div className="text-lg font-bold text-primary">{winRate}%</div>
                             <div className="text-xs text-slate-500">Win Rate</div>
+                        </div>
+                    </div>
+
+                    {/* Advanced Stats */}
+                    <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
+                        <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-2">Advanced Analytics</h4>
+                        <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Avg Points/Game</span>
+                            <span className="font-mono font-bold text-amber-400">{avgPoints}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Point Differential</span>
+                            <span className={`font-mono font-bold ${pointDiff > 0 ? 'text-emerald-400' : pointDiff < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                                {pointDiff > 0 ? '+' : ''}{pointDiff}
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Clutch Factor <span className="text-[10px] text-slate-600 block">(Wins by 2 pts)</span></span>
+                            <span className="font-mono font-bold text-indigo-400">{clutchFactor}%</span>
                         </div>
                     </div>
 

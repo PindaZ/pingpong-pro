@@ -20,7 +20,9 @@ export async function PATCH(
             where: { id: session.user.id },
         });
 
-        if (!currentUser || (currentUser.role !== Role.ADMIN && currentUser.role !== Role.SUPERADMIN)) {
+        const isSuperadmin = (session.user as any).globalRole === 'SUPERADMIN';
+
+        if (!currentUser || (currentUser.role !== Role.ADMIN && currentUser.role !== Role.SUPERADMIN && !isSuperadmin)) {
             return new NextResponse("Forbidden", { status: 403 });
         }
 
@@ -46,7 +48,7 @@ export async function PATCH(
         }
 
         // 2. Only SUPERADMIN can promote someone to ADMIN
-        if (role === Role.ADMIN && currentUser.role !== Role.SUPERADMIN) {
+        if (role === Role.ADMIN && currentUser.role !== Role.SUPERADMIN && !isSuperadmin) {
             return new NextResponse("Only SUPERADMIN can promote users to ADMIN", { status: 403 });
         }
 
@@ -82,7 +84,9 @@ export async function DELETE(
             where: { id: session.user.id },
         });
 
-        if (!currentUser || (currentUser.role !== Role.ADMIN && currentUser.role !== Role.SUPERADMIN)) {
+        const isSuperadmin = (session.user as any).globalRole === 'SUPERADMIN';
+
+        if (!currentUser || (currentUser.role !== Role.ADMIN && currentUser.role !== Role.SUPERADMIN && !isSuperadmin)) {
             return new NextResponse("Forbidden", { status: 403 });
         }
 
@@ -101,7 +105,7 @@ export async function DELETE(
         }
 
         // 2. Regular ADMIN cannot delete other ADMINS
-        if (targetUser.role === Role.ADMIN && currentUser.role !== Role.SUPERADMIN) {
+        if (targetUser.role === Role.ADMIN && currentUser.role !== Role.SUPERADMIN && !isSuperadmin) {
             return new NextResponse("Only SUPERADMIN can delete ADMINS", { status: 403 });
         }
 

@@ -23,6 +23,13 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(user.avatarUrl);
     const [error, setError] = useState("");
+    const [passwordLoading, setPasswordLoading] = useState(false);
+    const [passwordError, setPasswordError] = useState("");
+    const [passwordSuccess, setPasswordSuccess] = useState("");
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -80,6 +87,44 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             setLoading(false);
         }
     };
+
+    const handlePasswordChange = async () => {
+        if (newPassword !== confirmPassword) {
+            setPasswordError("New passwords do not match");
+            return;
+        }
+        if (newPassword.length < 6) {
+            setPasswordError("New password must be at least 6 characters");
+            return;
+        }
+        setPasswordLoading(true);
+        setPasswordError("");
+        setPasswordSuccess("");
+
+        try {
+            const res = await fetch("/api/profile/password", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentPassword, newPassword }),
+            });
+
+            if (!res.ok) {
+                const data = await res.text();
+                setPasswordError(data || "Failed to update password");
+            } else {
+                setPasswordSuccess("Password updated successfully");
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+            }
+        } catch (err: any) {
+            console.error(err);
+            setPasswordError(err.message || "Something went wrong");
+        } finally {
+            setPasswordLoading(false);
+        }
+    };
+
 
     return (
         <div id="edit-profile" className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm scroll-mt-8">
@@ -191,6 +236,68 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                     </button>
                 )}
             </div>
+
+            {/* Password Change Section */}
+            {editing && (
+                <div className="mt-12 space-y-4 pt-6 border-t border-slate-800">
+                    <h4 className="text-sm font-semibold text-white">Change Password</h4>
+
+                    {passwordError && (
+                        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                            {passwordError}
+                        </div>
+                    )}
+                    {passwordSuccess && (
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
+                            {passwordSuccess}
+                        </div>
+                    )}
+
+                    <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1">
+                            Current Password
+                        </label>
+                        <input
+                            type="password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1">
+                            New Password
+                        </label>
+                        <input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-medium text-slate-400 mb-1">
+                            Confirm New Password
+                        </label>
+                        <input
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                    </div>
+
+                    <button
+                        onClick={handlePasswordChange}
+                        disabled={passwordLoading || !currentPassword || !newPassword || !confirmPassword}
+                        className="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-all disabled:opacity-50"
+                    >
+                        {passwordLoading ? <Loader2 className="animate-spin inline mr-2" size={18} /> : null}
+                        Update Password
+                    </button>
+                </div>
+            )}
         </div>
+
     );
 }

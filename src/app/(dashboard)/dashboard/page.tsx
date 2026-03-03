@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TrendingUp, Award, Activity, Flame, Swords, Trophy } from "lucide-react";
+import { MatchStatus, Match, User } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -47,12 +48,16 @@ export default async function DashboardPage() {
         }
     });
 
+
+    // ... Inside DashboardPage ...
+
     // Fetch Active Challenges (ACCEPTED status)
     const activeMissions = await db.match.findMany({
         where: {
-            status: 'ACCEPTED',
+            status: "ACCEPTED" as any,
             OR: [
                 { player1Id: currentUser.id },
+
                 { player2Id: currentUser.id }
             ]
         },
@@ -62,7 +67,8 @@ export default async function DashboardPage() {
             games: true,
         },
         orderBy: { updatedAt: 'desc' }
-    });
+    }) as (Match & { player1: User; player2: User })[];
+
 
     // Fetch ELO History
     const rankingLogs = await db.rankingLog.findMany({
@@ -124,11 +130,19 @@ export default async function DashboardPage() {
     return (
         <div className="space-y-10 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-bold text-white tracking-tight">Dashboard</h2>
                     <p className="text-slate-400 mt-1">Welcome back, {currentUser.name}</p>
                 </div>
+                <Link
+                    href="/matches"
+                    className="group relative inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-bold text-white transition-all duration-200 bg-primary hover:bg-primary/90 rounded-xl overflow-hidden shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0"
+                >
+                    <div className="absolute inset-0 w-full h-full -rotate-45 scale-150 opacity-10 bg-gradient-to-r from-transparent via-white to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+                    <Trophy size={18} className="animate-bounce-subtle" />
+                    <span>LOG MATCH</span>
+                </Link>
             </div>
 
             {/* Stats Cards */}
@@ -197,7 +211,7 @@ export default async function DashboardPage() {
                                             <p className="text-white font-bold uppercase tracking-tight">vs {opponent.name}</p>
                                         </div>
                                     </div>
-                                    <Link 
+                                    <Link
                                         href={`/matches/log?opponentId=${opponent.id}&matchId=${mission.id}`}
                                         className="px-4 py-2 bg-primary text-white text-[10px] font-black rounded-lg shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all uppercase tracking-widest"
                                     >

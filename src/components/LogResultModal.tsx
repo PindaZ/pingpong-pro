@@ -36,8 +36,7 @@ function validateGameScore(p1: number, p2: number): string | null {
     return null;
 }
 
-// Check if match is already complete (best of 3)
-function getMatchStatus(games: { p1: string; p2: string }[]): { p1Wins: number; p2Wins: number; isComplete: boolean } {
+function getMatchStatus(games: { p1: string; p2: string }[]): { p1Wins: number; p2Wins: number; isComplete: boolean; requiredWins: number } {
     let p1Wins = 0;
     let p2Wins = 0;
 
@@ -45,15 +44,20 @@ function getMatchStatus(games: { p1: string; p2: string }[]): { p1Wins: number; 
         if (game.p1 !== "" && game.p2 !== "") {
             const s1 = parseInt(game.p1);
             const s2 = parseInt(game.p2);
-            if (!isNaN(s1) && !isNaN(s2)) {
+            if (!isNaN(s1) && !isNaN(s2) && !validateGameScore(s1, s2)) {
                 if (s1 > s2) p1Wins++;
                 else if (s2 > s1) p2Wins++;
             }
         }
     }
 
-    const isComplete = p1Wins >= 2 || p2Wins >= 2;
-    return { p1Wins, p2Wins, isComplete };
+    // Determine if it's best of 3 or 5 based on total games that could be played
+    // Usually table tennis is Bo3 or Bo5. Let's dynamically assume Bo5 if games > 3, else Bo3.
+    // Or just strictly require 2 wins for Bo3, 3 wins for Bo5.
+    const requiredWins = (games.length > 3 || Math.max(p1Wins, p2Wins) >= 3 || (p1Wins === 2 && p2Wins === 2)) ? 3 : 2;
+    const isComplete = p1Wins >= requiredWins || p2Wins >= requiredWins;
+
+    return { p1Wins, p2Wins, isComplete, requiredWins };
 }
 
 export default function LogResultModal({ isOpen, onClose, users, currentUserId }: LogResultModalProps) {
@@ -108,6 +112,52 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
         setValidationWarnings(warnings);
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number, field: "p1" | "p2") => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (field === "p1") {
+                document.getElementById(`game-${index}-p2`)?.focus();
+            } else if (field === "p2") {
+                if (index < games.length - 1) {
+                    document.getElementById(`game-${index + 1}-p1`)?.focus();
+                } else {
+                    // Try to add a new game and focus it
+                    addGame();
+                    setTimeout(() => document.getElementById(`game-${index + 1}-p1`)?.focus(), 50);
+                }
+            }
+        }
+    };
+
+    const onInputChange = (index: number, field: "p1" | "p2", value: string) => {
+        updateGame(index, field, value);
+        // Auto-tab logic when 2 digits are entered
+        if (value.length >= 2) {
+            if (field === "p1") {
+                document.getElementById(`game-${index}-p2`)?.focus();
+            } else if (field === "p2" && index < games.length - 1) {
+                document.getElementById(`game-${index + 1}-p1`)?.focus();
+            }
+        }
+    };
+
+    const quickFill = (index: number, p1Score: number, p2Score: number) => {
+        const newGames = [...games];
+        newGames[index].p1 = p1Score.toString();
+        newGames[index].p2 = p2Score.toString();
+        setGames(newGames);
+
+        // Auto focus next row if possible
+        if (index < games.length - 1) {
+            document.getElementById(`game-${index + 1}-p1`)?.focus();
+        } else if (!getMatchStatus(newGames).isComplete) {
+            // Add next and focus
+            setGames([...newGames, { p1: "", p2: "" }]);
+            setTimeout(() => document.getElementById(`game-${index + 1}-p1`)?.focus(), 50);
+        }
+    };
+
+
     const handleSubmit = async () => {
         if (!opponentId) {
             setError("Please select an opponent");
@@ -129,6 +179,34 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                 setError(`Game ${i + 1}: ${err}`);
                 return;
             }
+        }
+
+        const status = getMatchStatus(validGames);
+        if (!status.isComplete) {
+            setError(`Match is incomplete. A format of exactly Best of ${status.requiredWins * 2 - 1} is required to declare a definitive winner.`);
+            return;
+        }
+
+        let extraGames = false;
+        let runningP1 = 0;
+        let runningP2 = 0;
+        for (let i = 0; i < validGames.length; i++) {
+            const s1 = parseInt(validGames[i].p1);
+            const s2 = parseInt(validGames[i].p2);
+            if (s1 > s2) runningP1++;
+            else runningP2++;
+
+            if (runningP1 >= status.requiredWins || runningP2 >= status.requiredWins) {
+                if (i < validGames.length - 1) {
+                    extraGames = true;
+                }
+                break;
+            }
+        }
+
+        if (extraGames) {
+            setError("Invalid format: Games were played after a match winner was already decided.");
+            return;
         }
 
         setLoading(true);
@@ -211,37 +289,70 @@ export default function LogResultModal({ isOpen, onClose, users, currentUserId }
                                 </button>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-4">
                                 {games.map((game, index) => (
-                                    <div key={index} className="flex items-center gap-2">
-                                        <span className="text-xs text-slate-500 w-6">#{index + 1}</span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="99"
-                                            value={game.p1}
-                                            onChange={(e) => updateGame(index, "p1", e.target.value)}
-                                            placeholder="You"
-                                            className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
-                                        />
-                                        <span className="text-slate-500">-</span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="99"
-                                            value={game.p2}
-                                            onChange={(e) => updateGame(index, "p2", e.target.value)}
-                                            placeholder="Opp"
-                                            className="flex-1 px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-primary"
-                                        />
-                                        {games.length > 1 && (
+                                    <div key={index} className="flex flex-col gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-bold text-slate-500 w-6">#{index + 1}</span>
+                                            <input
+                                                id={`game-${index}-p1`}
+                                                type="number"
+                                                min="0"
+                                                max="99"
+                                                value={game.p1}
+                                                onChange={(e) => onInputChange(index, "p1", e.target.value)}
+                                                onKeyDown={(e) => handleKeyDown(e, index, "p1")}
+                                                placeholder="You"
+                                                className="flex-1 px-3 py-2.5 bg-slate-900 border border-slate-700 focus:border-primary rounded-lg text-white text-center text-lg font-bold focus:outline-none focus:ring-1 focus:ring-primary shadow-inner"
+                                            />
+                                            <span className="text-slate-500 font-bold">-</span>
+                                            <input
+                                                id={`game-${index}-p2`}
+                                                type="number"
+                                                min="0"
+                                                max="99"
+                                                value={game.p2}
+                                                onChange={(e) => onInputChange(index, "p2", e.target.value)}
+                                                onKeyDown={(e) => handleKeyDown(e, index, "p2")}
+                                                placeholder="Opp"
+                                                className="flex-1 px-3 py-2.5 bg-slate-900 border border-slate-700 focus:border-primary rounded-lg text-white text-center text-lg font-bold focus:outline-none focus:ring-1 focus:ring-primary shadow-inner"
+                                            />
+                                            {games.length > 1 && (
+                                                <button
+                                                    onClick={() => removeGame(index)}
+                                                    className="p-2.5 hover:bg-red-500/20 rounded-lg text-slate-500 hover:text-red-400 transition-colors"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            )}
+                                        </div>
+                                        {/* Quick Fill Buttons */}
+                                        <div className="flex pl-8 gap-2 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
                                             <button
-                                                onClick={() => removeGame(index)}
-                                                className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-red-400 transition-colors"
+                                                onClick={() => quickFill(index, 11, 0)}
+                                                className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-primary hover:text-primary text-slate-400 uppercase"
                                             >
-                                                <Trash2 size={16} />
+                                                11-0
                                             </button>
-                                        )}
+                                            <button
+                                                onClick={() => quickFill(index, 11, 5)}
+                                                className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-primary hover:text-primary text-slate-400 uppercase"
+                                            >
+                                                11-5
+                                            </button>
+                                            <button
+                                                onClick={() => quickFill(index, 0, 11)}
+                                                className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-red-400 hover:text-red-400 text-slate-400 uppercase"
+                                            >
+                                                0-11
+                                            </button>
+                                            <button
+                                                onClick={() => quickFill(index, 5, 11)}
+                                                className="px-2 py-0.5 text-[9px] font-bold tracking-wider rounded border border-slate-700 hover:border-red-400 hover:text-red-400 text-slate-400 uppercase"
+                                            >
+                                                5-11
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

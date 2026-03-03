@@ -166,7 +166,7 @@ export default function NotificationBell() {
                                                                 disabled={loading}
                                                                 className="flex-1 py-2 bg-slate-700 hover:bg-red-600/90 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 disabled:opacity-50 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/20 border border-slate-600 hover:border-transparent"
                                                             >
-                                                                <X size={14} /> Reject
+                                                                <X size={14} /> Dispute
                                                             </button>
                                                         </div>
                                                     )}

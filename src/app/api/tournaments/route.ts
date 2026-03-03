@@ -11,7 +11,8 @@ export async function POST(req: Request) {
         }
 
         // Check for admin/superadmin role
-        if (session.user.role !== 'ADMIN' && session.user.role !== 'SUPERADMIN') {
+        const isSuperadmin = (session.user as any).globalRole === 'SUPERADMIN';
+        if (session.user.role !== 'ADMIN' && session.user.role !== 'SUPERADMIN' && !isSuperadmin) {
             return new NextResponse("Forbidden", { status: 403 });
         }
 
@@ -21,6 +22,18 @@ export async function POST(req: Request) {
             return new NextResponse("Missing data", { status: 400 });
         }
 
+        let orgId = (session.user as any).activeOrganizationId;
+        if (!orgId) {
+            const member = await db.organizationMember.findFirst({
+                where: { userId: session.user.id }
+            });
+            if (member) orgId = member.organizationId;
+        }
+
+        if (!orgId) {
+            return new NextResponse("No active organization found", { status: 400 });
+        }
+
         const tournament = await db.tournament.create({
             data: {
                 name,
@@ -28,7 +41,7 @@ export async function POST(req: Request) {
                 endDate: new Date(endDate),
                 maxParticipants: maxParticipants ? parseInt(maxParticipants) : 32,
                 creatorId: session.user.id,
-                organizationId: (session.user as any).activeOrganizationId,
+                organizationId: orgId,
             },
         });
 
